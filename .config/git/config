@@ -2,6 +2,6 @@
 	email = roey280404@gmail.com
 	name = roey ben arieh
 [core]
-	editor = vim
+	editor = nvim
 [init]
 	defaultBranch = main
