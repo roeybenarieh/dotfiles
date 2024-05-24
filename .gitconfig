@@ -1,0 +1,7 @@
+[user]
+	email = roey280404@gmail.com
+	name = roey ben arieh
+[core]
+	editor = vim
+[init]
+	defaultBranch = main
