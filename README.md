@@ -4,5 +4,6 @@
 
 ```bash
 git clone git@github.com:roeybenarieh/dotfiles.git ~/dotfiles/
-stow ~/dotfiles
+cd ~/dotfiles
+stow .
 ```
