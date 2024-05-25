@@ -89,6 +89,22 @@ ZSH_TMUX_FIXTERM=true # set 256-color terminal if supported
 ZSH_TMUX_AUTOCONNECT=false # start tmux session every terminal loggin
 ZSH_TMUX_CONFIG=$HOME/.config/tmux/tmux.conf
 
+
+# fzf plugin configuration
+# preview fzf files with the bat(batcat) cli
+export FZF_CTRL_T_OPTS="--preview 'batcat -n --color=always {}'
+  --bind 'ctrl-/:change-preview-window(down|hidden|)'
+  --color header:italic
+  --header 'CTRL-/ to change preview window'"
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window up:3:hidden:wrap
+  --bind 'ctrl-/:toggle-preview'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'CTRL=/ to change preview window. CTRL-Y to copy command into clipboard'"
+export FZF_ALT_C_OPTS="
+  --preview 'tree -C {}'"
+
 # Function to install a oh-my-zhs plugin if it doesn't exist
 # Parameters:
 #   $1 - resource type, either 'plugins' or 'themes'
