@@ -463,13 +463,15 @@ set -g @plugin 'tmux-plugins/tmux-copycat'
 # My Custom plugins
 # navigating tmux and neovim with the same keymaps
 set -g @plugin 'christoomey/vim-tmux-navigator'
-# theme
-# set -g @catppuccin_status_background "default" # make the status line transperent
-# set -g @plugin 'catppuccin/tmux'
+# using nvim in multiple panes/windows
+set -g @plugin 'trevarj/tmux-open-nvim'
+# add ton executable file to path (needed by the plugin)
+set-environment -g PATH "$PATH:$HOME/.config/tmux/plugins/tmux-open-nvim/scripts"
 
 # MUST BE LAST
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
+# TODO: make restoring neovim sessoin in tmux work
 set -g @resurrect-strategy-nvim 'session' # for restoring neovim sessions
 resurrect_dir="$HOME/.tmux/resurrect"
 set -g @resurrect-dir $resurrect_dir
