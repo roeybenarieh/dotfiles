@@ -81,6 +81,7 @@ plugins=(
 
 # nvm plugin configuration
 zstyle ':omz:plugins:nvm' lazy yes # Load nvm lazyly
+zstyle ':omz:plugins:nvm' lazy-cmd nvim neovim # load nvm when neovim is loaded
 
 # tmux plugin configuration
 ZSH_TMUX_UNICODE=true # enforce utf-8 for showing shell icons
