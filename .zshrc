@@ -74,9 +74,10 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   zsh-autosuggestions web-search fast-syntax-highlighting zsh-autocomplete common-aliases command-not-found colored-man-pages thefuck
-  git fzf helm tmux oc tmux
+  git fzf helm tmux oc tmux kubectl docker docker-compose
   python pip
   nvm
+  nix-zsh-completions
 )
 
 # nvm plugin configuration
