@@ -1,0 +1,16 @@
+name: Check nix files are correctly formatted 
+
+on: [push, workflow_dispatch]
+
+jobs:
+  nixfmt:
+    name: nixfmt format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && nix-channel --update
+      - run: nix-env -iA nixpkgs.nixfmt
+      - run: nixfmt --check .
+      - run: nixfmt --diff . | sed 's/^/::error file=/' || true`
