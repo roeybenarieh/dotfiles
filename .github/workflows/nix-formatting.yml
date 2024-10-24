@@ -11,6 +11,6 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs && nix-channel --update
-      - run: nix-env -iA nixpkgs.nixfmt
+      - run: nix-env -iA nixpkgs.nixfmt-classic
       - run: nixfmt --check .
       - run: nixfmt --diff . | sed 's/^/::error file=/' || true`

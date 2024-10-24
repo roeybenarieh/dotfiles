@@ -1,8 +1,5 @@
 { config, pkgs, ... }:
 
 {
-  imports = [
-    ./ide
-    ./source-control
-  ];
+  imports = [ ./ide ./source-control ./langueges ];
 }

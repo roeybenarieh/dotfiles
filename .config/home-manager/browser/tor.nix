@@ -1,8 +1,6 @@
 { pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    tor-browser
-  ];
+  home.packages = with pkgs; [ tor-browser ];
 }
 

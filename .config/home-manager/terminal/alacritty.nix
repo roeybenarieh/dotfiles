@@ -1,9 +1,7 @@
-{ config, pkgs, ... }:
-{
+{ config, pkgs, ... }: {
   # install nerdfont
-  home.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-  ];
+  home.packages = with pkgs;
+    [ (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) ];
 
   # install alacritty
   programs.alacritty = {
@@ -12,7 +10,10 @@
     # alacritty configuration file
     settings = {
       window = {
-        padding = { x = 4; y = 8; };
+        padding = {
+          x = 4;
+          y = 8;
+        };
         decorations = "full";
         opacity = 1;
         startup_mode = "Windowed";
@@ -25,25 +26,22 @@
       #   pkgs.alacritty-theme.tokyo-night
       # ];
 
-      font =
-        let
-          jetbrainsMono = style: { family = "JetBrainsMono Nerd Font"; inherit style; };
-        in
-        {
-          size = 13;
-          normal = jetbrainsMono "Regular";
-          bold = jetbrainsMono "Bold";
-          italic = jetbrainsMono "Italic";
-          bold_italic = jetbrainsMono "Bold Italic";
+      font = let
+        jetbrainsMono = style: {
+          family = "JetBrainsMono Nerd Font";
+          inherit style;
         };
-
-      cursor = {
-        style = "Block";
+      in {
+        size = 13;
+        normal = jetbrainsMono "Regular";
+        bold = jetbrainsMono "Bold";
+        italic = jetbrainsMono "Italic";
+        bold_italic = jetbrainsMono "Bold Italic";
       };
 
-      env = {
-        TERM = "xterm-256color";
-      };
+      cursor = { style = "Block"; };
+
+      env = { TERM = "xterm-256color"; };
 
       live_config_reload = true;
     };

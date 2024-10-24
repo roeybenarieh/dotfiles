@@ -1,11 +1,7 @@
 { pkgs, ... }:
 
 {
-  imports = [
-    ./fzf.nix
-    ./zoxide.nix
-    ./bat.nix
-  ];
+  imports = [ ./fzf.nix ./zoxide.nix ./bat.nix ];
   home.packages = with pkgs; [
     # file system
     tree

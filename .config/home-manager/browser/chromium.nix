@@ -9,10 +9,10 @@
       { id = "gmegofmjomhknnokphhckolhcffdaihd"; } # jsonview
       { id = "aapbdbdomjkkjkaonfhkkikfgjllcleb"; } # google-translate
       { id = "eimadpbcbfnmbkopoojfekhnkhdbieeh"; } # dark-reader
-      { id = "klehggjefofgiajjfpoebdidnpjmljhb"; } # duplicate tab shortcat with Alt+Shift+D
+      {
+        id = "klehggjefofgiajjfpoebdidnpjmljhb";
+      } # duplicate tab shortcat with Alt+Shift+D
     ];
-    dictionaries = with pkgs; [
-      hunspellDictsChromium.en_US
-    ];
+    dictionaries = with pkgs; [ hunspellDictsChromium.en_US ];
   };
 }

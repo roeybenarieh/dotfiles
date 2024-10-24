@@ -1,13 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  imports = [
-    ./browser
-    ./terminal
-    ./software-development
-    ./basic
-    ./wm
-  ];
+  imports = [ ./browser ./terminal ./software-development ./basic ./wm ];
 
   options = {
     settings.gui.enable = lib.mkOption { type = lib.types.bool; };
@@ -21,7 +15,6 @@
     # general
     nixpkgs.config.allowUnfree = true; # allow unfree software
     nixpkgs.config.users.defaultUserShell = pkgs.zsh;
-
 
     # Home Manager needs a bit of information about you and the paths it should
     # manage.
@@ -90,9 +83,7 @@
     #
     #  /etc/profiles/per-user/roey/etc/profile.d/hm-session-vars.sh
     #
-    home.sessionVariables = {
-      EDITOR = "nvim";
-    };
+    home.sessionVariables = { EDITOR = "nvim"; };
 
     # Let Home Manager install and manage itself.
     programs.home-manager.enable = true;
