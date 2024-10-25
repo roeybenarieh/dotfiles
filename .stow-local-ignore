@@ -22,3 +22,11 @@ _darcs
 ^/CONTRIBUTE.*
 ^/LICENSE.*
 ^/COPYING
+
+# my own ignores
+\.github
+nix
+\.editorconfig
+justfile
+flake.nix
+flake.lock
