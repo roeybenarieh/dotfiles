@@ -13,8 +13,7 @@
     let
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
       pkgs-stable = nixpkgs-stable.legacyPackages."x86_64-linux";
-    in
-    {
+    in {
       homeConfigurations = {
         # home config per user
         roey = home-manager.lib.homeManagerConfiguration {

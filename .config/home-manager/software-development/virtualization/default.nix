@@ -1,16 +1,17 @@
 { config, pkgs, pkgs-stable, ... }:
 
 {
-  home.packages = with pkgs; [
-    # virtual machines
-    virtualbox
+  home.packages = with pkgs;
+    [
+      # virtual machines
+      virtualbox
 
-    # containers
-    docker
-    lazydocker
+      # containers
+      docker
+      lazydocker
 
-    # containers orcestration
-    kubectl
-    ocm # openshift 'oc' cli
-  ] ++ [ pkgs-stable.kubernetes-helm ];
+      # containers orcestration
+      kubectl
+      ocm # openshift 'oc' cli
+    ] ++ [ pkgs-stable.kubernetes-helm ];
 }

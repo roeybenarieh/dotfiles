@@ -3,6 +3,8 @@
 {
   wayland.windowManager.hyprland = {
     enable = true;
+    # nvidiaPatches = true;
+    xwayland.enable = true; # translation layer between xserver to wayland
     settings = {
       "$mod" = "SUPER";
       bind = [
@@ -59,4 +61,18 @@
       }
     '';
   };
+
+  home.sessionVariables = {
+    # If your cursor becomes invisible
+    WLR_NO_HARDWARE_CURSORS = "1";
+    # Hint electron apps to use wayland
+    NIXOS_OZONE_WL = "1";
+  };
+
+  # hardware = {
+  #   # Opengl
+  #   Opengl.enable = true;
+  #   # Most wayland compositors need this
+  #   nvidia.modesetting.enable = true;
+  # };
 }

@@ -1,5 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./ide ./source-control ./langueges ./netwoking.nix ./virtualization ];
+  imports =
+    [ ./ide ./source-control ./langueges ./netwoking.nix ./virtualization ];
 }
