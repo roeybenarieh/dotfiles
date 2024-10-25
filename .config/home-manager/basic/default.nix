@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  imports = [ ./fzf.nix ./zoxide.nix ./bat.nix ];
+  imports = [ ./fzf.nix ./zoxide.nix ./bat.nix ./eza.nix ];
   home.packages = with pkgs; [
     # file system
     tree
@@ -15,7 +15,9 @@
     wget
 
     # fun
+    neofetch
     cmatrix
     cowsay
   ];
+  home.shellAliases = { c = "clear"; };
 }
