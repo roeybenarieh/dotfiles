@@ -1,2 +1,3 @@
 [virtualenvs]
+create = true     # create a new virtual environment if one doesn’t already exist
 in-project = true # tell poetry to install venv in project directory
