@@ -26,20 +26,18 @@
       #   pkgs.alacritty-theme.tokyo-night
       # ];
 
-      font =
-        let
-          jetbrainsMono = style: {
-            family = "JetBrainsMono Nerd Font";
-            inherit style;
-          };
-        in
-        {
-          size = 13;
-          normal = jetbrainsMono "Regular";
-          bold = jetbrainsMono "Bold";
-          italic = jetbrainsMono "Italic";
-          bold_italic = jetbrainsMono "Bold Italic";
+      font = let
+        jetbrainsMono = style: {
+          family = "JetBrainsMono Nerd Font";
+          inherit style;
         };
+      in {
+        size = 13;
+        normal = jetbrainsMono "Regular";
+        bold = jetbrainsMono "Bold";
+        italic = jetbrainsMono "Italic";
+        bold_italic = jetbrainsMono "Bold Italic";
+      };
 
       cursor = { style = "Block"; };
 

@@ -34,21 +34,35 @@
         default = "Ecosia";
         engines = {
           # force = true; # force replay the existing search configuraiton
-          "Google".metaData.alias = "@g"; # builtin engines only support specifying one additional alias
+          "Google".metaData.alias =
+            "@g"; # builtin engines only support specifying one additional alias
 
           "Nix Packages" = {
             urls = [{
               template = "https://search.nixos.org/packages";
-              params = [{ name = "type"; value = "packages"; } { name = "query"; value = "{searchTerms}"; }];
+              params = [
+                {
+                  name = "type";
+                  value = "packages";
+                }
+                {
+                  name = "query";
+                  value = "{searchTerms}";
+                }
+              ];
             }];
-            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            icon =
+              "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
             definedAliases = [ "@np" "@nixpkgs" ];
           };
 
           "Source Graph" = {
             urls = [{
               template = "https://sourcegraph.com/search";
-              params = [{ name = "q"; value = "{searchTerms}"; }];
+              params = [{
+                name = "q";
+                value = "{searchTerms}";
+              }];
             }];
             definedAliases = [ "@sg" "@sourcegraph" ];
           };
@@ -57,7 +71,16 @@
             urls = [{
               template = "https://www.ecosia.org/search";
               iconurl = "https://www.ecosia.org/search/favicon.ico";
-              params = [{ name = "method"; value = "index"; } { name = "q"; value = "{searchTerms}"; }];
+              params = [
+                {
+                  name = "method";
+                  value = "index";
+                }
+                {
+                  name = "q";
+                  value = "{searchTerms}";
+                }
+              ];
             }];
           };
 

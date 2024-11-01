@@ -7,7 +7,8 @@
     package = pkgs-stable.openssh; # use stable package for ssh
     settings = {
       PasswordAuthentication = true;
-      KbdInteractiveAuthentication = true; # ask for each autherazation interactivly
+      KbdInteractiveAuthentication =
+        true; # ask for each autherazation interactivly
       UsePAM = true;
 
       # security related
@@ -20,9 +21,7 @@
   # install google-authenticator
   environment.systemPackages = with pkgs-stable; [ google-authenticator ];
   # use google-authenticator pam for ssh connections
-  security.pam = {
-    services.sshd.googleAuthenticator.enable = true;
-  };
+  security.pam = { services.sshd.googleAuthenticator.enable = true; };
   # NOTE: this code enable google-authenticator only for ssh connections ONLY
   # NOTE: in order for the pam to work a ~/.google_authenticator file must exist for that user
   # run 'google-authenticator', follow the setup steps, and the file will automaticaly get created.

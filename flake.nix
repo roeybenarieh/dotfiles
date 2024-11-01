@@ -13,16 +13,19 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, firefox-addons, ... }@inputs:
+  outputs =
+    { self, nixpkgs, nixpkgs-stable, home-manager, firefox-addons, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
       pkgs-stable = nixpkgs-stable.legacyPackages."x86_64-linux";
-    in
-    {
+    in {
       homeConfigurations = {
         roey = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          extraSpecialArgs = { inherit pkgs-stable; inherit inputs; };
+          extraSpecialArgs = {
+            inherit pkgs-stable;
+            inherit inputs;
+          };
           modules = [ ./.config/home-manager/home.nix ];
         };
       };

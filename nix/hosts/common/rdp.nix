@@ -16,9 +16,7 @@
   # use google-authenticator pam for xrdp connections
   security.pam = {
     # wtf is the 'xrdp-sesman' service?
-    services.xrdp.googleAuthenticator = {
-      enable = true;
-    };
+    services.xrdp.googleAuthenticator = { enable = true; };
   };
   # NOTE: this code enable google-authenticator only for Xrdp connections ONLY
   # NOTE: in order for the pam to work a ~/.google_authenticator file must exist for that user
