@@ -1,6 +1,5 @@
 { pkgs, ... }:
 
 {
-  imports = [ ./tor.nix ./chromium.nix ];
+  imports = [ ./tor.nix ./chromium.nix ./firefox ];
 }
-
