@@ -26,24 +26,26 @@
       #   pkgs.alacritty-theme.tokyo-night
       # ];
 
-      font = let
-        jetbrainsMono = style: {
-          family = "JetBrainsMono Nerd Font";
-          inherit style;
+      font =
+        let
+          jetbrainsMono = style: {
+            family = "JetBrainsMono Nerd Font";
+            inherit style;
+          };
+        in
+        {
+          size = 13;
+          normal = jetbrainsMono "Regular";
+          bold = jetbrainsMono "Bold";
+          italic = jetbrainsMono "Italic";
+          bold_italic = jetbrainsMono "Bold Italic";
         };
-      in {
-        size = 13;
-        normal = jetbrainsMono "Regular";
-        bold = jetbrainsMono "Bold";
-        italic = jetbrainsMono "Italic";
-        bold_italic = jetbrainsMono "Bold Italic";
-      };
 
       cursor = { style = "Block"; };
 
       env = { TERM = "xterm-256color"; };
 
-      live_config_reload = true;
+      general.live_config_reload = true;
     };
   };
 }
