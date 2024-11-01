@@ -14,6 +14,12 @@
     curl
     wget
 
+    # text editing
+    vim
+
+    # utils
+    tldr
+
     # fun
     neofetch
     cmatrix
