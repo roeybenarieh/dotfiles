@@ -11,13 +11,38 @@
       #   DisableFirefoxStudies = true;
       # };
       settings = {
-        # this like has every setting: https://mozilla.github.io/policy-templates/#searchengines--add
+        # this site has every setting: https://mozilla.github.io/policy-templates/#searchengines--add
 
         # "browser.startup.homepage" = "https://www.ecosia.org";
-        "browser.startup.page" = "https://www.ecosia.org";
-        "startup.homepage_welcome_url" = "https://www.ecosia.org";
+        # "browser.startup.page" = "https://www.ecosia.org";
+        # "startup.homepage_welcome_url" = "https://www.ecosia.org";
         "dom.security.https_only_mode" = true;
-        "extensions.autoDisableScopes" = 0; # automaticly enable every extension
+        # automaticly enable every extension
+        "extensions.autoDisableScopes" = 0;
+        # Disable telemetry
+        # https://wiki.mozilla.org/Platform/Features/Telemetry
+        # https://wiki.mozilla.org/Privacy/Reviews/Telemetry
+        # https://wiki.mozilla.org/Telemetry
+        # https://www.mozilla.org/en-US/legal/privacy/firefox.html#telemetry
+        # https://support.mozilla.org/t5/Firefox-crashes/Mozilla-Crash-Reporter/ta-p/1715
+        # https://wiki.mozilla.org/Security/Reviews/Firefox6/ReviewNotes/telemetry
+        # https://gecko.readthedocs.io/en/latest/browser/experiments/experiments/manifest.html
+        # https://wiki.mozilla.org/Telemetry/Experiments
+        # https://support.mozilla.org/en-US/questions/1197144
+        # https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/telemetry/internals/preferences.html#id1
+        "toolkit.telemetry.enabled" = false;
+        "toolkit.telemetry.unified" = false;
+        "toolkit.telemetry.archive.enabled" = false;
+        "experiments.supported" = false;
+        "experiments.enabled" = false;
+        "experiments.manifest.uri" = "";
+        # Disable health reports (basically more telemetry)
+        # https://support.mozilla.org/en-US/kb/firefox-health-report-understand-your-browser-perf
+        # https://gecko.readthedocs.org/en/latest/toolkit/components/telemetry/telemetry/preferences.html
+        "datareporting.healthreport.uploadEnabled" = false;
+        "datareporting.healthreport.service.enabled" = false;
+        "datareporting.policy.dataSubmissionEnabled" = false;
+        "browser.urlbar.update2.engineAliasRefresh" = true;
       };
       # configure search engines
       extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
@@ -26,67 +51,16 @@
         to-google-translate
         darkreader
         ublock-origin
-        ecosia
+        # ecosia
         # video-downloadhelper
         # jsonview
       ];
       search = {
-        default = "Ecosia";
-        engines = {
-          # force = true; # force replay the existing search configuraiton
-          "Google".metaData.alias =
-            "@g"; # builtin engines only support specifying one additional alias
-
-          "Nix Packages" = {
-            urls = [{
-              template = "https://search.nixos.org/packages";
-              params = [
-                {
-                  name = "type";
-                  value = "packages";
-                }
-                {
-                  name = "query";
-                  value = "{searchTerms}";
-                }
-              ];
-            }];
-            icon =
-              "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@np" "@nixpkgs" ];
-          };
-
-          "Source Graph" = {
-            urls = [{
-              template = "https://sourcegraph.com/search";
-              params = [{
-                name = "q";
-                value = "{searchTerms}";
-              }];
-            }];
-            definedAliases = [ "@sg" "@sourcegraph" ];
-          };
-
-          "Ecosia" = {
-            urls = [{
-              template = "https://www.ecosia.org/search";
-              iconurl = "https://www.ecosia.org/search/favicon.ico";
-              params = [
-                {
-                  name = "method";
-                  value = "index";
-                }
-                {
-                  name = "q";
-                  value = "{searchTerms}";
-                }
-              ];
-            }];
-          };
-
-        };
+        default = "Google";
+        force = true; # force replay the existing search configuraiton
+        engines = import ./search_engines.nix { inherit pkgs; };
       };
-      bookmarks = import ./firefox_bookmarks.nix { };
+      bookmarks = import ./bookmarks.nix { };
     };
   };
 }
