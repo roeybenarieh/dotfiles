@@ -14,9 +14,15 @@ format:
   treefmt
 
 [group('nix')]
-rebuild:
+rebuild-user:
   git add "**.nix" \
   && home-manager switch --show-trace --flake .#roey
+
+[group('nix')]
+rebuild-system:
+  git add "**.nix" \
+  && sudo nixos-rebuild switch --show-trace --flake .#roey-nixos
+
 
 [group('nix')]
 show-flake:
