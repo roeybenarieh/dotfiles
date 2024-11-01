@@ -23,3 +23,10 @@ nix-shell '<home-manager>' -A install # if this command doesn't work, logout and
 # build the configuration
 just rebuild # if you don't have the just CLI: home-manager switch --show-trace --flake . 
 ```
+
+## TODOES
+
+- install a password manager in all devices and configure it properly
+- themes for Firefox
+- install and configure Neovim
+- configure zsh + tmux
