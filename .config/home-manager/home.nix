@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 {
-  imports = [ ./browser ./terminal ./software-development ./basic ./wm ];
+  imports = [ ./browser ./terminal ./software-development ./basic ./wm ./social ];
 
   options = {
     settings.gui.enable = lib.mkOption { type = lib.types.bool; };
