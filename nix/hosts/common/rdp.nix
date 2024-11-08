@@ -4,7 +4,7 @@
   # enable xfce desktop environment for rdp connections
   services.xserver.desktopManager.xfce.enable = true;
   services.xrdp = {
-    enable = true;
+    enable = false;
     package = pkgs-stable.xrdp;
     audio.enable = true;
     defaultWindowManager = "xfce4-session";
