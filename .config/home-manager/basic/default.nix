@@ -17,6 +17,9 @@
     # text editing
     vim
 
+    # file types
+    unzip # using .zip files
+
     # utils
     tldr
 
