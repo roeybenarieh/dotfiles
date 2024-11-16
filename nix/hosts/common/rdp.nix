@@ -6,7 +6,10 @@
   services.xrdp = {
     enable = false;
     package = pkgs-stable.xrdp;
-    audio.enable = true;
+    audio = {
+      enable = true;
+      package = pkgs-stable.pulseaudio-module-xrdp;
+    };
     defaultWindowManager = "xfce4-session";
     openFirewall = true;
   };
