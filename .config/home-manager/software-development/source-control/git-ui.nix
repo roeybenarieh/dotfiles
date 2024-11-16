@@ -2,7 +2,7 @@
 
 {
   home.packages = with pkgs; [
-    gitbutler # doesnt work
+    # gitbutler # doesnt work
     gitnuro
   ];
 }
