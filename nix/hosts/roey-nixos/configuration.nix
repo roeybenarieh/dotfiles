@@ -16,6 +16,16 @@
   networking = {
     hostName = "roey-nixos"; # Define your hostname.
     networkmanager.enable = true; # Enable networking
+    # TODO: make sure this is working
+    # more info in: https://nix.dev/manual/nix/2.18/language/builtins.html?highlight=mapatters#builtins-mapAttrs
+    interfaces = lib.mkDefault (
+      builtins.mapAttrs (name: _: {
+        wakeOnLan = {
+          enable = true;
+          policy = "magic";
+        };
+      }) config.networking.interfaces
+    );
   };
 
   # nix related
