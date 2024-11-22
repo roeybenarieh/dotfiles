@@ -6,6 +6,7 @@
     ./hardware-configuration.nix
     ../common/ssh.nix
     ../common/rdp.nix
+    ../common/system_utils.nix
     # ../common/tmp.nix
   ];
 
