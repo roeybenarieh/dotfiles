@@ -28,6 +28,9 @@
     );
   };
 
+  # virtualisation
+  virtualisation.docker.enable = true;
+
   # nix related
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
