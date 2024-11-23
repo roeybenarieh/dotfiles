@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [
@@ -57,8 +57,16 @@
   services.xserver.enable = true;
 
   # Enable the Budgie Desktop environment.
-  services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.desktopManager.budgie.enable = true;
+  services.xserver = {
+    displayManager.lightdm.enable = true;
+    desktopManager.budgie.enable = true;
+    windowManager.qtile = {
+      enable = true;
+      extraPackages = python3Packages: with python3Packages; [
+        qtile-extras
+      ];
+    };
+  };
 
   # Configure keymap in X11
   services.xserver.xkb = {

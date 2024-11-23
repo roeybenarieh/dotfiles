@@ -1,5 +1,11 @@
 # My dotfiles
 
+<p align="center">
+    <a href="https://nixos.wiki/wiki/Flakes">
+        <img src="https://img.shields.io/static/v1?label=Nix Flake&message=check&style=flat&logo=nixos&colorA=24273A&colorB=9173ff&logoColor=CAD3F5">
+    </a>
+</p>
+
 Specs:
 - Linux compatible only
 
