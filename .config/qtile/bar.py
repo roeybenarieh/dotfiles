@@ -122,7 +122,7 @@ class Bar(bar.Bar):
         Memory,
         CPUGraph,
         Separator,
-        widget.Volume,
+        widget.PulseVolume,
         Clock,
         Separator,
         QuickExit,
