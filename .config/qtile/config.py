@@ -15,7 +15,7 @@ import colors
 
 _assets = Path(__file__).parent / "assets"
 
-_gap = Gap(1)
+_gap = Gap(10)
 Screen = partial(
     Screen,
     bottom=_gap, left=_gap, right=_gap,
