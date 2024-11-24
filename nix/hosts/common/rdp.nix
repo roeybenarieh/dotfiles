@@ -10,7 +10,7 @@
       enable = true;
       package = pkgs-stable.pulseaudio-module-xrdp;
     };
-    defaultWindowManager = "xfce4-session";
+    defaultWindowManager = "qtile start";
     openFirewall = true;
   };
 
