@@ -13,13 +13,13 @@ from pathlib import Path
 
 import colors
 
+_assets = Path(__file__) / "assets"
 
 _gap = Gap(1)
 Screen = partial(
     Screen,
     bottom=_gap, left=_gap, right=_gap,
-    wallpaper=os.path.expanduser("~/.config/qtile/assets/wallpaper.png"),
-    # wallpaper=Path("./assets/wallpaper.jpg"),
+    wallpaper=_assets / "wallpaper.jpg",
     wallpaper_mode="fill"
 )
 
