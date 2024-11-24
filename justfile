@@ -42,3 +42,11 @@ update-dependencies:
 collect-garbage:
   nix-collect-garbage
 
+
+[group('qtile')]
+rebuild-qtile:
+  git add **.nix \
+  && git add ./.config/qtile/** \
+  && home-manager switch --show-trace --flake .#roey \
+  && qtile cmd-obj -o cmd -f reload_config
+
