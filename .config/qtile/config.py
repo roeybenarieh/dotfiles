@@ -13,13 +13,13 @@ from pathlib import Path
 
 import colors
 
-_assets = Path(__file__) / "assets"
+_assets = Path(__file__).parent / "assets"
 
 _gap = Gap(1)
 Screen = partial(
     Screen,
     bottom=_gap, left=_gap, right=_gap,
-    wallpaper=_assets / "wallpaper.jpg",
+    wallpaper=_assets / "wallpaper.png",
     wallpaper_mode="fill"
 )
 
