@@ -14,7 +14,10 @@
   ];
 
   # poetry
-  programs.poetry = { enable = true; };
+  programs.poetry = {
+    enable = true;
+    package = pkgs-stable.poetry;
+  };
   xdg.configFile."pypoetry/config.toml".source = ../../../../.config/pypoetry/config.toml;
 
   # python configuration
