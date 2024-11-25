@@ -43,10 +43,9 @@ collect-garbage:
   nix-collect-garbage
 
 
-[group('qtile')]
+[group('nix')]
 rebuild-qtile:
-  git add **.nix \
-  && git add ./.config/qtile/** \
-  && home-manager switch --show-trace --flake .#roey \
-  && qtile cmd-obj -o cmd -f reload_config
+  git add ./.config/qtile/** \
+  && just rebuild-user \
+  && qtile cmd-obj -o cmd -f reload_config # reload qtile
 
