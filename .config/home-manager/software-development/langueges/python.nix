@@ -5,6 +5,7 @@
   # home.packages = with pkgs; [ python312 python312Packages.pip ];
   home.packages = with pkgs-stable; [
     (python311.withPackages (pkgs: with pkgs; [
+      pip
       fastapi
       pydantic
       requests
