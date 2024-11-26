@@ -3,9 +3,6 @@
 {
   home.packages = with pkgs;
     [
-      # virtual machines
-      virtualbox
-
       # containers
       docker
       lazydocker
@@ -13,5 +10,13 @@
       # containers orcestration
       kubectl
       ocm # openshift 'oc' cli
-    ] ++ [ pkgs-stable.kubernetes-helm ];
+      lens # k8s IDE
+    ] ++ [
+      pkgs-stable.kubernetes-helm
+      pkgs-stable.minikube # local k8s like cluster
+      pkgs-stable.azure-cli
+
+      # virtual machines
+      pkgs-stable.virtualbox # local k8s like cluster
+    ];
 }
