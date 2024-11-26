@@ -49,3 +49,8 @@ rebuild-qtile:
   && just rebuild-user \
   && qtile cmd-obj -o cmd -f reload_config # reload qtile
 
+[group('nix')]
+rebuild-nvim:
+  git add ./.config/nvim/** \
+  && just rebuild-user \
+
