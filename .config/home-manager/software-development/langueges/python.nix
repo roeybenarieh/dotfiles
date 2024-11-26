@@ -24,4 +24,5 @@
   home.sessionVariables = {
     PYTHONASYNCIODEBUG = 1; # for debuging asyncio application
   };
+  home.shellAliases = { python = "python3.11"; };
 }
