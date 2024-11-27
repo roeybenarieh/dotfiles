@@ -1,15 +1,12 @@
-import colors
-
-from functools import partialmethod
-
-from libqtile import widget
-from libqtile.lazy import lazy
-
 import re
 import subprocess
 
 from libqtile import bar, widget
+from libqtile.lazy import lazy
 
+import colors
+import dexcom_widget
+from utils import mk_overrides
 
 widget_defaults = dict(
     font="JetBrainsMono Nerd Font",
@@ -19,10 +16,6 @@ widget_defaults = dict(
     foreground=colors.TEXT_LIGHT,
 )
 
-
-def mk_overrides(cls, **conf):
-    init_method = partialmethod(cls.__init__, **conf)
-    return type(cls.__name__, (cls,), {"__init__": init_method})
 
 Battery = mk_overrides(
     widget.Battery,
@@ -34,7 +27,10 @@ Battery = mk_overrides(
 )
 
 CPUGraph = mk_overrides(
-    widget.CPUGraph, type="line", line_width=1, border_width=0
+    widget.CPUGraph,
+    type="line",
+    line_width=1,
+    border_width=0,
 )
 
 GroupBox = mk_overrides(
@@ -54,7 +50,7 @@ GroupBox = mk_overrides(
 Mpris2 = mk_overrides(
     widget.Mpris2,
     objname="org.mpris.MediaPlayer2.spotify",
-    format='{xesam:title} - {xesam:artist}',
+    format="{xesam:title} - {xesam:artist}",
 )
 
 Memory = mk_overrides(
@@ -90,9 +86,7 @@ Separator = mk_overrides(widget.Spacer, length=4)
 Clock = mk_overrides(widget.Clock, format="%A, %b %-d %H:%M")
 
 
-QuickExit = mk_overrides(
-    widget.QuickExit, default_text="⏻", countdown_format="{}"
-)
+QuickExit = mk_overrides(widget.QuickExit, default_text="⏻", countdown_format="{}")
 
 Prompt = mk_overrides(
     widget.Prompt,
@@ -106,7 +100,7 @@ Prompt = mk_overrides(
 Systray = mk_overrides(
     widget.Systray,
     icon_size=14,
-    padding=8
+    padding=8,
 )
 
 
@@ -118,6 +112,7 @@ class Bar(bar.Bar):
         Separator,
         Prompt,
         Mpris2,
+        dexcom_widget.DexcomGlucose,
         Battery,
         Memory,
         CPUGraph,
@@ -134,12 +129,13 @@ class Bar(bar.Bar):
             widgets=self._build_widgets(),
             size=24,
             background=colors.BG_DARK,
-            margin=[0, 0, 8, 0]
+            margin=[0, 0, 8, 0],
         )
 
     def is_desktop(self):
         machine_info = subprocess.check_output(
-            ["hostnamectl", "status"], universal_newlines=True)
+            ["hostnamectl", "status"], universal_newlines=True
+        )
         m = re.search(r"Chassis: (\w+)\s.*\n", machine_info)
         chassis_type = "desktop" if m is None else m.group(1)
 

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgs-stable, lib, ... }:
 
 {
   imports = [
@@ -62,8 +62,10 @@
     desktopManager.budgie.enable = true;
     windowManager.qtile = {
       enable = true;
+      package = pkgs-stable.qtile-unwrapped;
       extraPackages = python3Packages: with python3Packages; [
         qtile-extras
+        pydexcom
       ];
     };
   };
