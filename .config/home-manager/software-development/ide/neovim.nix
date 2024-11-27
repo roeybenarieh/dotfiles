@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs-stable, ... }:
 
 {
   programs.neovim = {
@@ -7,12 +7,20 @@
     withPython3 = true;
     withNodeJs = true;
     # TODO: understand why this is working although it is not documented
-    extraPackages = with pkgs; [
+    extraPackages = with pkgs-stable; [
       ripgrep
       nixpkgs-fmt
       xclip
-      gcc
       fd
+
+      # languages
+      gcc
+      go
+      # rust
+      cargo
+      rustc
+      # markdown
+      marksman
 
       # python related
       pyright
