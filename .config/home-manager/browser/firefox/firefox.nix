@@ -6,16 +6,14 @@
     package = pkgs.firefox;
     profiles.roey = {
       isDefault = true; # set as the default profile
-      # policies = {
-      #   DisableTelemetry = true;
-      #   DisableFirefoxStudies = true;
-      # };
       settings = {
         # this site has every setting: https://mozilla.github.io/policy-templates/#searchengines--add
 
-        # "browser.startup.homepage" = "https://www.ecosia.org";
-        # "browser.startup.page" = "https://www.ecosia.org";
-        # "startup.homepage_welcome_url" = "https://www.ecosia.org";
+        # restore the previous session on startup
+        "browser.startup.page" = 3; # 3 means "Show my windows and tabs from last time"
+        "browser.warnOnQuit" = false; # Disable warning on quit
+        "browser.sessionstore.resume_from_crash" = true; # Resume from crash
+
         "dom.security.https_only_mode" = true;
         # automaticly enable every extension
         "extensions.autoDisableScopes" = 0;
