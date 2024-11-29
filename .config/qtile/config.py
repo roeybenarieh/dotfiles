@@ -1,6 +1,5 @@
 from functools import partial
 
-import os
 from libqtile.bar import Gap
 from libqtile.config import DropDown, Group, Key, Match, Screen, ScratchPad
 from libqtile.layout.columns import Columns
@@ -18,9 +17,11 @@ _assets = Path(__file__).parent / "assets"
 _gap = Gap(10)
 Screen = partial(
     Screen,
-    bottom=_gap, left=_gap, right=_gap,
+    bottom=_gap,
+    left=_gap,
+    right=_gap,
     wallpaper=_assets / "wallpaper.png",
-    wallpaper_mode="fill"
+    wallpaper_mode="fill",
 )
 
 screens = [Screen(top=Bar(i)) for i in range(2)]
@@ -30,7 +31,7 @@ layouts = [
         border_width=2,
         margin=4,
         border_focus=colors.BLUE_DARK,
-        border_normal=colors.BG_DARK
+        border_normal=colors.BG_DARK,
     )
 ]
 
@@ -48,8 +49,8 @@ floating_layout = Floating(
     ],
 )
 
-class _Group(Group):
 
+class _Group(Group):
     def __init__(self, name: str, key: str):
         self.name = name
         self.key = key
@@ -60,7 +61,8 @@ class _Group(Group):
     @classmethod
     def setup_single_keys(cls):
         toggle_term = Key(
-            [mod, "shift"], "space",
+            [mod, "shift"],
+            "space",
             lazy.group["scratchpad"].dropdown_toggle("term"),
         )
 
@@ -69,26 +71,20 @@ class _Group(Group):
     def setup_keys(self):
         move = Key([mod], self.key, lazy.group[self.name].toscreen())
         switch = Key(
-            [mod, "shift"], self.key,
+            [mod, "shift"],
+            self.key,
             lazy.window.togroup(self.name, switch_group=True),
         )
 
         keys.extend((move, switch))
 
+
 _scratchpad_defaults = dict(
-    x=0.05,
-    y=0.05,
-    opacity=0.95,
-    height=0.9,
-    width=0.9,
-    on_focus_lost_hide=False
+    x=0.05, y=0.05, opacity=0.95, height=0.9, width=0.9, on_focus_lost_hide=False
 )
 
 _scratchpads = [
-    ScratchPad(
-        "scratchpad",
-        [DropDown("term", "kitty", **_scratchpad_defaults)]
-    )
+    ScratchPad("scratchpad", [DropDown("term", "kitty", **_scratchpad_defaults)])
 ]
 
 _Group.setup_single_keys()

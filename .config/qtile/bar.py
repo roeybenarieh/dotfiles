@@ -16,6 +16,11 @@ widget_defaults = dict(
     foreground=colors.TEXT_LIGHT,
 )
 
+DexcomGlucose = mk_overrides(
+    dexcom_widget.DexcomGlucose,
+    update_interval=10,  # update every 10s
+)
+
 
 Battery = mk_overrides(
     widget.Battery,

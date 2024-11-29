@@ -1,10 +1,9 @@
+from colors import RED_DARK
 from libqtile.widget.generic_poll_text import GenPollText
-from pydexcom import Dexcom, Region
+from pydexcom import Dexcom, Region, GlucoseReading
 from pathlib import Path
 from typing import Optional
 from dataclasses import dataclass
-
-from utils import mk_overrides
 
 
 @dataclass
@@ -34,28 +33,32 @@ def get_config() -> Optional[Config]:
     )
 
 
-def pull_num():
-    config = get_config()
-    if not config:
-        return "???no-cred"
+class DexcomGlucose(GenPollText):
+    def poll(self):
+        glucose_reading = self.__get_glucose_reading()
+        if isinstance(glucose_reading, str):
+            return glucose_reading
 
-    try:
-        dexcom = Dexcom(
-            password=config.dexcom_password,
-            username=config.dexcom_username,
-            region=Region.OUS,
-        )
-        glucose_reading = dexcom.get_current_glucose_reading()
-    except Exception:
-        return "???http-err"
-    if not glucose_reading:
-        return "---no-data"
+        if glucose_reading.value < 80 or 130 < glucose_reading.value:
+            self.background = RED_DARK
 
-    return str(glucose_reading.value) + glucose_reading.trend_arrow
+        return str(glucose_reading.value) + glucose_reading.trend_arrow
 
+    def __get_glucose_reading(self) -> GlucoseReading | str:
+        config = get_config()
+        if not config:
+            return "???no-cred"
 
-DexcomGlucose = mk_overrides(
-    GenPollText,
-    func=pull_num,  # update function
-    update_interval=10,  # update every 10s
-)
+        try:
+            dexcom = Dexcom(
+                password=config.dexcom_password,
+                username=config.dexcom_username,
+                region=Region.OUS,
+            )
+            glucose_reading = dexcom.get_current_glucose_reading()
+        except Exception:
+            return "???http-err"
+        if not glucose_reading:
+            return "---no-data"
+
+        return glucose_reading
