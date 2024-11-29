@@ -1,10 +1,9 @@
-{ pkgs-stable, ... }:
+{ pkgs, ... }:
 
 {
   # Enable the OpenSSH daemon(sshd).
   services.openssh = {
     enable = true;
-    package = pkgs-stable.openssh; # use stable package for ssh
     settings = {
       PasswordAuthentication = true;
       KbdInteractiveAuthentication =
@@ -19,7 +18,7 @@
     };
   };
   # install google-authenticator
-  environment.systemPackages = with pkgs-stable; [ google-authenticator ];
+  environment.systemPackages = with pkgs; [ google-authenticator ];
   # use google-authenticator pam for ssh connections
   security.pam = { services.sshd.googleAuthenticator.enable = true; };
   # NOTE: this code enable google-authenticator only for ssh connections ONLY

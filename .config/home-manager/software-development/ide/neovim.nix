@@ -1,4 +1,4 @@
-{ pkgs-stable, ... }:
+{ pkgs, ... }:
 
 {
   programs.neovim = {
@@ -7,7 +7,7 @@
     withPython3 = true;
     withNodeJs = true;
     # TODO: understand why this is working although it is not documented
-    extraPackages = with pkgs-stable; [
+    extraPackages = with pkgs; [
       ripgrep
       nixpkgs-fmt
       xclip

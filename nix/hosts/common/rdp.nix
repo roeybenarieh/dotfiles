@@ -1,14 +1,12 @@
-{ pkgs-stable, ... }:
+{ ... }:
 
 {
   # enable xfce desktop environment for rdp connections
   services.xserver.desktopManager.xfce.enable = true;
   services.xrdp = {
     enable = false;
-    package = pkgs-stable.xrdp;
     audio = {
       enable = true;
-      package = pkgs-stable.pulseaudio-module-xrdp;
     };
     defaultWindowManager = "qtile start";
     openFirewall = true;

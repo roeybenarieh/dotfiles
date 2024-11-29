@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-stable, ... }:
+{ config, pkgs, ... }:
 
 {
   home.packages = with pkgs;
@@ -11,12 +11,11 @@
       kubectl
       ocm # openshift 'oc' cli
       lens # k8s IDE
-    ] ++ [
-      pkgs-stable.kubernetes-helm
-      pkgs-stable.minikube # local k8s like cluster
-      pkgs-stable.azure-cli
+      kubernetes-helm
+      minikube # local k8s like cluster
+      azure-cli
 
       # virtual machines
-      pkgs-stable.virtualbox # local k8s like cluster
+      virtualbox # local k8s like cluster
     ];
 }

@@ -1,6 +1,6 @@
-{ config, pkgs, ... }: {
+{ config, pkgs-unstable, ... }: {
   # install nerdfont
-  home.packages = with pkgs;
+  home.packages = with pkgs-unstable;
     [ (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) ];
 
   # install alacritty
@@ -26,18 +26,20 @@
       #   pkgs.alacritty-theme.tokyo-night
       # ];
 
-      font = let
-        jetbrainsMono = style: {
-          family = "JetBrainsMono Nerd Font";
-          inherit style;
+      font =
+        let
+          jetbrainsMono = style: {
+            family = "JetBrainsMono Nerd Font";
+            inherit style;
+          };
+        in
+        {
+          size = 13;
+          normal = jetbrainsMono "Regular";
+          bold = jetbrainsMono "Bold";
+          italic = jetbrainsMono "Italic";
+          bold_italic = jetbrainsMono "Bold Italic";
         };
-      in {
-        size = 13;
-        normal = jetbrainsMono "Regular";
-        bold = jetbrainsMono "Bold";
-        italic = jetbrainsMono "Italic";
-        bold_italic = jetbrainsMono "Bold Italic";
-      };
 
       cursor = { style = "Block"; };
 

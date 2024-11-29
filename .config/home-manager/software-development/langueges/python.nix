@@ -1,9 +1,9 @@
-{ config, pkgs-stable, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # install python+pip
   # home.packages = with pkgs; [ python312 python312Packages.pip ];
-  home.packages = with pkgs-stable; [
+  home.packages = with pkgs; [
     (python311.withPackages (pkgs: with pkgs; [
       pip
       fastapi
@@ -16,7 +16,7 @@
   # poetry
   programs.poetry = {
     enable = true;
-    package = pkgs-stable.poetry;
+    package = pkgs.poetry;
   };
   xdg.configFile."pypoetry/config.toml".source = ../../../../.config/pypoetry/config.toml;
 
