@@ -12,12 +12,11 @@ mouse = [
         [mod],
         "Button1",
         lazy.window.set_position_floating(),
-        start=lazy.window.get_position()),
+        start=lazy.window.get_position(),
+    ),
     Drag(
-        [mod],
-        "Button3",
-        lazy.window.set_size_floating(),
-        start=lazy.window.get_size()),
+        [mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()
+    ),
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
@@ -44,9 +43,13 @@ keys = [
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +5%")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 5%-")),
     # Volume
-    Key([], "XF86AudioMute", lazy.spawn("pamixer --toggle-mute")),
-    Key([], "XF86AudioLowerVolume", lazy.spawn("pamixer --decrease 5")),
-    Key([], "XF86AudioRaiseVolume", lazy.spawn("pamixer --increase 5")),
+    Key([], "XF86AudioMute", lazy.spawn("pamixer --toggle-mute")),  # mute volume
+    Key([], "XF86AudioLowerVolume", lazy.spawn("pamixer --decrease 5")),  # -5 volume
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("pamixer --increase 5")),  # +5 volume
+    Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause")),  # pause/play
+    Key([], "XF86AudioNext", lazy.spawn("playerctl next")),  # go to next play
+    Key([], "XF86AudioPrev", lazy.spawn("playerctl previous")),  # go to previous play
+    # resizing windows
     Key(
         [mod, "control"],
         "Right",
