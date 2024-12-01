@@ -46,11 +46,14 @@ collect-garbage:
 [group('nix')]
 rebuild-qtile:
   git add ./.config/qtile/** \
+  && git add ./.config/rofi/** \
   && just rebuild-user \
   && qtile cmd-obj -o cmd -f reload_config # reload qtile
 
 [group('nix')]
 rebuild-nvim:
-  git add ./.config/nvim/** \
+  cp ~/.config/nvim/lazyvim.json ./.config/nvim/lazyvim.json \
+  && cp ~/.config/nvim/lazy-lock.json ./.config/nvim/lazy-lock.json \
+  && git add ./.config/nvim/** \
   && just rebuild-user \
 
