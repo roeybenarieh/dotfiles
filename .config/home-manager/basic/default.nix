@@ -16,6 +16,7 @@
 
     # text editing
     vim
+    xclip # sharing system clipboard with terminal clipboard
 
     # file types
     unzip # using .zip files
