@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   # enable xfce desktop environment for rdp connections
@@ -13,7 +13,7 @@
   };
 
   # install google-authenticator
-  environment.systemPackages = with pkgs-stable; [ google-authenticator ];
+  environment.systemPackages = with pkgs; [ google-authenticator ];
   # use google-authenticator pam for xrdp connections
   security.pam = {
     # wtf is the 'xrdp-sesman' service?
