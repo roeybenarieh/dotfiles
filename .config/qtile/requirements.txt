@@ -1,3 +1,4 @@
 pydexcom
 qtile
 qtile-extras
+colour

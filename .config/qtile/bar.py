@@ -22,6 +22,12 @@ DexcomGlucose = mk_overrides(
 )
 
 
+DexcomInRangePercentage = mk_overrides(
+    dexcom_widget.DexcomInRangePercentage,
+    update_interval=60 * 5,  # update every 5min
+)
+
+
 Battery = mk_overrides(
     widget.Battery,
     format="⚡{percent:2.0%}",
@@ -117,7 +123,8 @@ class Bar(bar.Bar):
         Separator,
         Prompt,
         Mpris2,
-        dexcom_widget.DexcomGlucose,
+        DexcomGlucose,
+        DexcomInRangePercentage,
         Battery,
         Memory,
         CPUGraph,
