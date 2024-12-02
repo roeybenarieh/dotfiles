@@ -39,6 +39,7 @@ keys = [
     Key([mod, "control"], "r", lazy.reload_config()),
     Key([mod, "control"], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),
+    Key([alt], "space", lazy.spawn("rofi -show drun")),
     # Backlight
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +5%")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 5%-")),
