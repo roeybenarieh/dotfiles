@@ -6,6 +6,7 @@ mod = "mod4"
 shift = "shift"
 alt = "mod1"
 enter_key = "Return"
+space = "space"
 
 mouse = [
     Drag(
@@ -30,7 +31,7 @@ keys = [
     Key([mod], "b", lazy.spawn("firefox")),
     Key([], "Print", lazy.spawn("flameshot gui --clipboard")),  # screenshot
     Key([mod, shift], "s", lazy.spawn("flameshot gui --clipboard")),  # screenshot
-    # Key([mod], "space", lazy.layout.next()),
+    # Key([mod], space, lazy.layout.next()),
     Key([alt], "Tab", lazy.layout.next()),
     Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
     Key([mod], "n", lazy.layout.normalize()),
@@ -40,7 +41,14 @@ keys = [
     Key([mod, "control"], "r", lazy.reload_config()),
     Key([mod, "control"], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),
-    Key([alt], "space", lazy.spawn("rofi -show drun")),
+    Key([alt], space, lazy.spawn("rofi -show drun")),
+    # keyboard layout
+    Key(
+        [mod],
+        space,
+        lazy.widget["keyboardlayout"].next_keyboard(),
+        desc="Next keyboard layout.",
+    ),
     # Backlight
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +5%")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 5%-")),

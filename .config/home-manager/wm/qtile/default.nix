@@ -7,6 +7,7 @@
     flameshot # screenshots
     betterlockscreen # logout user
     rofi # windows-switcher/application-lancher
+    xorg.setxkbmap # for changing keyboard layout
   ];
   xdg.configFile = {
     "qtile" = {

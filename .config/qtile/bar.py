@@ -21,6 +21,12 @@ DexcomGlucose = mk_overrides(
     update_interval=10,  # update every 10s
 )
 
+KeyboardLayout = mk_overrides(
+    widget.KeyboardLayout,
+    configured_keyboards=["us", "il"],
+    display_map={"us": "en", "il": "he"},
+)
+
 
 DexcomInRangePercentage = mk_overrides(
     dexcom_widget.DexcomInRangePercentage,
@@ -130,6 +136,7 @@ class Bar(bar.Bar):
         CPUGraph,
         Separator,
         widget.PulseVolume,
+        KeyboardLayout,
         Clock,
         Separator,
         QuickExit,
