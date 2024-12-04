@@ -7,6 +7,7 @@ shift = "shift"
 alt = "mod1"
 enter_key = "Return"
 space = "space"
+control = "control"
 
 mouse = [
     Drag(
@@ -38,8 +39,8 @@ keys = [
     Key([mod], enter_key, lazy.spawn("alacritty")),
     Key([mod], "Tab", lazy.next_layout()),
     Key([mod], "w", lazy.window.kill()),
-    Key([mod, "control"], "r", lazy.reload_config()),
-    Key([mod, "control"], "q", lazy.shutdown()),
+    Key([mod, control], "r", lazy.reload_config()),
+    Key([mod, control], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),
     Key([alt], space, lazy.spawn("rofi -show drun")),
     # keyboard layout
@@ -61,7 +62,7 @@ keys = [
     Key([], "XF86AudioPrev", lazy.spawn("playerctl previous")),  # go to previous play
     # resizing windows
     Key(
-        [mod, "control"],
+        [mod, control],
         "Right",
         lazy.layout.grow_right(),
         lazy.layout.grow(),
@@ -69,7 +70,7 @@ keys = [
         lazy.layout.delete(),
     ),
     Key(
-        [mod, "control"],
+        [mod, control],
         "Left",
         lazy.layout.grow_left(),
         lazy.layout.shrink(),
@@ -77,7 +78,7 @@ keys = [
         lazy.layout.add(),
     ),
     Key(
-        [mod, "control"],
+        [mod, control],
         "Up",
         lazy.layout.grow_up(),
         lazy.layout.shrink(),
@@ -85,7 +86,7 @@ keys = [
         lazy.layout.add(),
     ),
     Key(
-        [mod, "control"],
+        [mod, control],
         "Down",
         lazy.layout.grow_down(),
         lazy.layout.shrink(),
