@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-unstable, ... }:
 
 {
   programs.neovim = {
@@ -28,5 +28,29 @@
       python311Packages.ruff
     ];
   };
+  programs.neovide = {
+    enable = true;
+    settings = {
+      fork = false;
+      frame = "full";
+      idle = true;
+      maximized = false;
+      # neovim-bin = "/usr/bin/nvim";
+      no-multigrid = false;
+      srgb = false;
+      tabs = true;
+      theme = "auto";
+      mouse-cursor-icon = "arrow";
+      title-hidden = true;
+      vsync = true;
+      wsl = false;
+
+      font = {
+        normal = [ "JetBrainsMono Nerd Font" ];
+        size = 14.0;
+      };
+    };
+  };
   home.shellAliases = { n = "nvim"; };
+  home.packages = with pkgs-unstable; [ (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) ];
 }
