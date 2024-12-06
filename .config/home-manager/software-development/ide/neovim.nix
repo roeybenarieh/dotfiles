@@ -28,9 +28,5 @@
       python311Packages.ruff
     ];
   };
-  xdg.configFile."nvim" = {
-    source = ../../../nvim;
-    recursive = true;
-  };
   home.shellAliases = { n = "nvim"; };
 }
