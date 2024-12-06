@@ -5,6 +5,7 @@ from libqtile.config import DropDown, Group, Key, Match, Screen, ScratchPad
 from libqtile.layout.columns import Columns
 from libqtile.layout.floating import Floating
 from libqtile.lazy import lazy
+from libqtile.utils import guess_terminal
 
 from bar import Bar, widget_defaults
 from controls import mod, keys
@@ -102,6 +103,8 @@ cursor_warp = False
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
+
+terminal = guess_terminal(preference=["alacritty", "xterm"])
 
 auto_minimize = False
 wmname = "Qtile"

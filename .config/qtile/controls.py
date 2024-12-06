@@ -39,6 +39,8 @@ keys = [
     Key([mod], enter_key, lazy.spawn("alacritty")),
     Key([mod], "Tab", lazy.next_layout()),
     Key([mod], "w", lazy.window.kill()),
+    Key([alt], "F4", lazy.window.kill()),
+    Key([control], "escape", lazy.spawn("alacritty -e btop")),
     Key([mod, control], "r", lazy.reload_config()),
     Key([mod, control], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),

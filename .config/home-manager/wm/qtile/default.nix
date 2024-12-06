@@ -7,6 +7,7 @@
     flameshot # screenshots
     rofi # windows-switcher/application-lancher
     xorg.setxkbmap # for changing keyboard layout
+    btop # for viewing system resources
   ];
   xdg.configFile = {
     "qtile" = {
