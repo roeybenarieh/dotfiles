@@ -6,6 +6,7 @@
     # file system
     tree
     baobab # disk usage GUI
+    nautilus # file explorer
 
     # system diagnostic
     btop # like htop but better
@@ -30,4 +31,8 @@
     cowsay
   ];
   home.shellAliases = { c = "clear"; };
+  # set nauilus as default folder explorer
+  xdg.mimeApps.defaultApplications = {
+    "inode/directory" = "nautilus";
+  };
 }

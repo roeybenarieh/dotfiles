@@ -23,7 +23,7 @@ mouse = [
 ]
 
 keys = [
-    Key([mod], "e", lazy.spawn("thunar")),
+    Key([mod], "e", lazy.spawn("xdg-open .")),
     Key([mod], "v", lazy.spawn("kitty -e pulsemixer")),
     Key([mod], "h", lazy.spawn("kitty -e nmtui")),
     Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
