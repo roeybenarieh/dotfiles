@@ -38,6 +38,7 @@ keys = [
     Key([mod], "n", lazy.layout.normalize()),
     Key([mod], enter_key, lazy.spawn("alacritty")),
     Key([mod], "Tab", lazy.next_layout()),
+    Key([mod], "m", lazy.window.toggle_maximize(), desc="Toggle maximize"),
     Key([mod], "w", lazy.window.kill()),
     Key([alt], "F4", lazy.window.kill()),
     Key([control], "escape", lazy.spawn("alacritty -e btop")),
