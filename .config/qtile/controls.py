@@ -27,7 +27,7 @@ keys = [
     Key([mod], "v", lazy.spawn("kitty -e pulsemixer")),
     Key([mod], "h", lazy.spawn("kitty -e nmtui")),
     Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
-    Key([mod], "l", lazy.spawn("betterlockscreen -l")),
+    Key([mod], "l", lazy.spawn("dm-tool lock")),
     Key([mod], "f", lazy.window.toggle_floating()),
     Key([mod], "b", lazy.spawn("firefox")),
     Key([], "Print", lazy.spawn("flameshot gui --clipboard")),  # screenshot
