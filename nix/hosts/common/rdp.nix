@@ -10,6 +10,15 @@
     };
     defaultWindowManager = "qtile start";
     openFirewall = true;
+
+    # this file is eventually created in /etc/xrdp/sesman.ini
+    extraConfDirCommands = ''
+      substituteInPlace $out/sesman.ini \
+        --replace MaxSessions=50 MaxSessions=1 \
+        --replace AllowRootLogin=true AllowRootLogin=false \
+        --replace KillDisconnected=false KillDisconnected=true \
+        --replace DisconnectedTimeLimit=0 DisconnectedTimeLimit=600
+    '';
   };
 
   # install google-authenticator
