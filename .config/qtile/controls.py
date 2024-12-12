@@ -1,5 +1,6 @@
 from libqtile.config import Click, Drag, Key
 from libqtile.lazy import lazy
+from pathlib import Path
 
 # common key maps
 mod = "mod4"
@@ -8,6 +9,10 @@ alt = "mod1"
 enter_key = "Return"
 space = "space"
 control = "control"
+
+# dependencies
+_screenshot_dir = Path.home() / "Pictures" / "Screenshots"
+_screenshot_dir.mkdir(parents=True, exist_ok=True)
 
 mouse = [
     Drag(
@@ -30,8 +35,16 @@ keys = [
     Key([mod], "l", lazy.spawn("dm-tool lock")),
     Key([mod], "f", lazy.window.toggle_floating()),
     Key([mod], "b", lazy.spawn("firefox")),
-    Key([], "Print", lazy.spawn("flameshot gui --clipboard")),  # screenshot
-    Key([mod, shift], "s", lazy.spawn("flameshot gui --clipboard")),  # screenshot
+    Key(
+        [],
+        "Print",
+        lazy.spawn(f"flameshot screen --clipboard --path {_screenshot_dir}"),
+    ),  # screenshot
+    Key(
+        [mod, shift],
+        "s",
+        lazy.spawn(f"flameshot gui --clipboard --path {_screenshot_dir}"),
+    ),  # partial screenshot
     # Key([mod], space, lazy.layout.next()),
     Key([alt], "Tab", lazy.layout.next()),
     Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
