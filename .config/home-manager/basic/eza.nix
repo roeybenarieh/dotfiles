@@ -6,7 +6,7 @@
     enable = true;
     extraOptions = [
       "--git" # List each file's Git status if tracked or ignored
-      "--icon" # Display icons next to file names
+      "--icons" # Display icons next to file names
     ];
     # allow shell integrations only if the shell itself is enabled
     enableBashIntegration = config.programs.bash.enable;
