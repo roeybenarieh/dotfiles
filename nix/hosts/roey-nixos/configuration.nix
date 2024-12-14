@@ -103,6 +103,9 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # enable zsh for users
+  programs.zsh.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.roey = {
     isNormalUser = true;
@@ -112,6 +115,7 @@
       "wheel" # Enable ‘sudo’ for the user.
       "docker"
     ];
+    shell = pkgs.zsh;
     packages = with pkgs;
       [
         #  thunderbird
