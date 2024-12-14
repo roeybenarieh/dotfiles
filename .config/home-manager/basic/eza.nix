@@ -15,5 +15,8 @@
     enableNushellIntegration = config.programs.nushell.enable;
     enableIonIntegration = config.programs.ion.enable;
   };
-  home.shellAliases = { ls = "eza"; };
+  home.shellAliases = {
+    ls = "eza";
+    l = "ll";
+  };
 }
