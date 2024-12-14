@@ -5,10 +5,17 @@
   home.sessionVariables = {
     # preview fzf files with the bat(batcat) cli
     FZF_CTRL_T_OPTS = ''
-      --preview '${pkgs.bat}/bin/bat -n --color=always {}'
-       --bind 'ctrl-/:change-preview-window(down|hidden|)'
-       --color header:italic
-       --header 'CTRL-/ to change preview window'
+      --preview '
+        dir_path={}
+        if [[ -d {} ]]; then 
+          ${pkgs.tree}/bin/tree -L 3 {}
+        else 
+          ${pkgs.bat}/bin/bat -n --color=always {}
+        fi
+      '
+      --bind 'ctrl-/:change-preview-window(down|hidden|)'
+      --color header:italic
+      --header 'CTRL-/ to change preview window'
     '';
     FZF_CTRL_R_OPTS = ''
       --preview 'echo {}' --preview-window up:3:hidden:wrap
