@@ -15,7 +15,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking = {
-    hostName = "roey-nixos"; # Define your hostname.
+    hostName = "home-computer"; # Define your hostname.
     networkmanager.enable = true; # Enable networking
     # TODO: make sure this is working
     interfaces = {
