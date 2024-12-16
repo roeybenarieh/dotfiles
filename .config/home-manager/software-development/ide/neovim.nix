@@ -13,6 +13,9 @@
       xclip
       fd
 
+      # fonts
+      nerd-fonts.jetbrains-mono
+
       # languages
       gcc
       go
@@ -52,5 +55,4 @@
     };
   };
   home.shellAliases = { n = "nvim"; };
-  home.packages = with pkgs-unstable; [ (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) ];
 }

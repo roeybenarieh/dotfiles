@@ -1,7 +1,6 @@
-{ config, pkgs-unstable, ... }: {
+{ config, pkgs, ... }: {
   # install nerdfont
-  home.packages = with pkgs-unstable;
-    [ (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) ];
+  home.packages = with pkgs; [ nerd-fonts.jetbrains-mono ];
 
   # install alacritty
   programs.alacritty = {
