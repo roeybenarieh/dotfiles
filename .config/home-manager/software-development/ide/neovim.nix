@@ -14,7 +14,7 @@
       fd
 
       # fonts
-      nerd-fonts.jetbrains-mono
+      jetbrains-mono
 
       # languages
       gcc
@@ -55,4 +55,5 @@
     };
   };
   home.shellAliases = { n = "nvim"; };
+  # home.packages = with pkgs; [ (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) ];
 }
