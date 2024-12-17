@@ -1,5 +1,6 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, pkgs-unstable, ... }: {
   # install nerdfont
+  # run 'fc-cache -rf' when changing/installing fonts
   home.packages = with pkgs; [ nerd-fonts.jetbrains-mono ];
 
   # install alacritty
@@ -33,7 +34,7 @@
           };
         in
         {
-          size = 13;
+          size = 15;
           normal = jetbrainsMono "Regular";
           bold = jetbrainsMono "Bold";
           italic = jetbrainsMono "Italic";

@@ -13,9 +13,6 @@
       xclip
       fd
 
-      # fonts
-      nerd-fonts.jetbrains-mono
-
       # languages
       gcc
       go
