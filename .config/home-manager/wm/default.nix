@@ -1,5 +1,5 @@
 { ... }:
 
 {
-  imports = [ ./qtile ];
+  imports = [ ./qtile ./picom ];
 }

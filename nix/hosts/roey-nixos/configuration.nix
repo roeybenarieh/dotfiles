@@ -7,6 +7,7 @@
     ../common/ssh.nix
     ../common/rdp.nix
     ../common/system_utils.nix
+    ./hardware-extra.nix
     # ../common/tmp.nix
   ];
 
@@ -66,10 +67,6 @@
         colour
       ];
     };
-  };
-  # x11 compositor with animations & rounded-corners
-  services.picom = {
-    enable = true;
   };
 
   # Configure keymap in X11
