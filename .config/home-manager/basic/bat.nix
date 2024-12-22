@@ -2,8 +2,9 @@
 
 {
   programs.bat = { enable = true; };
+  # display man pages using bat
   home.sessionVariables = {
-    MANPAGER =
-      "sh -c 'sed -e s/.\\\\x08//g | bat --language man --plain'"; # use bat for man pages
+    MANPAGER = "sh -c 'col -bx | ${pkgs.bat}/bin/bat -l man -p'";
+    MANROFFOPT = "-c";
   };
 }
