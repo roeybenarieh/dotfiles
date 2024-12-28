@@ -9,6 +9,9 @@
     xorg.setxkbmap # for changing keyboard layout
     btop # for viewing system resources
   ];
+  # clipboard manager
+  services.clipmenu.enable = true;
+
   xdg.configFile = {
     "qtile" = {
       source = ../../../qtile;

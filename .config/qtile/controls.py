@@ -1,6 +1,7 @@
 from libqtile.config import Click, Drag, Key
 from libqtile.lazy import lazy
 from pathlib import Path
+import os
 
 # common key maps
 mod = "mod4"
@@ -13,6 +14,9 @@ control = "control"
 # dependencies
 _screenshot_dir = Path.home() / "Pictures" / "Screenshots"
 _screenshot_dir.mkdir(parents=True, exist_ok=True)
+os.environ["CM_LAUNCHER"] = "rofi"    # make clipmenu output clip selection to stdout
+os.environ["CM_HISTLENGTH"] = "10"    # number of lines of clipboard history to show
+os.environ["CM_OUTPUT_CLIP"] = "true" # launch clipmenu with rofi
 
 mouse = [
     Drag(
@@ -29,7 +33,7 @@ mouse = [
 
 keys = [
     Key([mod], "e", lazy.spawn("xdg-open .")),
-    Key([mod], "v", lazy.spawn("kitty -e pulsemixer")),
+    Key([mod], "v", lazy.spawn("clipmenu")),
     Key([mod], "h", lazy.spawn("kitty -e nmtui")),
     Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
     Key([mod], "l", lazy.spawn("dm-tool lock")),
