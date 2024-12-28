@@ -7,6 +7,7 @@
     ../common/ssh.nix
     ../common/rdp.nix
     ../common/system_utils.nix
+    ../common/metrics.nix
     ./hardware-extra.nix
     # ../common/tmp.nix
   ];
