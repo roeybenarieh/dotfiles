@@ -30,7 +30,10 @@
     cmatrix
     cowsay
   ];
-  home.shellAliases = { c = "clear"; };
+  home.shellAliases = {
+    c = "clear";
+    htop = "btop";
+  };
   # set nauilus as default folder explorer
   xdg.mimeApps.defaultApplications = {
     "inode/directory" = "nautilus";
