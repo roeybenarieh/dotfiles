@@ -4,11 +4,9 @@
   # enable xfce desktop environment for rdp connections
   services.xserver.desktopManager.xfce.enable = true;
   services.xrdp = {
+    enable = true;
+    audio.enable = true;
     defaultWindowManager = "xfce4-session";
-    enable = false;
-    audio = {
-      enable = true;
-    };
     openFirewall = true;
 
     # this file is eventually created in /etc/xrdp/sesman.ini
@@ -18,6 +16,9 @@
         --replace AllowRootLogin=true AllowRootLogin=false \
         --replace KillDisconnected=false KillDisconnected=true \
         --replace DisconnectedTimeLimit=0 DisconnectedTimeLimit=600
+
+      substituteInPlace $out/xrdp.ini \
+      --replace "opt=" "opt=ask" \
     '';
   };
 
@@ -26,7 +27,9 @@
   # use google-authenticator pam for xrdp connections
   security.pam = {
     # wtf is the 'xrdp-sesman' service?
-    services.xrdp.googleAuthenticator = { enable = true; };
+    # services.xrdp.googleAuthenticator = { enable = true; };
+    # for more info: https://github.com/neutrinolabs/xrdp/issues/1210 there is an example configuration
+    services.xrdp-sesman.googleAuthenticator = { enable = true; };
   };
   # NOTE: this code enable google-authenticator only for Xrdp connections ONLY
   # NOTE: in order for the pam to work a ~/.google_authenticator file must exist for that user
