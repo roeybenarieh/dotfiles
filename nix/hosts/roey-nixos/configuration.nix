@@ -13,7 +13,10 @@
   ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot = {
+    enable = true;
+    configurationLimit = 150; # limit the amount of boot options
+  };
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking = {
