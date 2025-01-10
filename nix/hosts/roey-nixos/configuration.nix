@@ -23,13 +23,13 @@
     hostName = "home-computer"; # Define your hostname.
     networkmanager.enable = true; # Enable networking
     # TODO: make sure this is working
-    interfaces = {
-      enp3s0 = {
-        wakeOnLan = {
-          enable = true;
-        };
-      };
-    };
+    # interfaces = {
+    #   enp3s0 = {
+    #     wakeOnLan = {
+    #       enable = true;
+    #     };
+    #   };
+    # };
   };
 
   # virtualisation
