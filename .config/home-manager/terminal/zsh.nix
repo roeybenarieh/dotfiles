@@ -35,7 +35,7 @@
       plugins = [ "nix-community/nix-zsh-completions" ];
     };
     zplug = {
-      enable = true;
+      enable = false;
 
       # plugins = [
       #   { name = "zsh-users/zsh-autosuggestions"; } # Simple plugin installation
