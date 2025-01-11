@@ -17,17 +17,42 @@ cd ~/.dotfiles
 stow .
 ```
 
-## Installation using home manager
+## Installation using home manager(No Nixos)
 
 ```bash
 # install nix command line
 sh <(curl -L https://nixos.org/nix/install) --no-daemon
+
 # install home-manager
 nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 nix-channel --update
 nix-shell '<home-manager>' -A install # if this command doesn't work, logout and in and try again
-# build the configuration
-just rebuild # if you don't have the just CLI: home-manager switch --show-trace --flake . 
+
+# build user configuration
+home-manager switch --flake .#roey --extra-experimental-features nix-command --extra-experimental-features flakes
+```
+
+## Installation using NixOS
+
+```bash
+# install home-manager
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+nix-shell '<home-manager>' -A install # if this command doesn't work, logout and in and try again
+
+# build user configuration
+home-manager switch --flake .#roey --extra-experimental-features nix-command --extra-experimental-features flakes
+
+
+# generate a new hardware-configuration.nix file
+nixos-generate-config --dir ./tmp
+cp ./tmp/hardware-configuration.nix ./nix/hosts/roey-nixos
+
+# build system configuration
+sudo nixos-rebuild switch --show-trace --flake .#roey-nixos
+
+# reboot to make eveything take affect
+reboot
 ```
 
 ## TODOES
