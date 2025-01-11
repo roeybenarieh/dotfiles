@@ -16,6 +16,9 @@
   boot.loader.systemd-boot = {
     enable = true;
     configurationLimit = 150; # limit the amount of boot options
+    # disable editing kernel command-line before boot, 
+    # prevents access to root in case of physical access to the machine.
+    editor = false;
   };
   boot.loader.efi.canTouchEfiVariables = true;
 
