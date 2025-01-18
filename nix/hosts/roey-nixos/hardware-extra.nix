@@ -1,14 +1,9 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  hardware.graphics = {
-    enable = true;
-    # driSupport = true;
-    # enable32Bit = true;
-  };
-
-  # services.xserver.videoDrivers = [ "amdgpu" ];
-
+  imports = [
+    ../common/nvidia1080ti.nix
+  ];
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
