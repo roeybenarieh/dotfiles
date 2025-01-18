@@ -8,8 +8,8 @@
     ../common/rdp.nix
     ../common/system_utils.nix
     ../common/metrics.nix
+    ../common/foldathome.nix
     ./hardware-extra.nix
-    # ../common/tmp.nix
   ];
 
   # Bootloader.

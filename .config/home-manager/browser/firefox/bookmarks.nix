@@ -127,5 +127,23 @@
       ];
     }
 
+
+    {
+      name = "Local";
+      bookmarks = [
+        {
+          name = "prometheus";
+          tags = [ "prometheus" ];
+          keyword = "prometheus";
+          url = "http://localhost:9090/query";
+        }
+        {
+          name = "fold@home";
+          url = "http://localhost:7396";
+          tags = [ "f@h" "fold at home" "fold@home" ];
+          keyword = "fold@home";
+        }
+      ];
+    }
   ];
 }]
