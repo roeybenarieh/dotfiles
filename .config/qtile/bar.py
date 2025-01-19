@@ -2,6 +2,7 @@ import re
 import subprocess
 
 from libqtile import bar, widget
+from libqtile.widget.nvidia_sensors import NvidiaSensors
 from libqtile.lazy import lazy
 
 import colors
@@ -27,6 +28,12 @@ KeyboardLayout = mk_overrides(
     display_map={"us": "en", "il": "he"},
 )
 
+# TODO: get gpu usage%
+NvidiaTemp = mk_overrides(
+    NvidiaSensors,
+    format = "{temp}°C",
+    update_interval = 5
+)
 
 DexcomInRangePercentage = mk_overrides(
     dexcom_widget.DexcomInRangePercentage,
@@ -132,6 +139,7 @@ class Bar(bar.Bar):
         DexcomGlucose,
         DexcomInRangePercentage,
         Battery,
+        NvidiaTemp,
         Memory,
         CPUGraph,
         Separator,
