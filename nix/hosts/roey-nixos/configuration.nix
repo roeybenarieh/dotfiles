@@ -9,6 +9,7 @@
     ../common/system_utils.nix
     ../common/metrics.nix
     ../common/foldathome.nix
+    ../common/ssd.nix
     ./hardware-extra.nix
   ];
 
