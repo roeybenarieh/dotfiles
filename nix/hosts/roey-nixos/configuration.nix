@@ -45,7 +45,7 @@
   time.timeZone = "Asia/Tel_Aviv";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_IL";
+  # full list found in: https://sourceware.org/git/?p=glibc.git;a=blob;f=localedata/SUPPORTED
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_IL";
