@@ -93,8 +93,12 @@
           url = "https://claude.ai";
         }
         {
-          name = "\n                    claude ";
-          url = " https://claude.ai ";
+          name = "deepseek";
+          url = "https://chat.deepseek.com";
+        }
+        {
+          name = "ChatGPT";
+          url = "https://chatgpt.com";
         }
       ];
     }
