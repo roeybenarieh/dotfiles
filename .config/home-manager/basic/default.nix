@@ -33,6 +33,7 @@
   home.shellAliases = {
     c = "clear";
     htop = "btop";
+    open = "xdg-open";
   };
   # set nauilus as default folder explorer
   xdg.mimeApps.defaultApplications = {
