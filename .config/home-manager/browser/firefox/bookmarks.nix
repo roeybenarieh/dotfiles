@@ -142,6 +142,12 @@
           url = "http://localhost:9090/query";
         }
         {
+          name = "stremio";
+          tags = [ "stremio" ];
+          keyword = "stremio";
+          url = "http://127.0.0.1:11470";
+        }
+        {
           name = "fold@home";
           url = "http://localhost:7396";
           tags = [ "f@h" "fold at home" "fold@home" ];
