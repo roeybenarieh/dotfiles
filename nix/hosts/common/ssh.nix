@@ -14,7 +14,7 @@
       PermitRootLogin = "no";
       LoginGraceTime = "10m";
       MaxAuthTries = 10;
-      MaxSessions = 3;
+      MaxSessions = 1;
     };
   };
   # install google-authenticator
