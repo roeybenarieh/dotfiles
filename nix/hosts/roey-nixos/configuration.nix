@@ -7,7 +7,7 @@
     ../common/ssh.nix
     ../common/rdp.nix
     ../common/system_utils.nix
-    ../common/metrics.nix
+    ../common/metrics
     ../common/foldathome.nix
     ../common/ssd.nix
     ./hardware-extra.nix
