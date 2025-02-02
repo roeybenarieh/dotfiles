@@ -7,6 +7,7 @@
 </p>
 
 Specs:
+
 - Linux compatible only
 
 ## Installation
@@ -54,6 +55,12 @@ sudo nixos-rebuild switch --show-trace --flake .#roey-nixos
 # reboot to make eveything take affect
 reboot
 ```
+
+Some of the things manually needed to be created:
+
+- set up Google-authenticator at ~/.google_authenticator
+- set up Qtile Dexcom widgets at ~/.local/state/qtile-config
+- set up Neovim at ~/.config/nvim
 
 ## TODOES
 
