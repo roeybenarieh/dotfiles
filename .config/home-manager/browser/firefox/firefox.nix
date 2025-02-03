@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, ... }@firefox-attrs:
 
 {
   programs.firefox = {
@@ -56,9 +56,9 @@
       search = {
         default = "Google";
         force = true; # force replay the existing search configuraiton
-        engines = import ./search_engines.nix { inherit pkgs; };
+        engines = import ./search_engines.nix firefox-attrs;
       };
-      bookmarks = import ./bookmarks.nix { };
+      bookmarks = import ./bookmarks.nix firefox-attrs;
     };
   };
 }
