@@ -9,6 +9,7 @@
       "text/html" = "firefox.desktop";
       "application/pdf" = "firefox.desktop";
       "image/jpeg" = "firefox.desktop";
+      "image/png" = "firefox.desktop";
       "x-scheme-handler/http" = "firefox.desktop";
       "x-scheme-handler/https" = "firefox.desktop";
       "x-scheme-handler/about" = "firefox.desktop";
