@@ -7,12 +7,23 @@
     profiles.roey = {
       isDefault = true; # set as the default profile
       settings = {
-        # this site has every setting: https://mozilla.github.io/policy-templates/#searchengines--add
+        # for more information visit in firefox browser:
+        # about:config
+        # or 
+        # https://mozilla.github.io/policy-templates/#searchengines--add
 
         # restore the previous session on startup
         "browser.startup.page" = 3; # 3 means "Show my windows and tabs from last time"
         "browser.warnOnQuit" = false; # Disable warning on quit
         "browser.sessionstore.resume_from_crash" = true; # Resume from crash
+
+        # find bar preferences(Ctrl+F)
+        "findbar.entireword" = false;
+        "findbar.highlightAll" = true;
+
+        # download related
+        "browser.download.lastDir" = "~/Downloads";
+        "browser.download.panel.shown" = true;
 
         "dom.security.https_only_mode" = true;
         # automaticly enable every extension
