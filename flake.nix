@@ -11,10 +11,11 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    stylix.url = "github:danth/stylix";
   };
 
   outputs =
-    { self, nixpkgs, nixpkgs-unstable, home-manager, firefox-addons, ... }@inputs:
+    { self, nixpkgs, nixpkgs-unstable, home-manager, firefox-addons, stylix, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
       pkgs-unstable = nixpkgs-unstable.legacyPackages."x86_64-linux";
@@ -27,7 +28,10 @@
             inherit pkgs-unstable;
             inherit inputs;
           };
-          modules = [ ./.config/home-manager/home.nix ];
+          modules = [
+            ./.config/home-manager/home.nix
+            stylix.homeManagerModules.stylix
+          ];
         };
       };
 

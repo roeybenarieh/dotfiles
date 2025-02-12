@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-unstable, ... }: {
+{ pkgs, ... }: {
   # install nerdfont
   # run 'fc-cache -rf' when changing/installing fonts
   home.packages = with pkgs; [ nerd-fonts.jetbrains-mono ];
@@ -15,16 +15,11 @@
           y = 8;
         };
         decorations = "full";
-        opacity = 1;
         startup_mode = "Windowed";
         title = "Alacritty";
         dynamic_title = true;
         decorations_theme_variant = "None";
       };
-
-      # import = [
-      #   pkgs.alacritty-theme.tokyo-night
-      # ];
 
       font =
         let
@@ -34,8 +29,8 @@
           };
         in
         {
-          size = 15;
-          normal = jetbrainsMono "Regular";
+          # size = 15;
+          # normal = jetbrainsMono "Regular";
           bold = jetbrainsMono "Bold";
           italic = jetbrainsMono "Italic";
           bold_italic = jetbrainsMono "Bold Italic";
