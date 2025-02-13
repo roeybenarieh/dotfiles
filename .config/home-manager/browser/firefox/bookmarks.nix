@@ -100,6 +100,10 @@
           name = "ChatGPT";
           url = "https://chatgpt.com";
         }
+        {
+          name = "NotebookLM - ask questions about text/websites/audio";
+          url = "https://notebooklm.google.com";
+        }
       ];
     }
 
