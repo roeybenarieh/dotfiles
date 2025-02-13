@@ -1,5 +1,5 @@
 { pkgs, ... }:
 
 {
-  home.packages = with pkgs; [ discord zoom-us telegram-desktop ];
+  home.packages = with pkgs; [ ferdium ];
 }
