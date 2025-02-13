@@ -5,11 +5,13 @@
   # make firefox the default for opening things
   xdg.mimeApps = {
     enable = true;
+    # to get mime type run: file -b --mime-type <file_name>
     defaultApplications = {
       "text/html" = "firefox.desktop";
       "application/pdf" = "firefox.desktop";
       "image/jpeg" = "firefox.desktop";
       "image/png" = "firefox.desktop";
+      "image/gif" = "firefox.desktop";
       "x-scheme-handler/http" = "firefox.desktop";
       "x-scheme-handler/https" = "firefox.desktop";
       "x-scheme-handler/about" = "firefox.desktop";
