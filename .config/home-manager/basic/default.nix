@@ -28,6 +28,7 @@
     # fun
     neofetch
     cmatrix
+    asciiquarium
     cowsay
   ];
   home.shellAliases = {
