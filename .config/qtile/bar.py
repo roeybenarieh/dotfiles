@@ -107,7 +107,13 @@ TaskList = mk_overrides(
 )
 
 Separator = mk_overrides(widget.Spacer, length=4)
-Clock = mk_overrides(widget.Clock, format="%A, %b %-d %H:%M")
+Clock = mk_overrides(
+    widget.Clock, 
+    format="%A, %b %-d %H:%M",
+    mouse_callbacks={
+        "Button1": lazy.spawn("xdg-open https://calendar.google.com"),
+    }
+)
 
 
 QuickExit = mk_overrides(widget.QuickExit, default_text="⏻", countdown_format="{}")
