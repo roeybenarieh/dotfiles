@@ -29,6 +29,7 @@
     neofetch
     cmatrix
     asciiquarium
+    lolcat
     cowsay
   ];
   home.shellAliases = {
