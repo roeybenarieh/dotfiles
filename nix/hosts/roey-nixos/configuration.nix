@@ -10,6 +10,7 @@
     ../common/metrics
     ../common/foldathome.nix
     ../common/ssd.nix
+    ../common/resource-optimization.nix
     ./hardware-extra.nix
   ];
 
