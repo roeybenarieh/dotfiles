@@ -7,7 +7,7 @@
     MANPAGER = "sh -c 'col -bx | ${pkgs.bat}/bin/bat -l man -p'";
     MANROFFOPT = "-c";
   };
-  home.shellAliases = {
-    cat = "${pkgs.bat}/bin/bat";
-  };
+  # home.shellAliases = {
+  #   cat = "${pkgs.bat}/bin/bat";
+  # };
 }

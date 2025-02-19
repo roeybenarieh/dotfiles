@@ -67,9 +67,14 @@
   # Enable the Budgie Desktop environment.
   services.xserver = {
     displayManager.lightdm.enable = true;
-    desktopManager.budgie.enable = true;
+    # displayManager.gdm.enable = true;
+    # displayManager.sddm.enable = true;
+    # displayManager.xpra.enable = true;
+    # displayManager.enable = false;
+    # desktopManager.budgie.enable = true;
+    desktopManager.deepin.enable = true;
     windowManager.qtile = {
-      enable = true;
+      enable = false;
       extraPackages = python3Packages: with python3Packages; [
         qtile-extras
         pydexcom

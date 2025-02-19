@@ -60,6 +60,10 @@
           name = "sourcegrapth";
           url = "https://sourcegraph.com/search";
         }
+        {
+          name = "codecrafters - challenging coding projects";
+          url = "https://app.codecrafters.io/catalog";
+        }
       ];
     }
 

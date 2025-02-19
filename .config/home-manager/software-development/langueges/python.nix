@@ -13,11 +13,16 @@
     ]))
   ];
 
+  # install 
+  # home.sessionVariables = {
+  #   LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+  #     pkgs.stdenv.cc.cc.lib
+  #     pkgs.libz
+  #   ];
+  # };
+
   # poetry
-  programs.poetry = {
-    enable = true;
-    package = pkgs.poetry;
-  };
+  programs.poetry.enable = true;
   xdg.configFile."pypoetry/config.toml".source = ../../../../.config/pypoetry/config.toml;
 
   # python configuration

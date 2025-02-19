@@ -6,6 +6,30 @@
     enable = true;
     port = 9090; # default port
     globalConfig.scrape_interval = "15s"; # "1m"
+    enableReload = true;
+
+    # alert manager config
+    alertmanager = {
+      enable = true;
+      port = 9093;
+      configText = ''
+        global:
+          resolve_timeout: 5m
+
+        route:
+          receiver: 'default'
+
+        receivers:
+          - name: 'default'
+
+        inhibit_rules:
+          - source_match:
+              severity: 'critical'
+            target_match:
+              severity: 'warning'
+            equal: ['alertname', 'dev', 'instance']
+      '';
+    };
 
     # enable node exporter and scrape it
     exporters.node = {
