@@ -11,11 +11,14 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    stylix.url = "github:danth/stylix";
+    crowdsec = {
+      url = "git+https://codeberg.org/kampka/nix-flake-crowdsec.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    { self, nixpkgs, nixpkgs-unstable, home-manager, firefox-addons, stylix, ... }@inputs:
+    { self, nixpkgs, nixpkgs-unstable, home-manager, firefox-addons, crowdsec, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
       pkgs-unstable = nixpkgs-unstable.legacyPackages."x86_64-linux";
@@ -30,7 +33,6 @@
           };
           modules = [
             ./.config/home-manager/home.nix
-            stylix.homeManagerModules.stylix
           ];
         };
       };
@@ -41,7 +43,11 @@
             inherit pkgs-unstable;
             inherit inputs;
           };
-          modules = [ ./nix/hosts/roey-nixos ];
+          modules = [
+            crowdsec.nixosModules.crowdsec
+            crowdsec.nixosModules.crowdsec-firewall-bouncer
+            ./nix/hosts/roey-nixos
+          ];
         };
       };
     };
