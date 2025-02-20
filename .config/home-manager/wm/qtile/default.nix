@@ -8,6 +8,7 @@
     rofi # windows-switcher/application-lancher
     xorg.setxkbmap # for changing keyboard layout
     btop # for viewing system resources
+    arandr # for editing monitors layout(positioning them relative to each other)
   ];
   # clipboard manager
   services.clipmenu.enable = true;
