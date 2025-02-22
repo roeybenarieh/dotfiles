@@ -42,6 +42,9 @@
         "dom.security.https_only_mode" = true;
         # automaticly enable every extension
         "extensions.autoDisableScopes" = 0;
+
+        # automatic fill
+        "extensions.formautofill.creditCards.enabled" = false; # dont auto fill credit cards
       };
       # configure search engines
       extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
