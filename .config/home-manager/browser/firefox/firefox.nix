@@ -45,6 +45,9 @@
 
         # automatic fill
         "extensions.formautofill.creditCards.enabled" = false; # dont auto fill credit cards
+
+        # telemetry
+        "toolkit.telemetry.server" = "data:,"; # change telemetry server
       };
       # configure search engines
       extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
@@ -56,6 +59,7 @@
         # ecosia
         # video-downloadhelper
         # jsonview
+        privacy-badger
       ];
       search = {
         default = "Google";
