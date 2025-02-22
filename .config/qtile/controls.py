@@ -50,7 +50,7 @@ keys = [
         lazy.spawn(f"flameshot gui --clipboard --path {_screenshot_dir}"),
     ),  # partial screenshot
     # Key([mod], space, lazy.layout.next()),
-    Key([alt], "Tab", lazy.layout.next()),
+    # Key([alt], "Tab", lazy.layout.next()),
     Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
     Key([mod], "n", lazy.layout.normalize()),
     Key([mod], enter_key, lazy.spawn("alacritty")),

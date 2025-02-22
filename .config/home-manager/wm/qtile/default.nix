@@ -9,6 +9,7 @@
     xorg.setxkbmap # for changing keyboard layout
     btop # for viewing system resources
     arandr # for editing monitors layout(positioning them relative to each other)
+    alttab # window switcher
   ];
   # clipboard manager
   services.clipmenu.enable = true;
