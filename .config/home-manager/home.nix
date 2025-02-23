@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports = [
@@ -23,6 +23,7 @@
     settings.gui.enable.option = true;
 
     # general
+    nixpkgs.overlays = [ inputs.nur.overlays.default ];
     nixpkgs.config.allowUnfree = true; # allow unfree software
     nixpkgs.config.users.defaultUserShell = pkgs.zsh;
 

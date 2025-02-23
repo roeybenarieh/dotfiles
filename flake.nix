@@ -7,15 +7,15 @@
       url = "github:nix-community/home-manager/master"; # unstable
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    firefox-addons = {
-      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+    nur = {
+      url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix.url = "github:danth/stylix";
   };
 
   outputs =
-    { self, nixpkgs, nixpkgs-unstable, home-manager, firefox-addons, stylix, ... }@inputs:
+    { self, nixpkgs, nixpkgs-unstable, home-manager, nur, stylix, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
       pkgs-unstable = nixpkgs-unstable.legacyPackages."x86_64-linux";

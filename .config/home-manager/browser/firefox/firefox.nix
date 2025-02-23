@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }@firefox-attrs:
+{ pkgs, ... }@firefox-attrs:
 
 {
   programs.firefox = {
@@ -50,17 +50,25 @@
         "toolkit.telemetry.server" = "data:,"; # change telemetry server
       };
       # configure search engines
-      extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
-        # TODO: auto enable the extensions
-        vimium
-        to-google-translate
-        darkreader
-        ublock-origin
-        # ecosia
-        # video-downloadhelper
-        # jsonview
-        privacy-badger
-      ];
+      extensions = {
+        force = true;
+        # nur packages can be found at: https://nur.nix-community.org/repos/rycee
+        packages = with pkgs.nur.repos.rycee.firefox-addons; [
+          # TODO: auto enable the extensions
+          vimium
+          to-google-translate
+          darkreader
+          ublock-origin
+          video-downloadhelper
+          privacy-badger
+        ];
+        # for viewing extension id: https://stackoverflow.com/a/51283520
+        # for viwing settings options: /home/roey/.mozilla/firefox/<profile>/browser-extension-data/<extension-id>/storage.json
+        settings = {
+          # vimium
+          "{d7742d87-e61d-4b78-b8a1-b469842139fa}".settings = { };
+        };
+      };
       search = {
         default = "Google";
         force = true; # force replay the existing search configuraiton
