@@ -12,8 +12,6 @@
         # "fast-syntax-highlighting"
         # "zsh-autocomplete"
         "common-aliases"
-        "command-not-found"
-        "colored-man-pages"
         "thefuck"
         "git"
         "fzf"
