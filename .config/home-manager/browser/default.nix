@@ -2,6 +2,9 @@
 
 {
   imports = [ ./tor.nix ./chromium.nix ./firefox ];
+  home.sessionVariables = {
+    BROWSER = "firefox";
+  };
   # make firefox the default for opening things
   xdg.mimeApps = {
     enable = true;
