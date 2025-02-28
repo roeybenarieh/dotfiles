@@ -62,12 +62,12 @@
           video-downloadhelper
           privacy-badger
         ];
-        # for viewing extension id: https://stackoverflow.com/a/51283520
-        # for viwing settings options: /home/roey/.mozilla/firefox/<profile>/browser-extension-data/<extension-id>/storage.json
-        settings = {
-          # vimium
-          "{d7742d87-e61d-4b78-b8a1-b469842139fa}".settings = { };
-        };
+        # # for viewing extension id: https://stackoverflow.com/a/51283520
+        # # for viwing settings options: /home/roey/.mozilla/firefox/<profile>/browser-extension-data/<extension-id>/storage.json
+        # settings = {
+        #   # vimium
+        #   "{d7742d87-e61d-4b78-b8a1-b469842139fa}".settings = { };
+        # };
       };
       search = {
         default = "Google";
