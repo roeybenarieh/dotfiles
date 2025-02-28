@@ -64,6 +64,8 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  # HACK: when desktopManager is not set, home manager expects dconf(for some reason)
+  programs.dconf.enable = true;
   # Enable the Budgie Desktop environment.
   services.xserver = {
     displayManager.lightdm.enable = true;
