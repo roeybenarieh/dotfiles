@@ -67,7 +67,6 @@
   # Enable the Budgie Desktop environment.
   services.xserver = {
     displayManager.lightdm.enable = true;
-    desktopManager.budgie.enable = true;
     windowManager.qtile = {
       enable = true;
       extraPackages = python3Packages: with python3Packages; [

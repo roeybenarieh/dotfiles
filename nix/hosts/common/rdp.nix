@@ -1,12 +1,10 @@
 { pkgs, ... }:
 
 {
-  # enable xfce desktop environment for rdp connections
-  services.xserver.desktopManager.xfce.enable = true;
   services.xrdp = {
     enable = true;
     audio.enable = true;
-    defaultWindowManager = "xfce4-session";
+    defaultWindowManager = "qtile start";
     openFirewall = true;
 
     # this file is eventually created in /etc/xrdp/sesman.ini
