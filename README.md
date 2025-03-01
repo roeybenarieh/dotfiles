@@ -83,3 +83,4 @@ Some of the things manually needed to be created:
 - declerativly configure windows application like tidepool uploader
 - service for automaticly fill out "Doh 1"
 - install razer keyboard software
+- firefox not able to open the folder of a thing downloaded
