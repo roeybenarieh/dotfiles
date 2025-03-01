@@ -76,5 +76,8 @@
       };
       bookmarks = import ./bookmarks.nix firefox-attrs;
     };
+    nativeMessagingHosts = with pkgs; [
+      vdhcoapp
+    ];
   };
 }
