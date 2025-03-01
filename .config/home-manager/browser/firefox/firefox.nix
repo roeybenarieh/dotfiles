@@ -62,11 +62,10 @@
           video-downloadhelper
           privacy-badger
         ];
-        # # for viewing extension id: https://stackoverflow.com/a/51283520
-        # # for viwing settings options: /home/roey/.mozilla/firefox/<profile>/browser-extension-data/<extension-id>/storage.json
+        # FIX: every time I used video Downloadhelper, it changes the settings, and home manager gets error on rebuild
         # settings = {
-        #   # vimium
-        #   "{d7742d87-e61d-4b78-b8a1-b469842139fa}".settings = { };
+        #   # Video DownloadHelper
+        #   "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}".settings = import ./extension_settings/video-downloadhelper.nix firefox-attrs;
         # };
       };
       search = {
