@@ -78,6 +78,10 @@
           name = "nixos Noevim flake";
           url = "primamateria.github.io/blog/neovim-nix";
         }
+        {
+          name = "nix languae search engine";
+          url = "https://noogle.dev";
+        }
       ];
     }
 
@@ -156,6 +160,16 @@
           url = "http://localhost:7396";
           tags = [ "f@h" "fold at home" "fold@home" ];
           keyword = "fold@home";
+        }
+      ];
+    }
+
+    {
+      name = "Learning";
+      bookmarks = [
+        {
+          name = "harvard courses";
+          url = "https://cs50.harvard.edu/x/2025";
         }
       ];
     }
