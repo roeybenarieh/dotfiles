@@ -10,4 +10,11 @@
       vscode-extensions.charliermarsh.ruff # python ruff linter
     ];
   };
+
+  # language specific IDE
+  home.packages = with pkgs.jetbrains; [
+    rider # C#
+    idea-community # java, kotlin, scala, groovy
+    pycharm-community # python
+  ];
 }
