@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -11,6 +11,9 @@
     ../common/foldathome.nix
     ../common/ssd.nix
     ../common/resource-optimization.nix
+    ../common/audio.nix
+    ../common/i18n.nix
+    ../common/xserver.nix
     ./hardware-extra.nix
   ];
 
@@ -43,69 +46,8 @@
   # nix related
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Set your time zone.
-  time.timeZone = "Asia/Tel_Aviv";
-
-  # Select internationalisation properties.
-  # full list found in: https://sourceware.org/git/?p=glibc.git;a=blob;f=localedata/SUPPORTED
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_IL";
-    LC_IDENTIFICATION = "en_IL";
-    LC_MEASUREMENT = "en_IL";
-    LC_MONETARY = "en_IL";
-    LC_NAME = "en_IL";
-    LC_NUMERIC = "en_IL";
-    LC_PAPER = "en_IL";
-    LC_TELEPHONE = "en_IL";
-    LC_TIME = "en_US.UTF-8";
-  };
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # HACK: when desktopManager is not set, home manager expects dconf(for some reason)
-  programs.dconf.enable = true;
-  # Enable the Budgie Desktop environment.
-  services.xserver = {
-    displayManager.lightdm.enable = true;
-    windowManager.qtile = {
-      enable = true;
-      extraPackages = python3Packages: with python3Packages; [
-        qtile-extras
-        pydexcom
-        colour
-      ];
-    };
-  };
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Configure console keymap
-  console.keyMap = "il";
-
   # Enable CUPS to print documents.
   services.printing.enable = true;
-
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -123,11 +65,6 @@
       "docker"
     ];
     shell = pkgs.zsh;
-    packages = with pkgs;
-      [
-        #  thunderbird
-        fzf
-      ];
   };
 
   # Allow unfree packages
@@ -152,5 +89,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
-
 }
