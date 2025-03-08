@@ -19,6 +19,10 @@ rebuild-user:
   && home-manager switch --show-trace --flake .#roey
 
 [group('nix')]
+rollback-user:
+  bash $(home-manager generations | fzf | awk -F '-> ' '{print $2 "/activate"}')
+
+[group('nix')]
 rebuild-system:
   git add "**.nix" \
   && sudo nixos-rebuild switch --show-trace --flake .#roey-nixos
