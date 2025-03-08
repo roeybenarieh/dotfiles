@@ -1,10 +1,14 @@
 {
-  description = "Roey Ben Arieh user home configuration";
+  description = "Roey Ben Arieh NixOS+HomeManager configurations";
   inputs = {
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable"; # unstable
     nixpkgs.url = "github:NixOS/nixpkgs/master"; # stable
     home-manager = {
       url = "github:nix-community/home-manager/master"; # unstable
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nur = {
@@ -14,35 +18,26 @@
     stylix.url = "github:danth/stylix";
   };
 
-  outputs =
-    { self, nixpkgs, nixpkgs-unstable, home-manager, nur, stylix, ... }@inputs:
-    let
-      pkgs = nixpkgs.legacyPackages."x86_64-linux";
-      pkgs-unstable = nixpkgs-unstable.legacyPackages."x86_64-linux";
-    in
-    {
-      homeConfigurations = {
-        roey = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          extraSpecialArgs = {
-            inherit pkgs-unstable;
-            inherit inputs;
-          };
-          modules = [
-            ./.config/home-manager/home.nix
-            stylix.homeManagerModules.stylix
-          ];
-        };
+  outputs = inputs:
+    # snowfall lib extended funciton for flake-utils-plus
+    inputs.snowfall-lib.mkFlake {
+      # must have Snowfall arguments.
+      inherit inputs;
+      src = ./nix;
+
+      # configure Snowfall Lib.
+      snowfall = {
+        namespace = "extra";
       };
 
-      nixosConfigurations = {
-        roey-nixos = nixpkgs.lib.nixosSystem {
-          specialArgs = {
-            inherit pkgs-unstable;
-            inherit inputs;
-          };
-          modules = [ ./nix/hosts/roey-nixos ];
-        };
+      # channels config
+      channels-config = {
+        allowUnfree = true;
       };
+
+      # overlays config
+      overlays = with inputs; [
+        nur.overlays.default
+      ];
     };
 }
