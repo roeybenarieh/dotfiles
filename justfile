@@ -16,7 +16,7 @@ format:
 [group('nix')]
 rebuild-user:
   git add "**.nix" \
-  && home-manager switch --show-trace --flake .#roey
+  && home-manager switch --flake .#roey
 
 [group('nix')]
 rollback-user:
@@ -25,7 +25,7 @@ rollback-user:
 [group('nix')]
 rebuild-system:
   git add "**.nix" \
-  && sudo nixos-rebuild switch --show-trace --flake .#roey-nixos
+  && sudo nixos-rebuild switch --flake .#roey-nixos
 
 
 [group('nix')]
