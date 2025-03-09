@@ -14,6 +14,8 @@ in
       bottles
       wine-staging
       winetricks
+      powershell # windows powershell
     ];
+    home.shellAliases = { powershell = "pwsh"; };
   };
 }
