@@ -63,7 +63,7 @@ in
       ];
     };
     home.shellAliases = {
-      cat = "${pkgs.bat}/bin/bat";
+      cat = lib.getExe pkgs.bat;
     };
 
 
@@ -89,9 +89,9 @@ in
         --preview '
           dir_path={}
           if [[ -d {} ]]; then 
-            ${pkgs.tree}/bin/tree -L 3 {}
+            ${lib.getExe pkgs.tree} -L 3 {}
           else 
-            ${pkgs.bat}/bin/bat -n --color=always {}
+            ${lib.getExe pkgs.bat} -n --color=always {}
           fi
         '
         --bind 'ctrl-/:change-preview-window(down|hidden|)'
