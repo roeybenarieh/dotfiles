@@ -116,5 +116,8 @@ in
         "--cmd cd" # configure zoxide to be used as 'cd'
       ];
     };
+
+    # enable numlock on default
+    xsession.numlock.enable = true;
   };
 }
