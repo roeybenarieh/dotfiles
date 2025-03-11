@@ -10,6 +10,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Let Home Manager install and manage itself.
+    programs.home-manager.enable = true;
 
     # general shit
     home.packages = with pkgs; [

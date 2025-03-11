@@ -1,12 +1,22 @@
-{ pkgs, ... }:
-
+{ namespace, lib, config, pkgs, ... }:
+with lib;
+with lib.${namespace};
+let
+  cfg = config.${namespace}.stylix;
+in
 {
+  options.${namespace}.stylix = with types; {
+    enable = mkBoolOpt true "Whether or not to enable stylix.";
+  };
+
   # more info can be found here:
   # https://stylix.danth.me/options/hm.html
-  stylix = {
-    enable = true;
+  config.stylix = {
+    # enabled only if enabled at options
+    enable = cfg.enable;
+
     autoEnable = true;
-    image = ../../.config/qtile/assets/wallpaper.png;
+    image = ./wallpaper.png;
     targets.neovim.enable = false;
     cursor = {
       package = pkgs.bibata-cursors;

@@ -48,6 +48,8 @@ in
     };
     home.packages = with pkgs; [
       xclip # better Ctrl+c Ctrl+v integration with terminal
+      stow # manage dotfiles
+      just # just cli
     ];
     home.sessionVariables = {
       # command-not-found variables

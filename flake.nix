@@ -39,5 +39,16 @@
       overlays = with inputs; [
         nur.overlays.default
       ];
+
+      # home manager modules
+      homes.modules = with inputs; [
+        stylix.homeManagerModules.stylix
+      ];
+
+      # nixos modules
+      systems.modules.nixos = with inputs; [
+        stylix.nixosModules.stylix
+        home-manager.nixosModules.home-manager
+      ];
     };
 }
