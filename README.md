@@ -69,3 +69,4 @@ Some of the things manually needed to be created:
 - install and configure Neovim
 - configure zsh + tmux
 - use one wallpaper.png file
+- cleanup docker and zsh configurations

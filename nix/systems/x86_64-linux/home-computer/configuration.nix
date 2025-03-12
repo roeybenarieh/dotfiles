@@ -1,31 +1,25 @@
-{ pkgs, ... }:
+{ pkgs, namespace, ... }:
 
 {
-  imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    ../common/ssh.nix
-    ../common/rdp.nix
-    ../common/system_utils.nix
-    ../common/metrics
-    ../common/foldathome.nix
-    ../common/ssd.nix
-    ../common/resource-optimization.nix
-    ../common/audio.nix
-    ../common/i18n.nix
-    ../common/xserver.nix
-    ./hardware-extra.nix
-  ];
-
-  # Bootloader.
-  boot.loader.systemd-boot = {
-    enable = true;
-    configurationLimit = 150; # limit the amount of boot options
-    # disable editing kernel command-line before boot, 
-    # prevents access to root in case of physical access to the machine.
-    editor = false;
+  ${namespace} = {
+    apps.enable = true;
+    docker.enable = true;
+    gaming.enable = true;
+    gpu.nvidia1080ti.enable = true;
+    metrics.prometheus.enable = true;
+    rdp.enable = true;
+    ssh.enable = true;
   };
-  boot.loader.efi.canTouchEfiVariables = true;
+
+  # # Bootloader.
+  # boot.loader.systemd-boot = {
+  #   enable = true;
+  #   configurationLimit = 150; # limit the amount of boot options
+  #   # disable editing kernel command-line before boot, 
+  #   # prevents access to root in case of physical access to the machine.
+  #   editor = false;
+  # };
+  # boot.loader.efi.canTouchEfiVariables = true;
 
   networking = {
     hostName = "home-computer"; # Define your hostname.
@@ -39,15 +33,8 @@
     #   };
     # };
   };
-
-  # virtualisation
-  virtualisation.docker.enable = true;
-
   # nix related
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -66,13 +53,6 @@
     ];
     shell = pkgs.zsh;
   };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [ vim curl git ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
