@@ -6,7 +6,7 @@ let
 in
 {
   options.${namespace}.stylix = with types; {
-    enable = mkBoolOpt true "Whether or not to enable stylix.";
+    enable = mkBoolOpt false "Whether or not to enable stylix.";
   };
 
   # more info can be found here:
