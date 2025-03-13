@@ -16,7 +16,7 @@ in
     # set the git config file
     xdg.configFile = {
       "git" = {
-        source = ../../../../.config/git;
+        source = ./git;
         recursive = true;
       };
     };

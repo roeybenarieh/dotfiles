@@ -37,15 +37,15 @@ in
 
     xdg.configFile = {
       "qtile" = {
-        source = ../../../../.config/qtile;
+        source = ./qtile;
         recursive = true;
       };
       "rofi" = {
-        source = ../../../../.config/rofi;
+        source = ./rofi;
         recursive = true;
       };
       "picom" = {
-        source = ../../../../.config/picom;
+        source = ./picom;
         recursive = true;
       };
     };

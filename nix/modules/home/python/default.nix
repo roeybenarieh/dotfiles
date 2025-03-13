@@ -27,8 +27,8 @@ in
       enable = true;
       package = pkgs.poetry;
     };
-    xdg.configFile."pypoetry".source = {
-      source = ../../../../.config/pypoetry;
+    xdg.configFile."pypoetry" = {
+      source = ./pypoetry;
       recursive = true;
     };
 

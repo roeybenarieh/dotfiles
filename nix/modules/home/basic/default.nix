@@ -12,6 +12,7 @@ in
   config = mkIf cfg.enable {
     ${namespace} = {
       stylix.enable = true;
+      nix.enable = true;
     };
 
     # Let Home Manager install and manage itself.

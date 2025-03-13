@@ -17,7 +17,11 @@ in
 
     autoEnable = true;
     image = ./wallpaper.png;
-    targets.neovim.enable = false;
+    targets = {
+      neovim.enable = false;
+      firefox.profileNames = [ "default" ];
+      vscode.profileNames = [ "default" ];
+    };
     cursor = {
       package = pkgs.bibata-cursors;
       name = "Bibata-Modern-Ice";

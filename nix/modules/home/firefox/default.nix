@@ -1,4 +1,4 @@
-{ namespace, lib, config, pkgs, ... }:
+{ namespace, lib, config, pkgs, ... }@firefox-attrs:
 with lib;
 with lib.${namespace};
 let
@@ -48,7 +48,7 @@ in
         };
       };
 
-      profiles.roey = {
+      profiles.default = {
         isDefault = true; # set as the default profile
         settings = {
           # for more information visit in firefox browser:

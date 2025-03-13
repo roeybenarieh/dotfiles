@@ -18,7 +18,7 @@ in
     #   };
     # };
     xdg.configFile."tmux" = {
-      source = ../../tmux;
+      source = ./tmux;
       recursive = true;
     };
     home.sessionVariables = {
