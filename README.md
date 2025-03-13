@@ -70,3 +70,4 @@ Some of the things manually needed to be created:
 - configure zsh + tmux
 - use one wallpaper.png file
 - cleanup docker and zsh configurations
+- cleanup wallpaper.png problem
