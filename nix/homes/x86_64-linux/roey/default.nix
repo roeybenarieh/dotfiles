@@ -23,6 +23,7 @@
     networking.enable = true;
     containers.enable = true;
     python.enable = true;
+    game-dev.enable = true;
   };
 
   # general

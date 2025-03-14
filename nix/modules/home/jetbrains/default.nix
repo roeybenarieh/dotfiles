@@ -6,13 +6,12 @@ let
 in
 {
   options.${namespace}.jetbrains = with types; {
-    enable = mkBoolOpt false "Whether or not to enable jetbrains application.";
+    enable = mkBoolOpt false "Whether or not to enable jetbrains applications.";
   };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs.jetbrains; [
-      rider # C#
-      idea-community # java, kotlin, scala, groovy
+      # idea-community # java, kotlin, scala, groovy
       pycharm-community # python
     ];
   };
