@@ -27,6 +27,13 @@ rebuild-system:
   git add "**.nix" \
   && sudo nixos-rebuild switch --flake .
 
+[group('nix')]
+copy-existing-nixos-config system:
+  @if [ -d "./nix/systems/x86_64-linux/{{system}}" ]; then \
+    cp /etc/nixos/* ./nix/systems/x86_64-linux/{{system}}; \
+  else \
+    echo "System '{{system}}' does NOT exist nix/systems/x86_64-linux"; \
+  fi
 
 [group('nix')]
 show-flake:
