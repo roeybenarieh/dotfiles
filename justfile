@@ -55,9 +55,8 @@ collect-garbage:
 
 
 [group('nix')]
-rebuild-qtile:
-  git add ./.config/qtile/** \
-  && git add ./.config/rofi/** \
+rebuild-desktop:
+  git add ./nix/modules/home/desktop/** \
   && just rebuild-user \
   && qtile cmd-obj -o cmd -f reload_config # reload qtile
 
