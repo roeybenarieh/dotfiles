@@ -8,12 +8,7 @@
       name = "OU";
       bookmarks = [
         {
-          name = "ou";
-          url =
-            "https://sso.apps.openu.ac.il/login?T_PLACE=https://sheilta.apps.openu.ac.il/pls/dmyopt2/sheilta.main";
-        }
-        {
-          name = "opal - linear algebra";
+          name = "shilta";
           url =
             "https://sso.apps.openu.ac.il/login?T_PLACE=https://sheilta.apps.openu.ac.il/pls/dmyopt2/sheilta.main";
         }
