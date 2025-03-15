@@ -22,7 +22,7 @@ in
       windowManager.qtile = {
         enable = true;
         extraPackages = python3Packages: with python3Packages; [
-          # qtile-extras
+          qtile-extras
           pydexcom
           colour
         ];
