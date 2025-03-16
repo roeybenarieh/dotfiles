@@ -76,7 +76,7 @@ in
       ];
     };
     home.shellAliases = {
-      cat = lib.getExe pkgs.bat;
+      cat = "bat --paging=never";
     };
 
 
