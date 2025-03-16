@@ -10,6 +10,14 @@
     docker.enable = true;
     # gaming.enable = true;
     # gpu.nvidia1080ti.enable = true;
+    gpu.nvidiaMX350 = {
+      enable = true;
+      prime_config = {
+        sync.enable = true;
+        nvidiaBusId = "PCI:1:0:0";
+        intelBusId = "PCI:0:2:0";
+      };
+    };
     metrics.prometheus.enable = true;
     # rdp.enable = true;
     ssh.enable = true;
