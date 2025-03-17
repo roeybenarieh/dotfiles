@@ -30,6 +30,7 @@ in
     fonts = {
       sizes = {
         terminal = 15;
+        popups = 15;
       };
       # the fonts given here are '<font_name> Regular', 
       # if you want to configure more fonts it has to be per application

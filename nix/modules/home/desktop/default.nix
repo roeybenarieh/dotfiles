@@ -25,12 +25,25 @@ in
       playerctl # control playing
       brightnessctl # control brightness
       flameshot # screenshots
-      rofi # windows-switcher/application-lancher
       xorg.setxkbmap # for changing keyboard layout
       btop # for viewing system resources
       arandr # for editing monitors layout(positioning them relative to each other)
       alttab # window switcher
     ];
+
+    # windows-switcher/application-lancher
+    programs.rofi = {
+      enable = true;
+      cycle = true;
+      extraConfig = {
+        show-icons = true;
+        kb-cancel = "Escape";
+        scroll-method = 0;
+        modi = "drun,ssh";
+        sort = true;
+        levenshtein-sort = true;
+      };
+    };
 
     # clipboard manager
     services.clipmenu.enable = true;
@@ -40,10 +53,10 @@ in
         source = ./qtile;
         recursive = true;
       };
-      "rofi" = {
-        source = ./rofi;
-        recursive = true;
-      };
+      # "rofi" = {
+      #   source = ./rofi;
+      #   recursive = true;
+      # };
       "picom" = {
         source = ./picom;
         recursive = true;
