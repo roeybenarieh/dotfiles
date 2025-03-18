@@ -41,7 +41,6 @@ in
         scroll-method = 0;
         modi = "drun,ssh";
         sort = true;
-        levenshtein-sort = true;
       };
     };
 
