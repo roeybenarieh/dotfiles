@@ -12,7 +12,12 @@ in
 
   config = mkIf cfg.enable {
     # Enable touchpad support
-    services.libinput.enable = true;
+    services.libinput = {
+      enable = true;
+      touchpad = {
+        accelStepScroll = 0.001;
+      };
+    };
 
     # enable bluetooth
     hardware.bluetooth.enable = true;

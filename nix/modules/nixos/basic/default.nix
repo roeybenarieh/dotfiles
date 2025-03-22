@@ -16,6 +16,7 @@ in
       i18n.enable = true;
       apps.enable = true;
       desktop.enable = true;
+      boot.enable = true;
     };
 
     # Perform garbage collection weekly to maintain low disk usage

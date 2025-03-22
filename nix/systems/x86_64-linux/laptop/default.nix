@@ -7,4 +7,5 @@
   snowfallorg.users.roey = {
     home.enable = false;
   };
+  # environment.systemPackages = with pkgs; [ ];
 }

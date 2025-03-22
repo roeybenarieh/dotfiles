@@ -29,6 +29,8 @@ in
       btop # for viewing system resources
       arandr # for editing monitors layout(positioning them relative to each other)
       alttab # window switcher
+      rofi-bluetooth
+      bluez-experimental
     ];
 
     # windows-switcher/application-lancher
@@ -42,6 +44,9 @@ in
         modi = "drun,ssh";
         sort = true;
       };
+      plugins = with pkgs; [
+        rofi-bluetooth
+      ];
     };
 
     # clipboard manager
