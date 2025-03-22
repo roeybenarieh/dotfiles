@@ -71,4 +71,4 @@ rebuild-desktop:
 
 [group('nix')]
 rebuild-all:
-  just rebuild-system && just rebuild-user && just rebuild-qtile
+  just rebuild-system && just rebuild-user && just rebuild-desktop
