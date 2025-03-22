@@ -33,6 +33,14 @@ in
       bluez-experimental
     ];
 
+    # map WinKey(mod) short press to F1, used by qtile
+    services.xcape = {
+      enable = true;
+      mapExpression = {
+        "Super_L" = "F1";
+      };
+    };
+
     # windows-switcher/application-lancher
     programs.rofi = {
       enable = true;
