@@ -24,6 +24,7 @@
     containers.enable = true;
     python.enable = true;
     game-dev.enable = true;
+    office.enable = true;
   };
 
   # general
