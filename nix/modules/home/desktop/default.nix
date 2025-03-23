@@ -45,12 +45,32 @@ in
     programs.rofi = {
       enable = true;
       cycle = true;
+      terminal = config.home.sessionVariables.TERM;
+      # more info at: https://davatorium.github.io/rofi/1.7.1/rofi.1/#configuration
       extraConfig = {
-        show-icons = true;
-        kb-cancel = "Escape";
-        scroll-method = 0;
-        modi = "drun,ssh";
+        # modes
+        modi = "run,drun,ssh";
+        display-drun = " Apps ";
+        display-run = " Run ";
+        display-ssh = " SSH ";
+        sidebar-mode = true;
+
+        max-history-size = 100;
+
+        # searching
+        matching = "fuzzy";
         sort = true;
+        sorting-method = "fzf";
+
+        # UI
+        drun-display-format = "{icon} {name}";
+        hide-scrollbar = true;
+        cycle = true;
+
+        # icons
+        show-icons = true;
+        icon-theme = "Papirus-dark";
+
       };
       plugins = with pkgs; [
         rofi-bluetooth
