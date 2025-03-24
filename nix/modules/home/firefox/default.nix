@@ -78,6 +78,11 @@ in
 
           # telemetry
           "toolkit.telemetry.server" = "data:,"; # change telemetry server
+
+          # smooth scrolling
+          "general.smoothScroll.msdPhysics.enabled" = true;
+          "gfx.x11-egl.force-enabled" = true;
+          "layers.acceleration.force-enabled" = true;
         };
         # configure search engines
         extensions = {
