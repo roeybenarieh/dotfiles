@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  "Google".metaData.alias =
+  "google".metaData.alias =
     "@g"; # builtin engines only support specifying one additional alias
 
   "MyNixos" = {
@@ -47,7 +47,7 @@
     definedAliases = [ "@sg" "@sourcegraph" ];
   };
 
-  "Ecosia" = {
+  "ecosia" = {
     urls = [{
       template = "https://www.ecosia.org/search";
       iconurl = "https://www.ecosia.org/search/favicon.ico";

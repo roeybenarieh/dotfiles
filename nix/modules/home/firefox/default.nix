@@ -104,11 +104,14 @@ in
           # };
         };
         search = {
-          default = "Google";
+          default = "google";
           force = true; # force replay the existing search configuraiton
           engines = import ./search_engines.nix firefox-attrs;
         };
-        bookmarks = import ./bookmarks.nix firefox-attrs;
+        bookmarks = {
+          force = true;
+          settings = import ./bookmarks.nix firefox-attrs;
+        };
       };
       nativeMessagingHosts = with pkgs; [
         vdhcoapp
