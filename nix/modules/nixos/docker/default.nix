@@ -13,6 +13,7 @@ in
   config = mkIf cfg.enable {
     virtualisation.docker = {
       enable = true;
+      enableOnBoot = false;
       rootless = {
         enable = true;
         setSocketVariable = true;
