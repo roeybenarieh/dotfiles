@@ -38,6 +38,8 @@ in
     # Enable CUPS to print documents.
     services.printing.enable = true;
 
+    # enable trash support in Nutils file explorer
+    services.gvfs.enable = true;
   };
 }
  
