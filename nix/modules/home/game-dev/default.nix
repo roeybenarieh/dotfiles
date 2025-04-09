@@ -13,6 +13,9 @@ in
     home.packages = with pkgs; [
       godot_4-mono
       jetbrains.rider # C#
+      mono
+      dotnet-sdk_9
+      nuget
     ];
     programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
       geequlim.godot-tools # extension for godot development
