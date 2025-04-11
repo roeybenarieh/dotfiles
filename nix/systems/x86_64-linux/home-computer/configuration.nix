@@ -1,6 +1,10 @@
 { pkgs, namespace, ... }:
 
 {
+  imports = [
+    ./hardware-extra.nix
+  ];
+
   ${namespace} = {
     apps.enable = true;
     docker.enable = true;
