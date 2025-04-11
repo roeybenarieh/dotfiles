@@ -13,6 +13,7 @@
     metrics.prometheus.enable = true;
     rdp.enable = true;
     ssh.enable = true;
+    razer.enable = true;
   };
 
   networking = {
