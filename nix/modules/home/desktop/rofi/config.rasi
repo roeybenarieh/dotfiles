@@ -1,0 +1,45 @@
+configuration {
+	/*---------- General setting ----------*/
+	modi: "drun,run,filebrowser,window";
+	case-sensitive: false;
+	cycle: true;
+	filter: "";
+	scroll-method: 0;
+	normalize-match: true;
+	show-icons: true;
+	icon-theme: "Arthur";
+/*	cache-dir: ;*/
+	steal-focus: false;
+/*	dpi: -1;*/
+
+	/*---------- Matching setting ----------*/
+	matching: "normal";
+	tokenize: true;
+
+	/*---------- SSH settings ----------*/
+	ssh-client: "ssh";
+	ssh-command: "{terminal} -e {ssh-client} {host} [-p {port}]";
+	parse-hosts: true;
+	parse-known-hosts: true;
+
+	/*---------- Run settings ----------*/
+	run-command: "{cmd}";
+	run-list-command: "";
+	run-shell-command: "{terminal} -e {cmd}";
+
+	/*---------- Fallback Icon ----------*/
+	run,drun {
+		fallback-icon: "application-x-addon";
+	}
+
+	/*---------- History and Sorting ----------*/
+	disable-history: false;
+	sorting-method: "normal";
+	max-history-size: 25;
+	/*---------- File browser settings ----------*/
+  filebrowser {
+    directory: "/home";
+    directories-first: true;
+    sorting-method: "name";
+  }
+}
