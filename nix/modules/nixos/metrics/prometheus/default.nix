@@ -14,19 +14,32 @@ in
     services.prometheus = {
       enable = true;
       port = 9090; # default port
-      globalConfig.scrape_interval = "15s"; # "1m"
+      globalConfig.scrape_interval = "15s";
 
       # enable node exporter and scrape it
-      exporters.node = {
-        enable = true;
-        port = 9000;
-        enabledCollectors = [ "tcpstat" "perf" "ethtool" "systemd" "cpu" "diskstats" "filesystem" "meminfo" "os" "time" ];
+      exporters = {
+        node = {
+          enable = true;
+          port = 9100;
+          enabledCollectors = [ "tcpstat" "perf" "ethtool" "systemd" "cpu" "diskstats" "filesystem" "meminfo" "os" "time" ];
+        };
+        systemd = {
+          enable = true;
+          port = 9558;
+          extraFlags = [
+            "--systemd.collector.enable-restart-count"
+          ];
+        };
       };
+
       scrapeConfigs = [
         {
-          job_name = "node";
+          job_name = "exporters";
           static_configs = [{
-            targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+            targets = [
+              "localhost:${toString config.services.prometheus.exporters.node.port}"
+              "localhost:${toString config.services.prometheus.exporters.systemd.port}"
+            ];
           }];
         }
       ];
