@@ -12,6 +12,7 @@ in
 
   config = mkIf cfg.enable {
     boot.loader = {
+      timeout = 2;
       systemd-boot = {
         enable = true;
         configurationLimit = 150; # limit the amount of boot options
