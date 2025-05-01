@@ -166,6 +166,10 @@
           name = "harvard courses";
           url = "https://cs50.harvard.edu/x/2025";
         }
+        {
+          name = "learn security in fun way";
+          url = "https://overthewire.org/wargames";
+        }
       ];
     }
   ];
