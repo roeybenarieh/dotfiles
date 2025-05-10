@@ -20,6 +20,9 @@ in
 
     # general shit
     home.packages = with pkgs; [
+      # xdg utils (e.g. xdg-open)
+      xdg-utils
+
       # file system
       tree
       baobab # disk usage GUI
