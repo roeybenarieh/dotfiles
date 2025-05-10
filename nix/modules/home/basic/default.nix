@@ -60,8 +60,8 @@ in
     ];
     home.shellAliases = {
       c = "clear";
-      htop = "btop";
-      open = "xdg-open";
+      htop = "${getExe pkgs.btop}";
+      open = "${pkgs.xdg-utils}/bin/xdg-open";
     };
     # set nauilus as default folder explorer
     xdg.mimeApps.defaultApplications = {
@@ -79,7 +79,7 @@ in
       ];
     };
     home.shellAliases = {
-      cat = "bat --paging=never";
+      cat = "${getExe pkgs.bat} --paging=never";
     };
 
 
@@ -105,9 +105,9 @@ in
         --preview '
           dir_path={}
           if [[ -d {} ]]; then 
-            ${lib.getExe pkgs.tree} -L 3 {}
+            ${getExe pkgs.tree} -L 3 {}
           else 
-            ${lib.getExe pkgs.bat} -n --color=always {}
+            ${getExe pkgs.bat} -n --color=always {}
           fi
         '
         --bind 'ctrl-/:change-preview-window(down|hidden|)'
