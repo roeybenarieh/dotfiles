@@ -40,6 +40,9 @@ in
 
     # enable trash support in Nutils file explorer
     services.gvfs.enable = true;
+
+    # enable dynamicly linked executables
+    programs.nix-ld.enable = true;
   };
 }
  
