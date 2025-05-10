@@ -30,11 +30,6 @@ in
         rustc
         # markdown
         marksman
-
-        # python related
-        pyright
-        python311Packages.debugpy
-        python311Packages.ruff
       ];
     };
     programs.neovide = {
