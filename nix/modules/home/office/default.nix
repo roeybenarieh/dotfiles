@@ -12,9 +12,10 @@ let
     url = "https://upload.wikimedia.org/wikipedia/commons/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg";
     sha256 = "sha256-oPvT1JtNwPLFrFGAeTiZhdvVCyhPpu2VElwWYLl3u+s=";
   };
+  onedrive-url = "https://onedrive.live.com";
   powerpoint = pkgs.makeDesktopItem {
     name = "Microsoft powerpoint";
-    exec = "${config.home.shellAliases.open} https://docs.google.com/presentation/u/0/";
+    exec = "${config.home.shellAliases.open} ${onedrive-url}";
     desktopName = "Powerpoint";
     genericName = "Slides/presentation Editor - Google Sheets";
     categories = [ "Office" "X-Microsoft" ];
@@ -22,7 +23,7 @@ let
   };
   word = pkgs.makeDesktopItem {
     name = "Microsoft word";
-    exec = "${config.home.shellAliases.open} https://docs.google.com/document/u/0";
+    exec = "${config.home.shellAliases.open} ${onedrive-url}";
     desktopName = "Word";
     genericName = "Document Editor - Google Docs";
     categories = [ "Office" "X-Microsoft" ];
