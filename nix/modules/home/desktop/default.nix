@@ -31,6 +31,7 @@ in
       alttab # window switcher
       rofi-bluetooth
       bluez-experimental
+      xkb-switch # for switching keyboard layouts
     ];
 
     # map WinKey(mod) short press to F1, used by qtile

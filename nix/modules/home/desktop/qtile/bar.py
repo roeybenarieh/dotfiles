@@ -1,6 +1,7 @@
 import re
 import subprocess
 
+from keyboard_layout_widget import MyKeyboardLayout
 from libqtile import bar, widget
 from libqtile.widget.nvidia_sensors import NvidiaSensors
 from libqtile.lazy import lazy
@@ -23,9 +24,9 @@ DexcomGlucose = mk_overrides(
 )
 
 KeyboardLayout = mk_overrides(
-    widget.KeyboardLayout,
-    configured_keyboards=["us", "il"],
-    display_map={"us": "en", "il": "he"},
+    MyKeyboardLayout,
+    text="UNK",
+    update_interval=0.1,
 )
 
 # TODO: get gpu usage%
