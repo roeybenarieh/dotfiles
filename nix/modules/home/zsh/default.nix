@@ -17,6 +17,9 @@ in
       # Enable completion for aliases
       initContent = "setopt complete_aliases";
 
+      # save timestamp to records
+      history.extended = true;
+
       oh-my-zsh = {
         enable = true;
         plugins = [
