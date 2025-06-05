@@ -14,6 +14,9 @@ in
 
     programs.zsh = {
       enable = true;
+      # Enable completion for aliases
+      initContent = "setopt complete_aliases";
+
       oh-my-zsh = {
         enable = true;
         plugins = [
