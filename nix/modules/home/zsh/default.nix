@@ -29,7 +29,6 @@ in
           # "fast-syntax-highlighting"
           # "zsh-autocomplete"
           "common-aliases"
-          "thefuck"
           "git"
           "fzf"
           "helm"

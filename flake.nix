@@ -43,7 +43,7 @@
 
       # home manager modules
       homes.modules = with inputs; [
-        stylix.homeManagerModules.stylix
+        stylix.homeModules.stylix
       ];
 
       # nixos modules

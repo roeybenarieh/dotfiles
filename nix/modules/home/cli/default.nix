@@ -33,7 +33,10 @@ in
   config = mkIf cfg.enable {
     programs = {
       # helping fix up command syntax errors
-      thefuck.enable = true;
+      pay-respects = {
+        enable = true;
+        options = [ "--alias thefuck --alias tf --alias f" ];
+      };
 
       # autocompletion
       carapace.enable = true;
