@@ -83,6 +83,13 @@ in
           "general.smoothScroll.msdPhysics.enabled" = true;
           "gfx.x11-egl.force-enabled" = true;
           "layers.acceleration.force-enabled" = true;
+
+          # Disables playback of DRM-controlled HTML5 content
+          # if enabled, automatically downloads the Widevine Content Decryption Module
+          # provided by Google Inc. Details
+          # (https://support.mozilla.org/en-US/kb/enable-drm#w_opt-out-of-cdm-playback-uninstall-cdms-and-stop-all-cdm-downloads)
+          # used by websites like Spotify to play audio
+          "media.eme.enabled" = true;
         };
         # configure search engines
         extensions = {
