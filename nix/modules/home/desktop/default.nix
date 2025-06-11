@@ -85,7 +85,7 @@ in
     xdg.configFile = {
       "qtile" = {
         source = ./qtile;
-        recursive = true;
+        onChange = "${getExe pkgs.qtile-unwrapped} cmd-obj -o cmd -f reload_config";
       };
       # "rofi" = {
       #   source = ./rofi;

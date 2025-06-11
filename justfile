@@ -15,7 +15,8 @@ format:
 
 [group('nix')]
 rebuild-user:
-  git add "**.nix" \
+  git add ./nix/modules/home/** \
+  && git add ./nix/homes/** \
   && home-manager switch --flake .
 
 [group('nix')]
@@ -52,13 +53,6 @@ update-dependencies:
 [group('nix')]
 collect-garbage:
   nix-collect-garbage
-
-
-[group('nix')]
-rebuild-desktop:
-  git add ./nix/modules/home/desktop/** \
-  && just rebuild-user \
-  && qtile cmd-obj -o cmd -f reload_config # reload qtile
 
 
 # [group('nix')]
