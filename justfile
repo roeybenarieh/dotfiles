@@ -25,7 +25,8 @@ rollback-user:
 
 [group('nix')]
 rebuild-system:
-  git add "**.nix" \
+  git add ./nix/modules/nixos/** \
+  && git add ./nix/systems/** \
   && sudo nixos-rebuild switch --flake .
 
 [group('nix')]
