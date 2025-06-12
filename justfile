@@ -65,4 +65,4 @@ collect-garbage:
 
 [group('nix')]
 rebuild-all:
-  just rebuild-system && just rebuild-user && just rebuild-desktop
+  just rebuild-system && just rebuild-user
