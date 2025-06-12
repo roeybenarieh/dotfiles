@@ -9,14 +9,19 @@ deploy:
 undeploy:
   stow --delete .
 
+# base files needed to be staged by git before building something in nix
+_base_nix_git_stage:
+  git add flake.nix flake.lock \
+  && git add ./nix/lib/**
+
 [group('nix')]
 format:
   treefmt
 
 [group('nix')]
 rebuild-user:
-  git add ./nix/modules/home/** \
-  && git add ./nix/homes/** \
+  @just _base_nix_git_stage \
+  && git add ./nix/modules/home/** ./nix/homes/** \
   && home-manager switch --flake .
 
 [group('nix')]
@@ -25,8 +30,8 @@ rollback-user:
 
 [group('nix')]
 rebuild-system:
-  git add ./nix/modules/nixos/** \
-  && git add ./nix/systems/** \
+  @just _base_nix_git_stage \
+  && git add ./nix/modules/nixos/** ./nix/systems/** \
   && sudo nixos-rebuild switch --flake .
 
 [group('nix')]
