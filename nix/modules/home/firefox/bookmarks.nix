@@ -151,10 +151,10 @@
           url = "http://127.0.0.1:11470";
         }
         {
-          name = "fold@home";
-          url = "http://localhost:7396";
-          tags = [ "f@h" "fold at home" "fold@home" ];
-          keyword = "fold@home";
+          name = "portainer";
+          url = "http://localhost:9443";
+          tags = [ "docker" "docker-desktop" "portainer" ];
+          keyword = "docker";
         }
       ];
     }

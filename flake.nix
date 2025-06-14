@@ -17,6 +17,10 @@
     };
     stylix.url = "github:danth/stylix";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    portainer-on-nixos = {
+      url = "gitlab:cbleslie/portainer-on-nixos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -50,6 +54,7 @@
       systems.modules.nixos = with inputs; [
         stylix.nixosModules.stylix
         home-manager.nixosModules.home-manager
+        portainer-on-nixos.nixosModules.portainer
       ];
     };
 }
