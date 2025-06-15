@@ -17,6 +17,10 @@
     };
     stylix.url = "github:danth/stylix";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    doh1-autofill = {
+      url = "github:roeybenarieh/doh1-autofill/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     portainer-on-nixos = {
       url = "gitlab:cbleslie/portainer-on-nixos";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -61,6 +61,7 @@ Some of the things manually needed to be created:
 - set up Google-authenticator at ~/.google_authenticator
 - set up Qtile Dexcom widgets at ~/.local/state/qtile-config
 - set up Neovim at ~/.config/nvim
+- set up doh1-autofiller configuration at ~/.config/doh1-autofill/config.json
 
 ## TODOES
 
