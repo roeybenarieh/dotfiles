@@ -22,10 +22,9 @@ in
       ]))
     ];
 
-    # poetry
-    programs.poetry = {
-      enable = true;
-      package = pkgs.poetry;
+    programs = {
+      uv.enable = true;
+      poetry.enable = true;
     };
     xdg.configFile."pypoetry" = {
       source = ./pypoetry;
@@ -36,6 +35,6 @@ in
     home.sessionVariables = {
       PYTHONASYNCIODEBUG = 1; # for debuging asyncio application
     };
-    home.shellAliases = { python = "python3.11"; };
+    home.shellAliases = { python = getExe pkgs.python311; };
   };
 }
