@@ -1,8 +1,8 @@
 from libqtile.config import Click, Drag, Key
 from libqtile.core.manager import Qtile
 from libqtile.lazy import lazy
-from pathlib import Path
 import os
+from settings import SETTINGS
 
 # common key maps
 mod = "mod4"
@@ -13,11 +13,11 @@ space = "space"
 control = "control"
 
 # dependencies
-_screenshot_dir = Path.home() / "Pictures" / "Screenshots"
-_screenshot_dir.mkdir(parents=True, exist_ok=True)
-os.environ["CM_LAUNCHER"] = "rofi"    # make clipmenu output clip selection to stdout
-os.environ["CM_HISTLENGTH"] = "10"    # number of lines of clipboard history to show
-os.environ["CM_OUTPUT_CLIP"] = "true" # launch clipmenu with rofi
+SETTINGS.screenshot_dir.mkdir(parents=True, exist_ok=True)  # make sure dir exist
+os.environ["CM_LAUNCHER"] = "rofi"  # make clipmenu output clip selection to stdout
+os.environ["CM_HISTLENGTH"] = "10"  # number of lines of clipboard history to show
+os.environ["CM_OUTPUT_CLIP"] = "true"  # launch clipmenu with rofi
+
 
 # utils functions
 @lazy.function
@@ -43,32 +43,32 @@ keys = [
     Key([mod], "e", lazy.spawn("xdg-open .")),
     Key([mod], "d", minimize_all(), desc="Toogle minimize all windows"),
     Key([mod], "v", lazy.spawn("clipmenu")),
-    Key([mod], "h", lazy.spawn("kitty -e nmtui")),
+    Key([mod], "h", lazy.spawn(SETTINGS.network_manager)),
     Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
     Key([mod], "l", lazy.spawn("dm-tool lock")),
     Key([mod], "f", lazy.window.toggle_floating()),
-    Key([mod], "b", lazy.spawn("firefox")),
+    Key([mod], "b", lazy.spawn(SETTINGS.browser)),
     Key(
         [],
         "Print",
-        lazy.spawn(f"flameshot screen --clipboard --path {_screenshot_dir}"),
+        lazy.spawn(f"flameshot screen --clipboard --path {SETTINGS.screenshot_dir}"),
     ),  # screenshot
     Key(
         [mod, shift],
         "s",
-        lazy.spawn(f"flameshot gui --clipboard --path {_screenshot_dir}"),
+        lazy.spawn(f"flameshot gui --clipboard --path {SETTINGS.screenshot_dir}"),
     ),  # partial screenshot
     # Key([mod], space, lazy.layout.next()),
     # Key([alt], "Tab", lazy.layout.next()),
     Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
     Key([mod], "n", lazy.layout.normalize()),
-    Key([mod], enter_key, lazy.spawn("alacritty")),
+    Key([mod], enter_key, lazy.spawn(SETTINGS.terminal)),
     Key([mod], "Tab", lazy.next_layout()),
     Key([mod], "m", lazy.window.toggle_maximize(), desc="Toggle maximize"),
     Key([], "F11", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen"),
     Key([mod], "w", lazy.window.kill()),
     Key([alt], "F4", lazy.window.kill()),
-    Key([control], "escape", lazy.spawn("alacritty -e btop")),
+    Key([control], "escape", lazy.spawn(SETTINGS.task_manager)),
     Key([mod, control], "r", lazy.reload_config()),
     Key([mod, control], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),

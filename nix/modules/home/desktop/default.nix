@@ -4,6 +4,7 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.desktop;
+  reload_qtile_command = "${getExe pkgs.qtile-unwrapped} cmd-obj -o cmd -f reload_config";
 in
 {
   options.${namespace}.desktop = with types; {
@@ -88,7 +89,19 @@ in
     xdg.configFile = {
       "qtile" = {
         source = ./qtile;
-        onChange = "${getExe pkgs.qtile-unwrapped} cmd-obj -o cmd -f reload_config";
+        onChange = reload_qtile_command;
+      };
+      "qtile-injection/config.json" = {
+        text = builtins.toJSON rec {
+          browser = config.home.sessionVariables.BROWSER;
+          wallpaper = ./qtile/assets/wallpaper.png;
+          terminal = config.home.sessionVariables.TERMINAL;
+          font = config.stylix.fonts.monospace.name;
+          screenshot_dir = "${config.home.homeDirectory}/Pictures/Screenshots";
+          network_manager = "${terminal} -e nmtui";
+          task_manager = "${terminal} -e ${config.home.shellAliases.htop}";
+        };
+        onChange = reload_qtile_command;
       };
       # "rofi" = {
       #   source = ./rofi;

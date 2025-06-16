@@ -9,9 +9,10 @@ from libqtile.lazy import lazy
 import colors
 import dexcom_widget
 from utils import mk_overrides
+from settings import SETTINGS
 
 widget_defaults = dict(
-    font="JetBrainsMono Nerd Font",
+    font=SETTINGS.font,
     fontsize=12,
     padding=12,
     background=colors.BG_DARK.with_alpha(0.9),
@@ -81,14 +82,7 @@ Mpris2 = mk_overrides(
 Memory = mk_overrides(
     widget.Memory,
     format="{MemUsed: .3f}Mb",
-    mouse_callbacks={
-        "Button1": lazy.spawn(
-            "kitty"
-            " -o initial_window_width=1720"
-            " -o initial_window_height=860"
-            " -e btop"
-        )
-    },
+    mouse_callbacks={"Button1": lazy.spawn(SETTINGS.task_manager)},
 )
 
 TaskList = mk_overrides(

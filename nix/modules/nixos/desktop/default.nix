@@ -25,6 +25,7 @@ in
           qtile-extras
           pydexcom
           colour
+          pydantic
         ];
       };
     };
