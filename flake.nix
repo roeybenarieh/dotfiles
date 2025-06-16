@@ -31,7 +31,7 @@
     # snowfall lib extended funciton for flake-utils-plus
     inputs.snowfall-lib.mkFlake {
       # must have Snowfall arguments.
-      inherit inputs;
+      inputs = inputs // { assets = ./assets; };
       src = ./nix;
 
       # configure Snowfall Lib.

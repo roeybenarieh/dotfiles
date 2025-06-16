@@ -1,4 +1,4 @@
-{ namespace, lib, config, pkgs, ... }:
+{ namespace, lib, config, pkgs, inputs, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -16,7 +16,8 @@ in
     enable = cfg.enable;
 
     autoEnable = true;
-    image = ./wallpaper.png;
+    image = "${inputs.assets}/wallpaper1.png";
+    polarity = "dark";
     targets = {
       neovim.enable = false;
       firefox.profileNames = [ "default" ];

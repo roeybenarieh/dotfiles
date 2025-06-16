@@ -1,4 +1,4 @@
-{ pkgs, namespace, lib, config, ... }:
+{ pkgs, namespace, lib, config, inputs, ... }:
 
 with lib;
 with lib.${namespace};
@@ -94,7 +94,7 @@ in
       "qtile-injection/config.json" = {
         text = builtins.toJSON rec {
           browser = config.home.sessionVariables.BROWSER;
-          wallpaper = ./qtile/assets/wallpaper.png;
+          wallpaper = "${inputs.assets}/wallpaper.png";
           terminal = config.home.sessionVariables.TERMINAL;
           font = config.stylix.fonts.monospace.name;
           screenshot_dir = "${config.home.homeDirectory}/Pictures/Screenshots";
