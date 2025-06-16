@@ -20,7 +20,7 @@ os.environ["CM_OUTPUT_CLIP"] = "true" # launch clipmenu with rofi
 
 # utils functions
 @lazy.function
-def minimize_all(qtile):
+def minimize_all(qtile: Qtile):
     for win in qtile.current_group.windows:
         if hasattr(win, "toggle_minimize"):
             win.toggle_minimize()
@@ -40,7 +40,7 @@ mouse = [
 
 keys = [
     Key([mod], "e", lazy.spawn("xdg-open .")),
-    Key([mod], "d", minimize_all(), desc = "Toogle minimize all windows"),
+    Key([mod], "d", minimize_all(), desc="Toogle minimize all windows"),
     Key([mod], "v", lazy.spawn("clipmenu")),
     Key([mod], "h", lazy.spawn("kitty -e nmtui")),
     Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
