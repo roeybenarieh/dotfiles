@@ -79,6 +79,9 @@ in
       ];
     };
 
+    # notification daemon used by qtile
+    services.dunst.enable = true;
+
     # clipboard manager
     services.clipmenu.enable = true;
 
