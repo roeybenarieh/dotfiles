@@ -1,4 +1,5 @@
 from libqtile.config import Click, Drag, Key
+from libqtile.core.manager import Qtile
 from libqtile.lazy import lazy
 from pathlib import Path
 import os
