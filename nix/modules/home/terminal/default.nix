@@ -56,6 +56,15 @@ in
     };
     home.sessionVariables = {
       TERM = "alacritty";
+      TERMINAL = "alacritty";
+    };
+    xdg.mimeApps = {
+      enable = true;
+      # to get mime type run: file -b --mime-type <file_name>
+      defaultApplications = {
+        "terminal" = "alacritty.desktop";
+        "x-scheme-handler/terminal" = "alacritty.desktop";
+      };
     };
   };
 }
