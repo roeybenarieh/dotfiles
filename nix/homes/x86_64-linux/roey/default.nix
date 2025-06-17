@@ -25,6 +25,7 @@
     python.enable = true;
     game-dev.enable = true;
     office.enable = true;
+    services.enable = true;
   };
 
   # general
