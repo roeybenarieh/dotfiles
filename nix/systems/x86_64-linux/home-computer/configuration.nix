@@ -14,6 +14,7 @@
     rdp.enable = true;
     ssh.enable = true;
     razer.enable = true;
+    virtualization.enable = true;
   };
 
   networking = {
