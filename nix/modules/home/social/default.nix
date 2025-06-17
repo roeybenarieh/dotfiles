@@ -11,8 +11,9 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      ferdium # manages all social platforms
-      discord # HACK: for some reason, audio input/output doesnt work in ferdium
+      discord
+      zoom-us
+      teams-for-linux
     ];
   };
 }
