@@ -13,7 +13,7 @@ in
     home.packages = with pkgs;
       [
         # containers
-        docker # docker engine and cli
+        # docker # docker engine and cli
         lazydocker
 
         # containers orcestration
