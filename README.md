@@ -6,6 +6,9 @@
     </a>
 </p>
 
+Desktop wallpaper  
+![alt text](./assets/wallpaper.png)
+
 Specs:
 
 - Linux compatible only
