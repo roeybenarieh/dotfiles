@@ -26,6 +26,8 @@ in
       };
       spiceUSBRedirection.enable = true;
     };
+    # the program allows to talk with VMs
+    # in order for that to work this program must be installed on the host and guest machine!
     services.spice-vdagentd.enable = true;
   };
 }
