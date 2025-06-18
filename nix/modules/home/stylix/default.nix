@@ -31,6 +31,8 @@ in
     # run 'fc-cache -rf' when changing/installing fonts
     fonts = {
       sizes = {
+        applications = 12;
+        desktop = 10;
         terminal = 15;
         popups = 15;
       };
