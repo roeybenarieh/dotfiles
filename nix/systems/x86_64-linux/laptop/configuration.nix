@@ -1,5 +1,6 @@
-{ pkgs, namespace, ... }:
+{ pkgs, namespace, lib, ... }:
 
+with lib.${namespace};
 {
   imports = [
     ./hardware-configuration.nix
@@ -7,22 +8,23 @@
   ];
 
   ${namespace} = {
-    apps.enable = true;
-    docker.enable = true;
-    # gaming.enable = true;
-    # gpu.nvidia1080ti.enable = true;
+    apps = enabled;
+    docker = enabled;
     gpu.nvidiaMX350 = {
       enable = true;
       prime_config = {
-        sync.enable = true;
+        sync = enabled;
         nvidiaBusId = "PCI:1:0:0";
         intelBusId = "PCI:0:2:0";
       };
     };
-    metrics.prometheus.enable = true;
-    # rdp.enable = true;
-    ssh.enable = true;
-    laptop.enable = true;
+    metrics.prometheus = enabled;
+    ssh = enabled;
+    laptop = enabled;
+
+    rdp = disabled;
+    gaming = enabled;
+    gpu.nvidia1080ti = disabled;
   };
 
   networking = {

@@ -1,20 +1,21 @@
-{ pkgs, namespace, ... }:
+{ pkgs, namespace, lib, ... }:
 
+with lib.${namespace};
 {
   imports = [
     ./hardware-extra.nix
   ];
 
   ${namespace} = {
-    apps.enable = true;
-    docker.enable = true;
-    gaming.enable = true;
-    gpu.nvidia1080ti.enable = true;
-    metrics.prometheus.enable = true;
-    rdp.enable = true;
-    ssh.enable = true;
-    razer.enable = true;
-    virtualization.enable = true;
+    apps = enabled;
+    docker = enabled;
+    gaming = enabled;
+    gpu.nvidia1080ti = enabled;
+    metrics.prometheus = enabled;
+    rdp = enabled;
+    ssh = enabled;
+    razer = enabled;
+    virtualization = enabled;
   };
 
   networking = {

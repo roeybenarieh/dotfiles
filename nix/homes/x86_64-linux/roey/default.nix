@@ -1,31 +1,28 @@
-{ pkgs, namespace, ... }:
+{ pkgs, namespace, lib, ... }:
 
+with lib.${namespace};
 {
-  # imports = [
-  #   stylix.homeManagerModules.stylix
-  # ];
-
   ${namespace} = {
-    cli.enable = true;
-    desktop.enable = true;
-    entertainment.enable = true;
-    firefox.enable = true;
-    git.enable = true;
-    jetbrains.enable = true;
-    neovim.enable = true;
-    social.enable = true;
-    terminal.enable = true;
-    tmux.enable = true;
-    tor.enable = true;
-    vscode.enable = true;
-    windows.enable = true;
-    zsh.enable = true;
-    networking.enable = true;
-    containers.enable = true;
-    python.enable = true;
-    game-dev.enable = true;
-    office.enable = true;
-    services.enable = true;
+    cli = enabled;
+    desktop = enabled;
+    entertainment = enabled;
+    firefox = enabled;
+    git = enabled;
+    jetbrains = enabled;
+    neovim = enabled;
+    social = enabled;
+    terminal = enabled;
+    tmux = enabled;
+    tor = enabled;
+    vscode = enabled;
+    windows = enabled;
+    zsh = enabled;
+    networking = enabled;
+    containers = enabled;
+    python = enabled;
+    game-dev = enabled;
+    office = enabled;
+    services = enabled;
   };
 
   # general
