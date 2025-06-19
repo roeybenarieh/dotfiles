@@ -81,7 +81,8 @@ Mpris2 = mk_overrides(
 
 Memory = mk_overrides(
     widget.Memory,
-    format="{MemUsed: .3f}Mb",
+    format="{MemUsed: .1f}GB",
+    measure_mem="G",
     mouse_callbacks={"Button1": lazy.spawn(SETTINGS.task_manager)},
 )
 
