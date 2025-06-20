@@ -7,14 +7,27 @@ let
 in
 {
   options.${namespace}.virtualization = with types; {
-    enable = mkBoolOpt false "Whether or not to enable virtualization technoligies.";
+    enable = mkBoolOpt false "Whether or not to enable virtualization technoligy.";
   };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      gnome-boxes
+      # libverto related
+      libverto
+
+      # spice
+      spice
+      spice-protocol
+
+      # windows specific staffs
+      win-virtio
+      win-spice
     ];
 
+    # UI for managing libvirt VMs
+    programs.virt-manager = enabled;
+
+    # https://stackoverflow.com/questions/60907105/what-is-the-difference-between-qemu-kvm-libvirt-and-how-to-use-with-vagrant
     virtualisation = {
       libvirtd = {
         enable = true;
@@ -26,8 +39,8 @@ in
       };
       spiceUSBRedirection.enable = true;
     };
-    # the program allows to talk with VMs
-    # in order for that to work this program must be installed on the host and guest machine!
+    # spice docs: https://www.spice-space.org/spice-for-newbies.html
+    # when installing spice guest tools, allow for better integration with VM.
     services.spice-vdagentd.enable = true;
   };
 }
