@@ -13,17 +13,19 @@ in
 
   config = mkIf cfg.enable {
     services.xserver.videoDrivers = [ "nvidia" ];
-    hardware.graphics.enable = true;
-    nixpkgs.config.nvidia.acceptLicence.enable = true;
+    hardware.graphics = enabled;
+    nixpkgs.config.nvidia.acceptLicence = enabled;
     hardware.nvidia = {
       open = false;
-      modesetting.enable = true;
+      modesetting = enabled;
       nvidiaSettings = true;
+      dynamicBoost = enabled;
       package = config.boot.kernelPackages.nvidiaPackages.latest;
 
       # handling two graphics cards
       # more info in: https://nixos.wiki/wiki/Nvidia
       prime = cfg.prime_config;
+      powerManagement = enabled;
     };
     environment.systemPackages = with pkgs; [ furmark ];
   };
