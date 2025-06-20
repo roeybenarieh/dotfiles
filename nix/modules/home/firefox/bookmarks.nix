@@ -152,7 +152,7 @@
         }
         {
           name = "portainer";
-          url = "http://localhost:9443";
+          url = "https://localhost:9443";
           tags = [ "docker" "docker-desktop" "portainer" ];
           keyword = "docker";
         }
