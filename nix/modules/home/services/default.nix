@@ -37,6 +37,8 @@ in
           Unit = "${doh1_service_name}.service";
         };
         Unit.Description = "Timer for ${doh1_service_name} service";
+        # start timer at boot
+        Install.WantedBy = [ "default.target" ];
       };
     };
   };
