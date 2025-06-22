@@ -81,7 +81,13 @@ in
     };
 
     # notification daemon used by qtile
-    services.dunst.enable = true;
+    services.dunst = {
+      enable = true;
+      settings.global = {
+        frame_width = 0;
+        gap_size = 5;
+      };
+    };
 
     # clipboard manager
     services.clipmenu.enable = true;
