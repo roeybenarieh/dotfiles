@@ -3,7 +3,7 @@
 # start picom compositor - only if not in xrdp session(because it is very hevy in remote sessions)
 # in charge of round edges for windows
 if [ -z "$XRDP_SESSION" ]; then
-	picom &
+	picom -b
 fi
 
 # start alttab

@@ -115,7 +115,7 @@ in
       # };
       "picom" = {
         source = ./picom;
-        recursive = true;
+        onChange = "${getExe pkgs.killall} picom || true; ${getExe pkgs.picom} -b";
       };
     };
   };
