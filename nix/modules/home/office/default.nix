@@ -15,6 +15,8 @@ let
 
   # functions
   # NOTE: this wrapper exists because playonlinux is using wine, hence in order for the wine app to get the file it needs to be pre-processed.
+  # FIX: file path with none-latin characters crashes playonlinux programs
+  # TODO: better support for hebrew characters in office programs
   play_on_linux_exec_wrap = application:
     "${pkgs.writeShellScript "wrapper" ''
       #!/bin/sh
