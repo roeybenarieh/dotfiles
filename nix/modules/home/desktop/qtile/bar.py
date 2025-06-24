@@ -42,6 +42,14 @@ DexcomInRangePercentage = mk_overrides(
     update_interval=60 * 5,  # update every 5min
 )
 
+Volume = mk_overrides(
+    PulseVolume,
+    mouse_callbacks={
+        "Button2": lazy.spawn(SETTINGS.auidio_controller),
+        "Button3": lazy.spawn(SETTINGS.audio_visualizer),
+    },
+)
+
 
 Battery = mk_overrides(
     widget.Battery,

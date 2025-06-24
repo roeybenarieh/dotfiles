@@ -106,6 +106,8 @@ in
           screenshot_dir = "${config.home.homeDirectory}/Pictures/Screenshots";
           network_manager = "${terminal} -e nmtui";
           task_manager = "${terminal} -e ${config.home.shellAliases.htop}";
+          audio_visualizer = "${terminal} -e ${getExe pkgs.cava}";
+          auidio_controller = getExe pkgs.pavucontrol;
         };
         onChange = reload_qtile_command;
       };

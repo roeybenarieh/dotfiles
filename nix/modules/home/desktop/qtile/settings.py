@@ -12,6 +12,8 @@ class QtileSettings(BaseModel):
     screenshot_dir: Path
     network_manager: str
     task_manager: str
+    audio_visualizer: str
+    auidio_controller: str
 
 
 def __get_settings() -> QtileSettings:
