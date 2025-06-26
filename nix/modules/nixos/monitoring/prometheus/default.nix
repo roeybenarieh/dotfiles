@@ -14,7 +14,12 @@ in
     services.prometheus = {
       enable = true;
       port = 9090; # default port
-      globalConfig.scrape_interval = "15s";
+      globalConfig = {
+        scrape_interval = "15s";
+        external_labels = {
+          "host" = config.networking.hostName;
+        };
+      };
 
       # enable node exporter and scrape it
       exporters = {
