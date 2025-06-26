@@ -1,14 +1,32 @@
-{ namespace, lib, config, ... }:
+{ pkgs, namespace, lib, config, ... }:
 
 with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.storage.minio;
+
+  # Script that creates all buckets
+  createBucketsScript = pkgs.writeShellScriptBin "create-minio-buckets" ''
+    # Wait for MinIO to be ready
+    until ${getExe pkgs.curl} -s -o /dev/null -w "%{http_code}" ${http_local_endpoint_on_port cfg.port}/minio/health/live | ${getExe pkgs.gnugrep} -q "200"; do
+      sleep 1
+    done
+
+    # Configure alias
+    ${getExe pkgs.minio-client} alias set local ${http_local_endpoint_on_port cfg.port} ${cfg.accessKey} ${cfg.secretKey} --api s3v4
+
+    # Create each bucket
+    ${lib.concatMapStrings (bucket: ''
+      echo "Creating bucket: ${bucket}"
+      ${getExe pkgs.minio-client} mb --ignore-existing local/${bucket}
+    '') cfg.bucketNames}
+  '';
 in
 {
   options.${namespace}.storage.minio = with types; {
     enable = mkBoolOpt false "Whether or not to enable minio S3 storage.";
     port = mkIntOpt 11906 "minio api port";
+    bucketNames = mkListOpt [ ] "minio buckets";
     accessKey = mkstrOpt "minio_accesskey" "minio username";
     secretKey = mkstrOpt "minio_secretkey" "minio password";
   };
@@ -21,6 +39,22 @@ in
       consoleAddress = ":9001"; # web UI port
       accessKey = cfg.accessKey;
       secretKey = cfg.secretKey;
+    };
+
+    systemd.services.create-minio-buckets = {
+      serviceConfig = {
+        Type = "oneshot"; # Run once and exit
+        ExecStart = "${createBucketsScript}/bin/create-minio-buckets";
+        Restart = "on-failure";
+        User = "root";
+        StandardOutput = "journal";
+        StandardError = "journal";
+      };
+
+      description = "Automatically create minio buckets";
+      after = [ "minio.service" ];
+      requires = [ "minio.service" ];
+      wantedBy = [ "multi-user.target" ];
     };
   };
 } 

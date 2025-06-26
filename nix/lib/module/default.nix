@@ -76,6 +76,24 @@ rec {
   #@ Type -> Any -> String
   mkstrOpt' = mkOpt' types.str;
 
+  ## Create a list NixOS module option.
+  ##
+  ## ```nix
+  ## lib.mkListOpt [1 "text"] "Description of my option."
+  ## ```
+  ##
+  #@ Type -> Any -> String
+  mkListOpt = mkOpt (types.listOf types.str);
+
+  ## Create a list NixOS module option without a description.
+  ##
+  ## ```nix
+  ## lib.mkListOpt [1 "text"]
+  ## ```
+  ##
+  #@ Type -> Any -> String
+  mkListOpt' = mkOpt' (types.listOf types.str);
+
   enabled = {
     ## Quickly enable an option.
     ##
