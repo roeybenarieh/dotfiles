@@ -89,6 +89,9 @@ in
       };
     };
 
+    # audio visualizer
+    programs.cava = enabled;
+
     # clipboard manager
     services.clipmenu.enable = true;
 
