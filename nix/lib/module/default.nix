@@ -40,6 +40,42 @@ rec {
   #@ Type -> Any -> String
   mkBoolOpt' = mkOpt' types.bool;
 
+  ## Create an integer NixOS module option.
+  ##
+  ## ```nix
+  ## lib.mkIntOpt 123 "Description of my option."
+  ## ```
+  ##
+  #@ Type -> Any -> String
+  mkIntOpt = mkOpt types.int;
+
+  ## Create an integer NixOS module option without a description.
+  ##
+  ## ```nix
+  ## lib.mkIntOpt 123
+  ## ```
+  ##
+  #@ Type -> Any -> String
+  mkIntOpt' = mkOpt' types.int;
+
+  ## Create a string NixOS module option.
+  ##
+  ## ```nix
+  ## lib.mkstrOpt "text" "Description of my option."
+  ## ```
+  ##
+  #@ Type -> Any -> String
+  mkstrOpt = mkOpt types.str;
+
+  ## Create a string NixOS module option without a description.
+  ##
+  ## ```nix
+  ## lib.mkstrOpt "text"
+  ## ```
+  ##
+  #@ Type -> Any -> String
+  mkstrOpt' = mkOpt' types.str;
+
   enabled = {
     ## Quickly enable an option.
     ##
