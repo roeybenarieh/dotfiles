@@ -15,7 +15,7 @@ in
       enable = true;
       port = 9090; # default port
       globalConfig = {
-        scrape_interval = "15s";
+        scrape_interval = "30s";
         external_labels = {
           "host" = config.networking.hostName;
         };
