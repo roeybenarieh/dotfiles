@@ -41,6 +41,20 @@ in
       secretKey = cfg.secretKey;
     };
 
+    # configure prometheus monitoring
+    systemd.services.minio.serviceConfig.Environment = "MINIO_PROMETHEUS_AUTH_TYPE=public";
+    services.prometheus = {
+      scrapeConfigs = [
+        {
+          job_name = "minio";
+          metrics_path = "/minio/v2/metrics/cluster";
+          static_configs = [{
+            targets = [ (schemaless_local_endpoint_on_port 11906) ];
+          }];
+        }
+      ];
+    };
+
     systemd.services.create-minio-buckets = {
       serviceConfig = {
         Type = "oneshot"; # Run once and exit
