@@ -117,6 +117,10 @@
           name = "clarity";
           url = "https://clarity.dexcom.eu";
         }
+        {
+          name = "tandem";
+          url = "https://source.tandemdiabetes.com";
+        }
       ];
     }
 
