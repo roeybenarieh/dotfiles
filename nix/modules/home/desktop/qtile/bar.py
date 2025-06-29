@@ -5,6 +5,7 @@ from keyboard_layout_widget import MyKeyboardLayout
 from libqtile import bar, widget
 from libqtile.widget.nvidia_sensors import NvidiaSensors
 from libqtile.lazy import lazy
+from libqtile.widget import PulseVolume
 
 import colors
 import dexcom_widget
