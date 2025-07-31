@@ -21,6 +21,7 @@ in
         nixpkgs-fmt
         xclip
         fd
+        silicon
 
         # languages
         gcc
