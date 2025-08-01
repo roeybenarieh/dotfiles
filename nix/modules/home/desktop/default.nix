@@ -30,8 +30,7 @@ in
       btop # for viewing system resources
       arandr # for editing monitors layout(positioning them relative to each other)
       alttab # window switcher
-      rofi-bluetooth
-      bluez-experimental
+      blueberry
       xkb-switch # for switching keyboard layouts
     ];
 
@@ -75,9 +74,9 @@ in
         icon-theme = "Papirus-dark";
 
       };
-      plugins = with pkgs; [
-        rofi-bluetooth
-      ];
+      # plugins = with pkgs; [
+      #   rofi-bluetooth
+      # ];
     };
 
     # notification daemon used by qtile
