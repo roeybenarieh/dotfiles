@@ -26,7 +26,10 @@ in
           RestartSec = "1h"; # restart service after 1 hour
           StartLimitBurst = 3; # Allow 3
         };
-        Unit.Description = "Automatically fill out doh1";
+        Unit = {
+          Description = "Automatically fill out doh1";
+          Wants = "network-online.target";
+        };
       };
       # get task status: systemctl status --user doh1-autofill-task.timer
       # timer deciding when to trigger the service
