@@ -34,7 +34,7 @@ in
       ];
     };
     programs.neovide = {
-      enable = true;
+      enable = false;
       settings = {
         fork = false;
         frame = "full";
@@ -52,7 +52,7 @@ in
 
         font = {
           normal = [ "JetBrainsMono Nerd Font" ];
-          size = 14.0;
+          # size = 14.0;
         };
       };
     };
