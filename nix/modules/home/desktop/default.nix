@@ -32,6 +32,7 @@ in
       alttab # window switcher
       blueberry
       xkb-switch # for switching keyboard layouts
+      networkmanager_dmenu
     ];
 
     # map WinKey(mod) short press to F1, used by qtile
@@ -95,6 +96,7 @@ in
     services.clipmenu.enable = true;
 
     xdg.configFile = {
+      "networkmanager-dmenu".source = ./networkmanager-dmenu;
       "qtile" = {
         source = ./qtile;
         onChange = reload_qtile_command;
