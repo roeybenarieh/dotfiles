@@ -18,6 +18,7 @@ in
       # these configurations automaticly gets converted from nix to normal systemd service toml configuration
       services.${doh1_service_name} = {
         Service = {
+          Environment = "PYTHONUNBUFFERED=1"; # allow 'print' statements to be in journal
           ExecStart = getExe doh1_autofill_pacage;
           StandardOutput = "journal";
           StandardError = "journal";
