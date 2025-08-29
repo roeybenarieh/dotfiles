@@ -25,6 +25,7 @@
       url = "gitlab:cbleslie/portainer-on-nixos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   };
 
   outputs = inputs:
@@ -52,6 +53,7 @@
       # home manager modules
       homes.modules = with inputs; [
         stylix.homeModules.stylix
+        spicetify-nix.homeManagerModules.default
       ];
 
       # nixos modules

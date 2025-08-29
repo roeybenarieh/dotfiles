@@ -1,8 +1,9 @@
-{ namespace, lib, config, pkgs, ... }:
+{ namespace, lib, config, pkgs, inputs, ... }:
 with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.entertainment;
+  spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   options.${namespace}.entertainment = with types; {
@@ -17,5 +18,18 @@ in
       # TODO: find a better place for krita
       krita # GUI paint app
     ];
+
+    # Spicetify (Spotify)
+    programs.spicetify = {
+      enable = true;
+      enabledExtensions = with spicePkgs.extensions; [
+        adblock
+        fullAppDisplay
+        hidePodcasts
+        keyboardShortcut
+        songStats
+      ];
+      enabledCustomApps = [ ];
+    };
   };
 }
