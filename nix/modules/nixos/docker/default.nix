@@ -10,9 +10,9 @@ let
   };
   docker-desktop = pkgs.makeDesktopItem {
     name = "Docker Desktop";
-    exec = "${pkgs.xdg-utils}/bin/xdg-open https://localhost:${toString config.services.portainer.port}";
+    exec = getExe pkgs.podman-desktop;
     desktopName = "Docker Desktop";
-    genericName = "Docker Desktop - docker web interface";
+    genericName = "Docker Desktop - podman desktop";
     categories = [ "Development" ];
     icon = docker-icon;
   };
@@ -27,14 +27,6 @@ in
       enable = true;
       enableOnBoot = false;
     };
-    # HACK: this portainer runs with OCI containers underneath - which makes it substantially slower
-    # in the future, run this as normal service
-    services.portainer = {
-      enable = true;
-      port = 9443;
-    };
-    environment.systemPackages = [
-      docker-desktop
-    ];
+    environment.systemPackages = with pkgs; [ podman-desktop ] ++ [ docker-desktop ];
   };
 }

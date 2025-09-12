@@ -154,12 +154,6 @@
           keyword = "stremio";
           url = "http://127.0.0.1:11470";
         }
-        {
-          name = "portainer";
-          url = "https://localhost:9443";
-          tags = [ "docker" "docker-desktop" "portainer" ];
-          keyword = "docker";
-        }
       ];
     }
 

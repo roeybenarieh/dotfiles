@@ -21,10 +21,6 @@
       url = "github:roeybenarieh/doh1-autofill/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    portainer-on-nixos = {
-      url = "gitlab:cbleslie/portainer-on-nixos";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   };
 
@@ -60,7 +56,6 @@
       systems.modules.nixos = with inputs; [
         stylix.nixosModules.stylix
         home-manager.nixosModules.home-manager
-        portainer-on-nixos.nixosModules.portainer
       ];
     };
 }
