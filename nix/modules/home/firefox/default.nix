@@ -33,7 +33,13 @@ in
     # the firefox configuration itself
     programs.firefox = {
       enable = true;
-      package = pkgs.firefox;
+      package = pkgs.firefox.overrideAttrs (old: {
+        # MOZ_USE_XINPUT2=1 allow more smooth (pixel-level) scroll and zoom
+        buildCommand = old.buildCommand + ''
+          mv $out/bin/firefox $out/bin/firefox-no-xinput2
+          makeWrapper $out/bin/firefox-no-xinput2 $out/bin/firefox --set-default MOZ_USE_XINPUT2 1
+        '';
+      });
 
       # Check about:policies#documentation for options.
       policies = {
