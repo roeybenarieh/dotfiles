@@ -38,7 +38,6 @@ in
     # map WinKey(mod) short press to F1, used by qtile
     services.xcape = {
       enable = true;
-      timeout = 300;
       mapExpression = {
         "Super_L" = "F1";
       };
