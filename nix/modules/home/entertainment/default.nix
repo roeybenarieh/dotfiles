@@ -29,7 +29,9 @@ in
         keyboardShortcut
         songStats
       ];
-      enabledCustomApps = [ ];
+      enabledCustomApps = with spicePkgs.apps; [
+        lyricsPlus
+      ];
     };
   };
 }
