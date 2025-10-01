@@ -17,6 +17,18 @@ in
       remmina # rdp(and other protocols) client
     ];
     # ssh client
-    programs.ssh.enable = true;
+    programs.ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      matchBlocks = {
+        "*" = {
+          user = "roey";
+        };
+        "roey.myddns.me" = {
+          hostname = "roey.myddns.me";
+          port = 48800;
+        };
+      };
+    };
   };
 }

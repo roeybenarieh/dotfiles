@@ -11,7 +11,7 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      godot_4-mono
+      godot_4_4-mono
       jetbrains.rider # C#
       mono
       dotnet-sdk_9

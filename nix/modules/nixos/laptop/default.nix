@@ -44,7 +44,7 @@ in
     };
 
     # better suspend+hibernate
-    services.logind.lidSwitch = "suspend-then-hibernate";
+    services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
 
     services.xserver.xautolock = {
       enable = true;

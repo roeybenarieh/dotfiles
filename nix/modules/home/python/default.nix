@@ -13,7 +13,7 @@ in
     # install python+pip
     # home.packages = with pkgs; [ python312 python312Packages.pip ];
     home.packages = with pkgs; [
-      (python311.withPackages (pkgs: with pkgs; [
+      (python312.withPackages (pkgs: with pkgs; [
         pip
         fastapi
         pydantic

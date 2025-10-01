@@ -14,7 +14,7 @@ in
     # TODO: for the love of god, when installing stremio make sure to disable caching!!!
     # from my experience it make stremio playing videos WAY MORE smoothly
     home.packages = with pkgs;[
-      stremio # streaming app
+      # stremio # streaming app
       # TODO: find a better place for krita
       krita # GUI paint app
     ];
