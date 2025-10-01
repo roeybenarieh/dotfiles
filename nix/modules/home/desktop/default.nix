@@ -21,6 +21,11 @@ in
         "-b" # run the backend
       ];
     };
+    xdg.desktopEntries.picom = {
+      name = "picom";
+      noDisplay = true;
+    };
+
     home.packages = with pkgs; [
       pamixer # control volume
       playerctl # control playing
