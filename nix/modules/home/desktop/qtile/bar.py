@@ -50,11 +50,13 @@ Volume = mk_overrides(
 
 Battery = mk_overrides(
     widget.Battery,
-    format="⚡{percent:2.0%}",
+    format="⚡{percent:2.0%} {hour:d}:{min:02d}",
     background=colors.BG_DARK.with_alpha(0.7),
+    charging_foreground=colors.GREEN_DARK.with_alpha(0.7),
     foreground=colors.TEXT_LIGHT,
     low_background=colors.RED_DARK.with_alpha(0.7),
     low_percentage=0.1,
+    update_interval=5,
 )
 
 CPUGraph = mk_overrides(
