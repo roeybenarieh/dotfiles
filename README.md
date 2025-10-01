@@ -74,3 +74,5 @@ Some of the things manually needed to be created:
 - configure zsh + tmux
 - cleanup docker and zsh configurations
 - add power profiles for laptop
+- get files from Iphone
+- Airdrop support(maybe opendrop)
