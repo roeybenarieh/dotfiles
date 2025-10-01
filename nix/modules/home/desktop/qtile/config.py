@@ -112,15 +112,14 @@ auto_minimize = False
 wmname = "Qtile"
 
 
-
-#The first bit tells Qtile to run the autostart file when it is started. The autostart file does the wallpaper, activates the compositor,
-#and sets the keymap on my build the rest is the final options for qtile. Most of this stuff is pretty obvious, and doesn't really need to be
-#messed with. The floating layout section is a list of window types that should automatically spawn as floating. If an app you're trying to
-#glitches when spawned normally, try adding it to the list below, using the same match syntax  as with the group section. Finally at the bottom,
-#the clever people who coded Qtile lie to the computer and say that Qtile is a Java window manager so it'll work correctly.
+# The first bit tells Qtile to run the autostart file when it is started. The autostart file does the wallpaper, activates the compositor,
+# and sets the keymap on my build the rest is the final options for qtile. Most of this stuff is pretty obvious, and doesn't really need to be
+# messed with. The floating layout section is a list of window types that should automatically spawn as floating. If an app you're trying to
+# glitches when spawned normally, try adding it to the list below, using the same match syntax  as with the group section. Finally at the bottom,
+# the clever people who coded Qtile lie to the computer and say that Qtile is a Java window manager so it'll work correctly.
 @hook.subscribe.startup
 def autostart():
     # important node: the autostart.sh must be executable!
     # git saves the executable bit so you should be fine
-    home=os.path.expanduser('~/.config/qtile/scripts/autostart.sh')
+    home = os.path.expanduser("~/.config/qtile/scripts/autostart.sh")
     subprocess.call([home])

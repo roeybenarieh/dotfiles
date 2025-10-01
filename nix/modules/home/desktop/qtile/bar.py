@@ -32,11 +32,7 @@ KeyboardLayout = mk_overrides(
 )
 
 # TODO: get gpu usage%
-NvidiaTemp = mk_overrides(
-    NvidiaSensors,
-    format = "{temp}°C",
-    update_interval = 5
-)
+NvidiaTemp = mk_overrides(NvidiaSensors, format="{temp}°C", update_interval=5)
 
 DexcomInRangePercentage = mk_overrides(
     dexcom_widget.DexcomInRangePercentage,
@@ -113,11 +109,11 @@ TaskList = mk_overrides(
 
 Separator = mk_overrides(widget.Spacer, length=4)
 Clock = mk_overrides(
-    widget.Clock, 
+    widget.Clock,
     format="%A, %b %-d %H:%M",
     mouse_callbacks={
         "Button1": lazy.spawn("xdg-open https://calendar.google.com"),
-    }
+    },
 )
 
 

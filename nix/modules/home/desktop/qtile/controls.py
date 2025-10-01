@@ -26,6 +26,7 @@ def minimize_all(qtile: Qtile):
         if hasattr(win, "toggle_minimize"):
             win.toggle_minimize()
 
+
 mouse = [
     Drag(
         [mod],
