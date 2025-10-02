@@ -54,7 +54,6 @@ Battery = mk_overrides(
     background=colors.BG_DARK.with_alpha(0.7),
     charging_foreground=colors.GREEN_DARK.with_alpha(0.7),
     foreground=colors.TEXT_LIGHT,
-    low_background=colors.RED_DARK.with_alpha(0.7),
     low_percentage=0.1,
     update_interval=5,
 )
