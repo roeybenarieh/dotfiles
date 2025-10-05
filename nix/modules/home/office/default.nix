@@ -90,5 +90,6 @@ in
       playonlinux
       samba
     ];
+    programs.obsidian = enabled;
   };
 }
