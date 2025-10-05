@@ -14,6 +14,7 @@ class QtileSettings(BaseModel):
     task_manager: str
     audio_visualizer: str
     auidio_controller: str
+    application_launcher: str
 
 
 def __get_settings() -> QtileSettings:

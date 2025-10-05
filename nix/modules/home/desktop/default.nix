@@ -53,32 +53,6 @@ in
       enable = true;
       cycle = true;
       terminal = config.home.sessionVariables.TERM;
-      # more info at: https://davatorium.github.io/rofi/1.7.1/rofi.1/#configuration
-      extraConfig = {
-        # modes
-        modi = "run,drun,ssh";
-        display-drun = " Apps ";
-        display-run = " Run ";
-        display-ssh = " SSH ";
-        sidebar-mode = true;
-
-        max-history-size = 100;
-
-        # searching
-        matching = "fuzzy";
-        sort = true;
-        sorting-method = "fzf";
-
-        # UI
-        drun-display-format = "{icon} {name}";
-        hide-scrollbar = true;
-        cycle = true;
-
-        # icons
-        show-icons = true;
-        icon-theme = "Papirus-dark";
-
-      };
       # plugins = with pkgs; [
       #   rofi-bluetooth
       # ];
@@ -116,6 +90,7 @@ in
           task_manager = "${terminal} -e ${config.home.shellAliases.htop}";
           audio_visualizer = "${terminal} -e ${getExe pkgs.cava}";
           auidio_controller = getExe pkgs.pavucontrol;
+          application_launcher = "${getExe pkgs.rofi} -show drun -config ${./rofi/applications-config.rasi}";
         };
         onChange = reload_qtile_command;
       };
@@ -127,6 +102,7 @@ in
         source = ./picom;
         onChange = "${getExe pkgs.killall} picom || true; ${getExe pkgs.picom} -b";
       };
+      "rofi".source = ./rofi;
     };
   };
 }
