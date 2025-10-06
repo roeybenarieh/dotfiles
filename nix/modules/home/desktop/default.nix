@@ -5,6 +5,18 @@ with lib.${namespace};
 let
   cfg = config.${namespace}.desktop;
   reload_qtile_command = "${getExe pkgs.qtile-unwrapped} cmd-obj -o cmd -f reload_config";
+  blueooth-icon = pkgs.fetchurl {
+    url = "https://upload.wikimedia.org/wikipedia/commons/e/ed/Antu_bluetooth.svg";
+    sha256 = "sha256-JfGCuTF2o9X0iiUTemolD7eGFrrKPN8ArAJ6szFiY3o=";
+  };
+  volume-control-icon = pkgs.fetchurl {
+    url = "https://upload.wikimedia.org/wikipedia/commons/a/a0/Circle-icons-speaker.svg";
+    sha256 = "sha256-qvAZqJNs2RMQMg5N6WrH/JROFPQoDjyawYQO9vJcxIw=";
+  };
+  xserver-icon = pkgs.fetchurl {
+    url = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/X.Org_Logo.svg/1024px-X.Org_Logo.svg.png";
+    sha256 = "sha256-7OL0wemiIgMHkXSRxSuWZRzlH3nMKtlCidX/Ypp+fdc=";
+  };
 in
 {
   options.${namespace}.desktop = with types; {
@@ -35,10 +47,45 @@ in
       btop # for viewing system resources
       arandr # for editing monitors layout(positioning them relative to each other)
       alttab # window switcher
-      blueberry
+      blueberry # bluetooth manager
       xkb-switch # for switching keyboard layouts
       networkmanager_dmenu
     ];
+
+    # manually set blueberry desktop entry in order to have icon
+    xdg.desktopEntries.blueberry = {
+      name = "Bluetooth";
+      genericName = "Bluetooth Settings";
+      comment = "Manage Bluetooth devices";
+      exec = getExe' pkgs.blueberry "blueberry";
+      icon = blueooth-icon;
+      terminal = false;
+      type = "Application";
+      categories = [ "Settings" "HardwareSettings" ];
+    };
+    # manually set pavucontrol desktop entry in order to have icon
+    xdg.desktopEntries."org.pulseaudio.pavucontrol" = {
+      name = "volume control";
+      genericName = "audio mixer";
+      comment = "control the volume of your audio devices";
+      exec = getExe pkgs.pavucontrol;
+      icon = volume-control-icon;
+      terminal = false;
+      type = "Application";
+      categories = [ "Settings" "HardwareSettings" ];
+    };
+    # manually set arandr desktop entry in order to have icon
+    xdg.desktopEntries.arandr = {
+      name = "Display Settings";
+      genericName = "Screen Layout Editor";
+      comment = "Graphically manage screen layouts and resolutions";
+      exec = getExe pkgs.arandr;
+      icon = xserver-icon;
+      terminal = false;
+      type = "Application";
+      categories = [ "Settings" "HardwareSettings" "Utility" ];
+    };
+
 
     # map WinKey(mod) short press to F1, used by qtile
     services.xcape = {
