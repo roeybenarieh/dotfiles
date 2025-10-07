@@ -50,6 +50,10 @@ in
         package = pkgs.dejavu_fonts;
         name = "DejaVu Sans";
       };
+      emoji = {
+        package = pkgs.noto-fonts-emoji;
+        name = "Noto Color Emoji";
+      };
     };
   };
 }
