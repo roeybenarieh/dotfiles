@@ -65,7 +65,7 @@ in
 
         font = {
           normal = [ "JetBrainsMono Nerd Font" ];
-          # size = 14.0;
+          size = mkForce 11.0;
         };
       };
     };
