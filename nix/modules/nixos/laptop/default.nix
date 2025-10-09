@@ -55,7 +55,10 @@ in
 
 
     # enable bluetooth
-    hardware.bluetooth.enable = true;
+    hardware.bluetooth = {
+      enable = true;
+      powerOnBoot = false;
+    };
 
     # Networking related
     networking = {
