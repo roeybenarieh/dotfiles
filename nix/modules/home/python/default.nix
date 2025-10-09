@@ -35,6 +35,5 @@ in
     home.sessionVariables = {
       PYTHONASYNCIODEBUG = 1; # for debuging asyncio application
     };
-    home.shellAliases = { python = getExe pkgs.python311; };
   };
 }
