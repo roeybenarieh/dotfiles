@@ -4,6 +4,8 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.laptop;
+  makeLine = name: "${pkgs.networkmanager}/bin/nmcli connection modify \"${name}\" connection.autoconnect yes || true";
+  networkAutoConnect = networks: builtins.concatStringsSep "\n" (map makeLine networks);
 in
 {
   options.${namespace}.laptop = with types; {
@@ -54,6 +56,18 @@ in
 
     # enable bluetooth
     hardware.bluetooth.enable = true;
+
+    # Networking related
+    networking = {
+      localCommands = networkAutoConnect [ "RoeyBA Iphone" "RoeyBA Iphone Network" ];
+      wireless.iwd = {
+        enable = true; # better than wpa_supplicant that is used by default
+        settings = {
+          Settings.AutoConnect = true;
+        };
+      };
+    };
+
 
     # taken from : https://nixos.wiki/wiki/Laptop
     # power management

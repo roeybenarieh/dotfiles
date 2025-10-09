@@ -30,7 +30,6 @@ with lib.${namespace};
   networking = {
     hostName = "laptop";
     networkmanager.enable = true;
-    # wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
