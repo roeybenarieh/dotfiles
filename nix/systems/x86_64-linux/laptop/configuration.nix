@@ -42,6 +42,7 @@ with lib.${namespace};
       "wheel" # Enable ‘sudo’ for the user.
       "docker"
       "libvirtd" # for using libvirtd VM technology
+      "input" # permission to access input devices
     ];
     shell = pkgs.zsh;
   };
