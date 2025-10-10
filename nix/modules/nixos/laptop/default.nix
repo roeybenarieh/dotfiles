@@ -4,8 +4,6 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.laptop;
-  makeLine = name: "${pkgs.networkmanager}/bin/nmcli connection modify \"${name}\" connection.autoconnect yes || true";
-  networkAutoConnect = networks: builtins.concatStringsSep "\n" (map makeLine networks);
 in
 {
   options.${namespace}.laptop = with types; {
@@ -62,7 +60,12 @@ in
 
     # Networking related
     networking = {
-      localCommands = networkAutoConnect [ "RoeyBA Iphone" "RoeyBA Iphone Network" ];
+      # set all known connections(by name) to be autoconnected 
+      localCommands = ''
+        for name in $(${pkgs.networkmanager}/bin/nmcli -t -f NAME connection show); do
+          ${pkgs.networkmanager}/bin/nmcli connection modify \"$name\" connection.autoconnect yes || true
+        done
+      '';
       wireless.iwd = {
         enable = true; # better than wpa_supplicant that is used by default
         settings = {
