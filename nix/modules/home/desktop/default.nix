@@ -138,6 +138,7 @@ in
           audio_visualizer = "${terminal} -e ${getExe pkgs.cava}";
           auidio_controller = getExe pkgs.pavucontrol;
           application_launcher = "${getExe pkgs.rofi} -show drun -config ${./rofi/applications-config.rasi}";
+          simple_monitors_manager = getExe pkgs.lxrandr;
         };
         onChange = reload_qtile_command;
       };

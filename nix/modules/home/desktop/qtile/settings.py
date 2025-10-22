@@ -15,6 +15,7 @@ class QtileSettings(BaseModel):
     audio_visualizer: str
     auidio_controller: str
     application_launcher: str
+    simple_monitors_manager: str
 
 
 def __get_settings() -> QtileSettings:

@@ -49,6 +49,7 @@ keys = [
     Key([mod], "l", lazy.spawn("dm-tool lock")),
     Key([mod], "f", lazy.window.toggle_floating()),
     Key([mod], "b", lazy.spawn(SETTINGS.browser)),
+    Key([mod], "p", lazy.spawn(SETTINGS.simple_monitors_manager)),
     Key(
         [],
         "Print",
