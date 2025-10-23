@@ -35,6 +35,7 @@ in
         xclip
         fd
         silicon
+        lua51Packages.luarocks
 
         # languages
         gcc
