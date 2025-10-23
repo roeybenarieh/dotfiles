@@ -78,11 +78,13 @@ in
 
     # taken from : https://nixos.wiki/wiki/Laptop
     # power management
-    powerManagement.enable = true;
+    powerManagement = {
+      enable = true;
+      powertop.enable = true;
+    };
     # cpu thermal management
     services.thermald.enable = true;
     # cpu usage management
-
     services.auto-cpufreq = {
       enable = true;
       settings = {
