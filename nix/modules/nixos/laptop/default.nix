@@ -56,6 +56,7 @@ in
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = false;
+      settings.Policy.AutoEnable = true;
     };
 
     # Networking related
