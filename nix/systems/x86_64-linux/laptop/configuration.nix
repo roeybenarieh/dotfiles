@@ -10,6 +10,7 @@ with lib.${namespace};
   ${namespace} = {
     apps = enabled;
     docker = enabled;
+    containerization.k3s = enabled;
     gpu.nvidiaMX350 = {
       enable = true;
       prime_config = {
@@ -27,6 +28,8 @@ with lib.${namespace};
     gpu.nvidia1080ti = disabled;
   };
 
+  # systemd.services."preload-firefox" = {
+  #   description = "Preload Firefox into RAM";
   networking = {
     hostName = "laptop";
     networkmanager.enable = true;
