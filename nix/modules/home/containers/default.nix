@@ -20,11 +20,6 @@ in
         kubectl
         lens # k8s IDE
         kubernetes-helm
-        minikube # local k8s like cluster
-        azure-cli
-
-        # virtual machines
-        virtualbox # needed by minikube
       ];
   };
 }
