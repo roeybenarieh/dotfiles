@@ -44,6 +44,7 @@ with lib.${namespace};
       "networkmanager"
       "wheel" # Enable ‘sudo’ for the user.
       "docker"
+      "k3s"
       "libvirtd" # for using libvirtd VM technology
     ];
     shell = pkgs.zsh;
