@@ -5,12 +5,15 @@ let
   cfg = config.${namespace}.neovim;
   nvim-wrapper = pkgs.writeShellScriptBin "nvim-wrapper" ''
     #!/bin/sh
+    if [[ -z "$DISPLAY" ]]; then
+      exec nvim
+    fi
     # Get the currently active window (your Alacritty)
     win_id=$(${getExe pkgs.xdotool} getactivewindow)
     # Send it to the background
     ${getExe pkgs.xdotool} windowunmap "$win_id"
     # Launch Neovide in the same directory
-    ${getExe pkgs.neovide} "$@"
+    ${getExe pkgs.neovide} "$@" 2> /dev/null
     # Send original windowd to foreground (bring it back)
     ${getExe pkgs.xdotool} windowmap "$win_id"
   '';
