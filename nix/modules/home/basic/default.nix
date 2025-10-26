@@ -3,6 +3,10 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.basic;
+  gmail-icon = pkgs.fetchurl {
+    url = "https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg";
+    sha256 = "sha256-3hKd/5OcNBvmu1YXZXGclTYvAh25NuiKdFV2LmiH+wU=";
+  };
 in
 {
   options.${namespace}.basic = with types; {
@@ -137,5 +141,20 @@ in
 
     # enable numlock on default
     xsession.numlock.enable = true;
+
+    # Define Gmail as a desktop application
+    xdg.desktopEntries.gmail = {
+      name = "Gmail";
+      comment = "Google mail application";
+      exec = ''xdg-open "https://mail.google.com/mail"'';
+      terminal = false;
+      type = "Application";
+      icon = gmail-icon;
+      mimeType = [ "x-scheme-handler/mailto" ];
+    };
+    # Make Gmail the default mailto handler
+    xdg.mimeApps.defaultApplications = {
+      "x-scheme-handler/mailto" = [ "gmail.desktop" ];
+    };
   };
 }
