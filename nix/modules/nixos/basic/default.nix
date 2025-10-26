@@ -51,6 +51,9 @@ in
 
     # enable dynamicly linked executables
     programs.nix-ld.enable = true;
+
+    # enable numlock on start up
+    services.xserver.displayManager.setupCommands = ''${getExe pkgs.numlockx} on'';
   };
 }
  
