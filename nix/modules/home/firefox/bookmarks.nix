@@ -149,6 +149,12 @@
           url = "http://localhost:9090/query";
         }
         {
+          name = "ttyd terminal";
+          tags = [ "terminal" ];
+          keyword = "terminal";
+          url = "http://127.0.0.1:7681";
+        }
+        {
           name = "stremio";
           tags = [ "stremio" ];
           keyword = "stremio";

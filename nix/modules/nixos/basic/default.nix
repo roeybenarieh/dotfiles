@@ -27,6 +27,13 @@ in
       options = "--delete-older-than 1m"; # older than 1 month
     };
 
+    services.ttyd = {
+      enable = true;
+      writeable = true;
+      enableSSL = true;
+      port = 7681;
+    };
+
 
     # Optimize storage
     # You can also manually optimize the store via:
