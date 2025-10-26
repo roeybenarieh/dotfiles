@@ -176,5 +176,14 @@
         }
       ];
     }
+    {
+      name = "IDF";
+      bookmarks = [
+        {
+          name = "torim";
+          url = "https://torim.prat.idf.il";
+        }
+      ];
+    }
   ];
 }]
