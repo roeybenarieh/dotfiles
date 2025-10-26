@@ -30,7 +30,6 @@ in
     services.ttyd = {
       enable = true;
       writeable = true;
-      enableSSL = true;
       port = 7681;
     };
 
