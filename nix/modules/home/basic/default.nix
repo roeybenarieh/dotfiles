@@ -60,6 +60,7 @@ in
     ];
     home.shellAliases = {
       c = "clear";
+      cdold = "cd $OLDPWD";
       htop = "${getExe pkgs.btop}";
       open = "${pkgs.xdg-utils}/bin/xdg-open";
     };
