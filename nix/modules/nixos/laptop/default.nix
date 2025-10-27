@@ -102,22 +102,5 @@ in
     # better suspend+hibernate
     services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
 
-    services.xserver.xautolock = {
-      enable = true;
-
-      # notifications
-      enableNotifier = true;
-      notify = 60;
-      notifier = "${pkgs.libnotify}/bin/notify-send 'Locking in 60 seconds'";
-
-      # time schedules(only when not charging)
-      killtime = 20; # 20min until shutdown
-      time = 10; # 10 min until lock
-      extraOptions = [
-        "-detectsleep" # reset schedules after computer sleeped
-        "-lockaftersleep" # lock when returning from sleep
-        "-secure" # prevent service shuting down
-      ];
-    };
   };
 }

@@ -46,7 +46,7 @@ keys = [
     Key([mod], "v", lazy.spawn("clipmenu")),
     Key([mod], "h", lazy.spawn(SETTINGS.network_manager)),
     Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
-    Key([mod], "l", lazy.spawn("dm-tool lock")),
+    Key([mod], "l", lazy.spawn(SETTINGS.lock_screen_command)),
     Key([mod], "f", lazy.window.toggle_floating()),
     Key([mod], "b", lazy.spawn(SETTINGS.browser)),
     Key([mod], "p", lazy.spawn(SETTINGS.simple_monitors_manager)),

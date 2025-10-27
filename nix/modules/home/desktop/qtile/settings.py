@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 class QtileSettings(BaseModel):
+    lock_screen_command: str
     browser: str
     wallpaper: FilePath
     terminal: str

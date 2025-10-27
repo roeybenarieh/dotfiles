@@ -139,9 +139,6 @@ in
       ];
     };
 
-    # enable numlock on default
-    xsession.numlock.enable = true;
-
     # Define Gmail as a desktop application
     xdg.desktopEntries.gmail = {
       name = "Gmail";

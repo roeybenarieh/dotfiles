@@ -17,6 +17,9 @@ let
     url = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/X.Org_Logo.svg/1024px-X.Org_Logo.svg.png";
     sha256 = "sha256-7OL0wemiIgMHkXSRxSuWZRzlH3nMKtlCidX/Ypp+fdc=";
   };
+  lock_screen_command = "${pkgs.systemd}/bin/loginctl lock-session self";
+  lock_screen_and_suspend = "${pkgs.systemd}/bin/systemctl -i suspend"; # gets locked by light-locker
+  terminal = config.home.sessionVariables.TERMINAL;
 in
 {
   options.${namespace}.desktop = with types; {
@@ -49,7 +52,7 @@ in
       alttab # window switcher
       blueberry # bluetooth manager
       xkb-switch # for switching keyboard layouts
-      networkmanager_dmenu
+      networkmanager_dmenu # handling network connections(nmtui alternative)
     ];
 
     # manually set blueberry desktop entry in order to have icon
@@ -99,7 +102,7 @@ in
     programs.rofi = {
       enable = true;
       cycle = true;
-      terminal = config.home.sessionVariables.TERM;
+      inherit terminal;
       # plugins = with pkgs; [
       #   rofi-bluetooth
       # ];
@@ -120,6 +123,39 @@ in
     # clipboard manager
     services.clipmenu.enable = true;
 
+    # xserver related
+    xsession = {
+      enable = true;
+      numlock.enable = true;
+      # making lightdm compatible lock screen, every user need to run it itself
+      initExtra = ''
+        ${pkgs.lightlocker}/bin/light-locker --idle-hint --lock-on-lid --lock-on-suspend --lock-after-screensaver=5 &
+      '';
+    };
+
+    # handling idle computer(xautolock alternative)
+    services.xidlehook = {
+      enable = true;
+      detect-sleep = true;
+      not-when-audio = true;
+      not-when-fullscreen = true;
+      # NOTE: The delays add onto the previous value (and the value is in seconds)
+      timers = [
+        {
+          delay = 60 * 10;
+          command = lock_screen_command;
+        }
+        {
+          delay = 60;
+          command = "${pkgs.systemd}/bin/systemctl -i suspend";
+        }
+        {
+          delay = 60 * 10;
+          command = "${pkgs.systemd}/bin/systemctl -i hibernate";
+        }
+      ];
+    };
+
     xdg.configFile = {
       "networkmanager-dmenu".source = ./networkmanager-dmenu;
       "qtile" = {
@@ -128,9 +164,10 @@ in
       };
       "qtile-injection/config.json" = {
         text = builtins.toJSON rec {
+          lock_screen_command = lock_screen_and_suspend;
           browser = config.home.sessionVariables.BROWSER;
           wallpaper = "${inputs.assets}/wallpaper.png";
-          terminal = config.home.sessionVariables.TERMINAL;
+          inherit terminal;
           font = config.stylix.fonts.monospace.name;
           screenshot_dir = "${config.home.homeDirectory}/Pictures/Screenshots";
           network_manager = "${terminal} -e nmtui";
