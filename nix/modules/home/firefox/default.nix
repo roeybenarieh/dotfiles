@@ -62,6 +62,9 @@ in
           # or 
           # https://mozilla.github.io/policy-templates/#searchengines--add
 
+          # disable transltation for hebrew and english
+          "browser.translations.neverTranslateLanguages" = "en,he";
+
           # restore the previous session on startup
           "browser.startup.page" = 3; # 3 means "Show my windows and tabs from last time"
           "browser.warnOnQuit" = false; # Disable warning on quit
