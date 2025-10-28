@@ -45,6 +45,7 @@ in
       policies = {
         DisableTelemetry = true;
         DisableFirefoxStudies = true;
+        DisplayBookmarksToolbar = "newtab"; # display bookmarks only on new tab
         EnableTrackingProtection = {
           Value = true;
           Locked = true;
