@@ -39,6 +39,7 @@ in
         fd
         silicon
         lua51Packages.luarocks
+        lsof # opencode plugin
 
         # languages
         gcc
