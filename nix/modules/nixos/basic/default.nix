@@ -33,6 +33,13 @@ in
       port = 7681;
     };
 
+    # change screen's colour temperature at night
+    services.redshift = {
+      enable = true;
+      extraOptions = [ "-m vidmode" ];
+    };
+    services.geoclue2 = enabled;
+    location.provider = "geoclue2";
 
     # Optimize storage
     # You can also manually optimize the store via:
