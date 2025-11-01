@@ -18,6 +18,9 @@ in
         "--disable traefik" # disable default ingress
         "--write-kubeconfig-mode 660" # change kubeconfig permissions
         "--write-kubeconfig-group k3s" # change kubeconfig group
+
+        # experimental flags
+        "--docker"
       ];
     };
   };
