@@ -75,9 +75,10 @@ in
         };
       };
     };
-    home.shellAliases = {
-      n = nvim-wrapper-executable;
+    home.shellAliases = rec {
       nvim = nvim-wrapper-executable;
+      n = nvim;
+      cn = "clear;${nvim}";
     };
   };
 }
