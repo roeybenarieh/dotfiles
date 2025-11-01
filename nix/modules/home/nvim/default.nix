@@ -40,6 +40,7 @@ in
         silicon
         lua51Packages.luarocks
         lsof # opencode plugin
+        statix # nix linter
 
         # languages
         gcc
