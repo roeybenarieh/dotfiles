@@ -16,7 +16,8 @@ in
     programs.gamemode.enable = true;
 
     environment.systemPackages = with pkgs; [
-      protonup
+      # protonup
+      protonup-ng
       protonup-qt # protonup UI
     ];
     environment.sessionVariables = {

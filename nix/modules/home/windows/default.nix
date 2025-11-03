@@ -11,7 +11,7 @@ in
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      bottles
+      # bottles
       wine-staging
       winetricks
       powershell # windows powershell

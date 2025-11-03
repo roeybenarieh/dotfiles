@@ -4,7 +4,7 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.desktop;
-  reload_qtile_command = "${getExe pkgs.qtile-unwrapped} cmd-obj -o cmd -f reload_config";
+  reload_qtile_command = "${getExe pkgs.python3.pkgs.qtile} cmd-obj -o cmd -f reload_config";
   blueooth-icon = pkgs.fetchurl {
     url = "https://upload.wikimedia.org/wikipedia/commons/e/ed/Antu_bluetooth.svg";
     sha256 = "sha256-JfGCuTF2o9X0iiUTemolD7eGFrrKPN8ArAJ6szFiY3o=";
