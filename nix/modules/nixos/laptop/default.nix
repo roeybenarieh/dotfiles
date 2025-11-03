@@ -36,21 +36,9 @@ in
       systemPackages = with pkgs; [
         libinput-gestures
         wmctrl # needed by libinput-gestures to switch workspaces
+        xdotool
       ];
     };
-
-    systemd.services.libinput-gestures = {
-      description = "Libinput Gestures Service";
-      after = [ "graphical.target" ];
-      wantedBy = [ "graphical.target" ];
-
-      serviceConfig = {
-        ExecStart = "${getExe pkgs.libinput-gestures} -c /etc/libinput-gestures.conf";
-        Restart = "always";
-        User = "root";
-      };
-    };
-
 
     # enable bluetooth
     hardware.bluetooth = {
