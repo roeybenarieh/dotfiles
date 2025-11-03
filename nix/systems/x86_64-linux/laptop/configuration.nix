@@ -12,7 +12,7 @@ with lib.${namespace};
     docker = enabled;
     containerization.k3s = enabled;
     gpu.nvidiaMX350 = {
-      enable = true;
+      enable = false;
       prime_config = {
         sync = enabled;
         nvidiaBusId = "PCI:1:0:0";
