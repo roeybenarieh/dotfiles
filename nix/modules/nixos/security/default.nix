@@ -15,5 +15,10 @@ in
       enable = true;
       bantime-increment = enabled;
     };
+    security.apparmor = {
+      enable = true;
+      enableCache = true;
+      killUnconfinedConfinables = true;
+    };
   };
 }
