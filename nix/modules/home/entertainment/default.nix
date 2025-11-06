@@ -17,6 +17,7 @@ in
       # stremio # streaming app
       # TODO: find a better place for krita
       krita # GUI paint app
+      spotube
     ];
 
     # Spicetify (Spotify)

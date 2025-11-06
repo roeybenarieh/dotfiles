@@ -41,6 +41,12 @@ mouse = [
 ]
 
 keys = [
+    # panel movements
+    Key([control, mod], "j", lazy.layout.down(), desc="Move focus down"),
+    Key([control, mod], "k", lazy.layout.up(), desc="Move focus up"),
+    Key([control, mod], "h", lazy.layout.left(), desc="Move focus left"),
+    Key([control, mod], "l", lazy.layout.right(), desc="Move focus right"),
+    #
     Key([mod], "e", lazy.spawn("xdg-open .")),
     Key([mod], "d", minimize_all(), desc="Toogle minimize all windows"),
     Key([mod], "v", lazy.spawn("clipmenu")),

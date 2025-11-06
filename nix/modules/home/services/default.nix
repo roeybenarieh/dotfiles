@@ -26,6 +26,15 @@ in
           Restart = "on-failure";
           RestartSec = "1h"; # restart service after 1 hour
           StartLimitBurst = 3; # Allow 3
+
+          # harden the service for better security
+          CapabilityBoundingSet = "";
+          AmbientCapabilities = "";
+          PrivateTmp = true;
+          ProtectSystem = "strict";
+          RestrictRealtime = true;
+          RestrictSUIDSGID = true;
+          LockPersonality = true;
         };
         Unit = {
           Description = "Automatically fill out doh1";

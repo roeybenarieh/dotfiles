@@ -115,10 +115,22 @@ in
             privacy-badger
           ];
           # FIX: every time I used video Downloadhelper, it changes the settings, and home manager gets error on rebuild
-          # settings = {
-          #   # Video DownloadHelper
-          #   "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}".settings = import ./extension_settings/video-downloadhelper.nix firefox-attrs;
-          # };
+          settings = {
+            #   # Video DownloadHelper
+            #   "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}".settings = import ./extension_settings/video-downloadhelper.nix firefox-attrs;
+
+            # vimium
+            "{c5093684-eceb-490e-a6cf-ad9d858eaeac}".settings = {
+              "keyMappings" = "";
+              "settingsVersion" = "2.3";
+              "exclusionRules" = [
+                {
+                  "passKeys" = "";
+                  "pattern" = "https?://127.0.0.1:7681/*";
+                }
+              ];
+            };
+          };
         };
         search = {
           default = "google";
