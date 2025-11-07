@@ -11,6 +11,9 @@ alt = "mod1"
 enter_key = "Return"
 space = "space"
 control = "control"
+escape = "escape"
+tab = "Tab"
+print_screen = "Print"
 
 # dependencies
 SETTINGS.screenshot_dir.mkdir(parents=True, exist_ok=True)  # make sure dir exist
@@ -51,14 +54,14 @@ keys = [
     Key([mod], "d", minimize_all(), desc="Toogle minimize all windows"),
     Key([mod], "v", lazy.spawn("clipmenu")),
     Key([mod], "h", lazy.spawn(SETTINGS.network_manager)),
-    Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
+    Key([mod, shift], "v", lazy.spawn("pavucontrol")),
     Key([mod], "l", lazy.spawn(SETTINGS.lock_screen_command)),
     Key([mod], "f", lazy.window.toggle_floating()),
     Key([mod], "b", lazy.spawn(SETTINGS.browser)),
     Key([mod], "p", lazy.spawn(SETTINGS.simple_monitors_manager)),
     Key(
         [],
-        "Print",
+        print_screen,
         lazy.spawn(f"flameshot screen --clipboard --path {SETTINGS.screenshot_dir}"),
     ),  # screenshot
     Key(
@@ -66,17 +69,15 @@ keys = [
         "s",
         lazy.spawn(f"flameshot gui --clipboard --path {SETTINGS.screenshot_dir}"),
     ),  # partial screenshot
-    # Key([mod], space, lazy.layout.next()),
-    # Key([alt], "Tab", lazy.layout.next()),
-    Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
+    Key([mod, shift], "h", lazy.layout.shuffle_left()),
     Key([mod], "n", lazy.layout.normalize()),
     Key([mod], enter_key, lazy.spawn(SETTINGS.terminal)),
-    Key([mod], "Tab", lazy.next_layout()),
+    Key([mod], tab, lazy.next_layout()),
     Key([mod], "m", lazy.window.toggle_maximize(), desc="Toggle maximize"),
     Key([], "F11", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen"),
     Key([mod], "w", lazy.window.kill()),
     Key([alt], "F4", lazy.window.kill()),
-    Key([control], "escape", lazy.spawn(SETTINGS.task_manager)),
+    Key([control], escape, lazy.spawn(SETTINGS.task_manager)),
     Key([mod, control], "r", lazy.reload_config()),
     Key([mod, control], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),
