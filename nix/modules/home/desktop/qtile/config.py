@@ -27,7 +27,7 @@ Screen = partial(
     wallpaper_mode="fill",
 )
 
-screens = [Screen(top=Bar(i)) for i in range(2)]
+screens = [Screen(top=Bar(i)) for i in range(4)]
 
 layouts = [
     Columns(
