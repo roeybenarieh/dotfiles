@@ -22,6 +22,16 @@ with lib.${namespace};
     metrics.prometheus = enabled;
     ssh = enabled;
     laptop = enabled;
+    graphics.displays = {
+      enable = true;
+      builtInDisplay = {
+        fingerprint = "00ffffffffffff000daef515000000000c1d0104a52213780228659759548e271e505400000001010101010101010101010101010101363680a0703820403020a60058c110000018000000fe004e3135364847412d4541330a20000000fe00434d4e0a202020202020202020000000fe004e3135364847412d4541330a200006";
+        config = {
+          mode = "1920x1080";
+          rotate = "normal";
+        };
+      };
+    };
 
     rdp = disabled;
     gaming = enabled;
