@@ -113,6 +113,7 @@ in
             ublock-origin
             video-downloadhelper
             privacy-badger
+            chrome-mask
           ];
           # FIX: every time I used video Downloadhelper, it changes the settings, and home manager gets error on rebuild
           settings = {
