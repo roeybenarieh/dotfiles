@@ -40,7 +40,7 @@ in
             };
           in
           {
-            # size = 15;
+            size = mkForce 25;
             # normal = jetbrainsMono "Regular";
             bold = jetbrainsMono "Bold";
             italic = jetbrainsMono "Italic";
@@ -49,7 +49,10 @@ in
 
         cursor = { style = "Block"; };
 
-        env = { TERM = "xterm-256color"; };
+        env = {
+          TERM = "xterm-256color";
+          WINIT_X11_SCALE_FACTOR = "1.0"; # better text size in multiplee monitorrs
+        };
 
         general.live_config_reload = true;
       };
