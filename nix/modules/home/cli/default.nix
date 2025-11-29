@@ -2,7 +2,7 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.tmux;
+  cfg = config.${namespace}.cli;
   programs-sqlite-db = inputs.flake-programs-sqlite.packages.${system}.programs-sqlite;
 in
 {

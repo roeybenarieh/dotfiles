@@ -10,13 +10,41 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      lsof
+      sesh
+    ];
     programs.tmux = {
       enable = true;
+      secureSocket = false;
       newSession = true;
-      plugins = with pkgs.tmuxPlugins; [
-        tmux-which-key
-        # requires vim-tmux-navigator in Neovim
+      plugins = with pkgs; [
+        {
+          plugin = tmuxPlugins.resurrect;
+          extraConfig = ''
+            set -g @resurrect-strategy-vim 'session'
+            set -g @resurrect-strategy-nvim 'session'
+            set -g @resurrect-capture-pane-contents 'on'
+
+            resurrect_dir="$HOME/.tmux/resurrect"
+            set -g @resurrect-dir $resurrect_dir
+            set -g @resurrect-hook-post-save-all 'target=$(readlink -f $resurrect_dir/last); sed "s| --cmd .*-vim-pack-dir||g; s|/etc/profiles/per-user/$USER/bin/||g; s|/home/$USER/.nix-profile/bin/||g" $target | sponge $target'
+
+            set -g @resurrect-capture-pane-contents 'on'
+          '';
+        }
+        {
+          plugin = tmuxPlugins.continuum;
+          extraConfig = ''
+            set -g @continuum-restore 'on'
+            set -g @continuum-boot 'on'
+            set -g @continuum-save-interval '5'
+          '';
+        }
+        # tmuxPlugins.tmux-which-key
+        # this cause an exception in the plugin: tmux source-file ~/.config/tmux/tmux.conf
       ];
+      # requires vim-tmux-navigator in Neovim
       extraConfig = ''
         set -g mouse on
 
@@ -70,5 +98,15 @@ in
         fi
       fi
     '';
+    # zsh related
+    # programs.zsh.oh-my-zsh.plugins = [ "tmux" ];
+    # home.sessionVariables = {
+    #   ZSH_TMUX_UNICODE = "true"; # enforce utf-8 for showing shell icons
+    #   ZSH_TMUX_AUTOSTART_ONCE = "true"; # start tmux when session start
+    #   ZSH_TMUX_FIXTERM = "true"; # set 256-color terminal if supported
+    #   ZSH_TMUX_AUTOCONNECT = "true"; # start tmux session every terminal loggin
+    #   ZSH_TMUX_AUTONAME_SESSION = "true";
+    #   # ZSH_TMUX_CONFIG=$HOME/.config/tmux/tmux.conf;
+    # };
   };
 }
