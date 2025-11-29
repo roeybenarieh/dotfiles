@@ -51,23 +51,6 @@ in
       settings.Policy.AutoEnable = true;
     };
 
-    # Networking related
-    networking = {
-      # set all known connections(by name) to be autoconnected 
-      localCommands = ''
-        for name in $(${pkgs.networkmanager}/bin/nmcli -t -f NAME connection show); do
-          ${pkgs.networkmanager}/bin/nmcli connection modify \"$name\" connection.autoconnect yes || true
-        done
-      '';
-      wireless.iwd = {
-        enable = true; # better than wpa_supplicant that is used by default
-        settings = {
-          Settings.AutoConnect = true;
-        };
-      };
-    };
-
-
     # taken from : https://nixos.wiki/wiki/Laptop
     # power management
     powerManagement = {
