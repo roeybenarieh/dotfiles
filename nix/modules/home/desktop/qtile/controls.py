@@ -1,3 +1,4 @@
+from libqtile.backend.base.window import Window
 from libqtile.config import Click, Drag, Key
 from libqtile.core.manager import Qtile
 from libqtile.lazy import lazy
@@ -28,6 +29,30 @@ def minimize_all(qtile: Qtile):
     for win in qtile.current_group.windows:
         if hasattr(win, "toggle_minimize"):
             win.toggle_minimize()
+
+
+@lazy.function
+def spawn_or_focus(self: Qtile, app: str) -> None:
+    """Check if the app being launched is already running, if so focus it"""
+    window = None
+    for win in self.windows_map.values():
+        if isinstance(win, Window):
+            wm_class: list | None = win.get_wm_class()
+            if wm_class is None or win.group is None:
+                return
+            if any(item.lower() == app.lower() for item in wm_class):
+                # with open("/home/roey/logs.txt", "a") as f:
+                #     f.write(app.lower())
+                #     things = [item.lower() for item in wm_class]
+                #     for thing in things:
+                #         f.write(str(thing) + "\n")
+                window = win
+                group = win.group
+                group.toscreen(toggle=False)
+                break
+
+    if window is None:
+        self.spawn(app)
 
 
 mouse = [
