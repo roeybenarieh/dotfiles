@@ -8,6 +8,9 @@ with lib.${namespace};
   ];
 
   ${namespace} = {
+    networking.hostName = "laptop";
+    networking.hostName = "laptop";
+    networking.hostName = "laptop";
     apps = enabled;
     docker = enabled;
     containerization.k3s = enabled;
