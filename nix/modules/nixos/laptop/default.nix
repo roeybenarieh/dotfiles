@@ -91,9 +91,33 @@ in
       };
     };
     services.power-profiles-daemon = disabled;
-
-    # better suspend+hibernate
-    services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";
+    # # battery management
+    # # FIX: this doesn't work for my lenovo laptop
+    # services.tlp = {
+    #   enable = false;
+    #   settings = {
+    #     # helps save long term battery health
+    #     START_CHARGE_THRESH_BAT0 = 40; # 40 and below it starts to charge
+    #     STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
+    #   };
+    # };
+    #
+    # # better suspend+hibernate
+    # # more info: https://www.mankier.com/5/logind.conf#Options-HandleLidSwitch
+    # services.logind.settings.Login = {
+    #   HandleLidSwitch = "hibernate";
+    #   HandleLidSwitchDocked = "hibernate";
+    #   HandleLidSwitchExternalPower = "hibernate";
+    #   KillUserProcesses = true;
+    #
+    #   SuspendKeyIgnoreInhibited = "yes";
+    #   HibernateKeyIgnoreInhibited = "yes";
+    #   RebootKeyIgnoreInhibited = "yes";
+    #   LidSwitchIgnoreInhibited = "yes";
+    # };
+    # systemd.sleep.extraConfig = ''
+    #   HibernateDelaySec=5m # hibernate 5 minutes after suspend(or the battery is less than 5%)
+    # '';
 
   };
 }
