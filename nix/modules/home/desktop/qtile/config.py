@@ -106,7 +106,7 @@ auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
 
-terminal = guess_terminal(preference=["alacritty", "xterm"])
+terminal = guess_terminal(preference=[SETTINGS.terminal, "xterm"])
 
 auto_minimize = False
 wmname = "Qtile"
