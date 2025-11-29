@@ -151,7 +151,7 @@ class Bar(bar.Bar):
         Memory,
         CPUGraph,
         Separator,
-        widget.PulseVolume,
+        Volume,
         KeyboardLayout,
         Clock,
         Separator,
