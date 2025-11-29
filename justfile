@@ -11,8 +11,8 @@ undeploy:
 
 # base files needed to be staged by git before building something in nix
 _base_nix_git_stage:
-  git add flake.nix flake.lock \
-  && git add ./nix/lib/**
+  git add flake.nix flake.lock && git add ./nix/lib/** \
+  && git add ./nix/modules/home/** ./nix/homes/**
 
 [group('nix')]
 format:
@@ -21,7 +21,6 @@ format:
 [group('nix')]
 rebuild-user:
   @just _base_nix_git_stage \
-  && git add ./nix/modules/home/** ./nix/homes/** \
   && home-manager switch --flake .
 
 [group('nix')]
