@@ -90,6 +90,7 @@ in
         };
       };
     };
+    services.power-profiles-daemon = disabled;
 
     # better suspend+hibernate
     services.logind.settings.Login.HandleLidSwitch = "suspend-then-hibernate";

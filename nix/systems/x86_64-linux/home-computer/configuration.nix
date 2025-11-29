@@ -33,22 +33,6 @@ with lib.${namespace};
   # nix related
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # enable zsh for users
-  programs.zsh.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.roey = {
-    isNormalUser = true;
-    description = "roey";
-    extraGroups = [
-      "networkmanager"
-      "wheel" # Enable ‘sudo’ for the user.
-      "docker"
-      "k3s"
-      "libvirtd" # for using libvirtd VM technology
-    ];
-    shell = pkgs.zsh;
-  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

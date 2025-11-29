@@ -20,6 +20,22 @@ in
       boot.enable = true;
     };
 
+    # Define a user account. Don't forget to set a password with ‘passwd’.
+    programs.zsh = enabled;
+    users.users.roey = {
+      isNormalUser = true;
+      description = "roey";
+      extraGroups = [
+        "networkmanager"
+        "wheel" # Enable ‘sudo’ for the user.
+        "docker"
+        "k3s"
+        "libvirtd" # for using libvirtd VM technology
+        "input" # permission to access input devices
+      ];
+      shell = pkgs.zsh;
+    };
+
     # Perform garbage collection weekly to maintain low disk usage
     nix.gc = {
       automatic = true;

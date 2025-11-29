@@ -40,28 +40,15 @@ with lib.${namespace};
 
   # systemd.services."preload-firefox" = {
   #   description = "Preload Firefox into RAM";
-  networking = {
-    hostName = "laptop";
-    networkmanager.enable = true;
-  };
+  #   wantedBy = [ "multi-user.target" ]; # preload at boot
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     ExecStart = ''
+  #       ${pkgs.vmtouch}/bin/vmtouch -t -l ${pkgs.firefox}
+  #     '';
+  #   };
+  # };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.roey = {
-    isNormalUser = true;
-    description = "roey";
-    extraGroups = [
-      "networkmanager"
-      "wheel" # Enable ‘sudo’ for the user.
-      "docker"
-      "k3s"
-      "libvirtd" # for using libvirtd VM technology
-      "input" # permission to access input devices
-    ];
-    shell = pkgs.zsh;
-  };
-
-  # enable zsh for users
-  programs.zsh.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

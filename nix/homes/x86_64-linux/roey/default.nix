@@ -1,8 +1,8 @@
-{ pkgs, namespace, lib, ... }:
+{ lib, ... }:
 
-with lib.${namespace};
+with lib.extra;
 {
-  ${namespace} = {
+  extra = {
     cli = enabled;
     desktop = enabled;
     entertainment = enabled;
@@ -24,9 +24,6 @@ with lib.${namespace};
     office = enabled;
     services = enabled;
   };
-
-  # general
-  nixpkgs.config.users.defaultUserShell = pkgs.zsh;
 
   home = {
     username = "roey";

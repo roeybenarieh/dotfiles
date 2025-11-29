@@ -10,8 +10,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    nixpkgs.config.users.defaultUserShell = pkgs.zsh;
-
     programs.zsh = {
       enable = true;
       # Enable completion for aliases
