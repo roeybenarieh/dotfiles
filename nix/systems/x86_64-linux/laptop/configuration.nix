@@ -35,7 +35,7 @@ with lib.${namespace};
     };
 
     rdp = disabled;
-    gaming = enabled;
+    gaming = disabled;
     gpu.nvidia1080ti = disabled;
   };
 
