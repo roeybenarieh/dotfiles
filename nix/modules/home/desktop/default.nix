@@ -53,6 +53,7 @@ in
       blueberry # bluetooth manager
       xkb-switch # for switching keyboard layouts
       networkmanager_dmenu # handling network connections(nmtui alternative)
+      linux-wifi-hotspot # create wifi hotsport
     ];
 
     # manually set blueberry desktop entry in order to have icon
