@@ -15,7 +15,7 @@ in
       timeout = 2;
       systemd-boot = {
         enable = true;
-        configurationLimit = 100; # limit the amount of boot options
+        configurationLimit = 50; # limit the amount of boot options
         # disable editing kernel command-line before boot, 
         # prevents access to root in case of physical access to the machine.
         editor = false;
