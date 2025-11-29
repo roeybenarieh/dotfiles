@@ -30,6 +30,8 @@ in
       };
     };
 
+    programs.chromium = enabled; # just in case
+
     # the firefox configuration itself
     programs.firefox = {
       enable = true;
