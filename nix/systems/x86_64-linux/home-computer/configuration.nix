@@ -7,6 +7,7 @@ with lib.${namespace};
   ];
 
   ${namespace} = {
+    networking.hostName = "home-computer";
     apps = enabled;
     docker = enabled;
     gaming = enabled;
@@ -18,18 +19,6 @@ with lib.${namespace};
     virtualization = enabled;
   };
 
-  networking = {
-    hostName = "home-computer"; # Define your hostname.
-    networkmanager.enable = true; # Enable networking
-    # TODO: make sure this is working
-    # interfaces = {
-    #   enp3s0 = {
-    #     wakeOnLan = {
-    #       enable = true;
-    #     };
-    #   };
-    # };
-  };
   # nix related
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
