@@ -11,7 +11,7 @@ with lib.${namespace};
     networking.hostName = "laptop";
     apps = enabled;
     docker = enabled;
-    containerization.k3s = enabled;
+    containerization.k3s = disabled;
     gpu.nvidiaMX350 = {
       enable = false;
       prime_config = {
