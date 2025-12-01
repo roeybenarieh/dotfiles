@@ -47,9 +47,16 @@ in
     # enable bluetooth
     hardware.bluetooth = {
       enable = true;
-      powerOnBoot = true;
-      settings.Policy.AutoEnable = true;
+      settings.Policy = {
+        AutoEnable = true;
+        ReconnectAttempts = 3;
+      };
     };
+    systemd.services.bluetooth.serviceConfig.ExecStartPost = [
+      # power on bluetooth on boot(NixOS option doesnt work for Gnome desktop)
+      "${pkgs.util-linux}/bin/rfkill unblock bluetooth"
+      "${pkgs.bluez}/bin/bluetoothctl power on"
+    ];
 
     # taken from : https://nixos.wiki/wiki/Laptop
     # power management
