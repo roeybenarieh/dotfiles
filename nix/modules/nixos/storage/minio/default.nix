@@ -26,7 +26,7 @@ in
   options.${namespace}.storage.minio = with types; {
     enable = mkBoolOpt false "Whether or not to enable minio S3 storage.";
     port = mkIntOpt 11906 "minio api port";
-    bucketNames = mkListOpt [ ] "minio buckets";
+    bucketNames = mkListOpt [ ] "minio buckets to create";
     accessKey = mkstrOpt "minio_accesskey" "minio username";
     secretKey = mkstrOpt "minio_secretkey" "minio password";
   };

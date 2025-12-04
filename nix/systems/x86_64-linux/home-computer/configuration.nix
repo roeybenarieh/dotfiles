@@ -1,6 +1,9 @@
 { pkgs, namespace, lib, ... }:
 
 with lib.${namespace};
+let
+  otel_traces_grpc_port = 11907;
+in
 {
   imports = [
     ./hardware-extra.nix
@@ -11,8 +14,28 @@ with lib.${namespace};
     apps = enabled;
     docker = enabled;
     gaming = enabled;
-    gpu.nvidia1080ti = enabled;
-    metrics.prometheus = enabled;
+    gpu.nvidia1080ti = disabled;
+    observability = {
+      grafana = enabled;
+      metrics = {
+        scraping = {
+          node = enabled;
+          systemd = enabled;
+        };
+        prometheus = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+        thanos = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+      };
+      traces.tempo = {
+        enable = false;
+        inherit otel_traces_grpc_port;
+      };
+    };
     rdp = enabled;
     ssh = enabled;
     razer = enabled;

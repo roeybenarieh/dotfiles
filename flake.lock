@@ -276,6 +276,22 @@
         "type": "github"
       }
     },
+    "grafana-dashboards": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1729071220,
+        "narHash": "sha256-Q9f/tXHyqfJvw7Ehwha7RKARypB4VMIKcnYImQ8XAXQ=",
+        "owner": "gitlab-org",
+        "repo": "grafana-dashboards",
+        "rev": "4a14ce3ae7734ef91c4a4cb919f294790f9f4a65",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "gitlab-org",
+        "repo": "grafana-dashboards",
+        "type": "gitlab"
+      }
+    },
     "grub2-themes": {
       "inputs": {
         "nixpkgs": [
@@ -494,6 +510,7 @@
       "inputs": {
         "doh1-autofill": "doh1-autofill",
         "flake-programs-sqlite": "flake-programs-sqlite",
+        "grafana-dashboards": "grafana-dashboards",
         "grub2-themes": "grub2-themes",
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",

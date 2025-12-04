@@ -28,6 +28,11 @@
       url = "github:vinceliuice/grub2-themes";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # grafana dashboards
+    grafana-dashboards = {
+      url = "gitlab:gitlab-org/grafana-dashboards";
+      flake = false;
+    };
   };
 
   outputs = inputs:
