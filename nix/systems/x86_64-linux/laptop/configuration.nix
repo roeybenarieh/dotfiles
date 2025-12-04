@@ -1,6 +1,9 @@
 { pkgs, namespace, lib, ... }:
 
 with lib.${namespace};
+let
+  otel_traces_grpc_port = 11907;
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -20,7 +23,27 @@ with lib.${namespace};
         intelBusId = "PCI:0:2:0";
       };
     };
-    metrics.prometheus = enabled;
+    observability = {
+      grafana = enabled;
+      metrics = {
+        scraping = {
+          node = enabled;
+          systemd = enabled;
+        };
+        prometheus = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+        thanos = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+      };
+      traces.tempo = {
+        enable = false;
+        inherit otel_traces_grpc_port;
+      };
+    };
     ssh = enabled;
     laptop = enabled;
     graphics.displays = {
