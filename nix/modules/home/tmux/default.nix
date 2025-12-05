@@ -79,6 +79,14 @@ in
 
         # more intuitive text copying with mouse
         unbind -T copy-mode-vi MouseDragEnd1Pane
+
+        # General
+        # wayland compatibility shit
+        # FIX: this does not work, only "tmux kill-server" makes the WAYLAND_DISPLAY envariable work inside tmux
+        set -g update-environment "DISPLAY WAYLAND_DISPLAY XAUTHORITY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS"
+        set -ga update-environment "DISPLAY WAYLAND_DISPLAY XAUTHORITY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS"
+        set-option -g update-environment "DISPLAY WAYLAND_DISPLAY XAUTHORITY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS"
+        set-option -ga update-environment "DISPLAY WAYLAND_DISPLAY XAUTHORITY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS"
       '';
     };
     # xdg.configFile."tmux" = {

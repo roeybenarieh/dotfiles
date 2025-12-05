@@ -29,6 +29,8 @@ in
         ];
       };
     };
+    # Enable the corresponding configuration at the user level.
+    snowfallorg.users.roey.home.config.${namespace}.desktop = mkForce enabled;
   };
 }
  

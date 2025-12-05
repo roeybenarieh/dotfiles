@@ -18,6 +18,7 @@ in
       desktop.enable = true;
       security.enable = true;
       boot.enable = true;
+      networking.enable = true;
     };
 
     # Define a user account. Don't forget to set a password with ‘passwd’.

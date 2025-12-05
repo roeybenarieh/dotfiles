@@ -72,6 +72,7 @@ in
         "--storage.tsdb.min-block-duration=2h"
         "--storage.tsdb.max-block-duration=2h"
       ];
+      enableAgentMode = true;
       scrapeConfigs = [
         {
           job_name = "thanos";

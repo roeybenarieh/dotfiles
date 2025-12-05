@@ -1,5 +1,6 @@
 { pkgs, namespace, lib, ... }:
 
+with lib;
 with lib.${namespace};
 let
   otel_traces_grpc_port = 11907;
@@ -13,6 +14,11 @@ in
   ${namespace} = {
     networking.hostName = "laptop";
     apps = enabled;
+    desktop = {
+      enable = mkForce false;
+      gnome = enabled;
+    };
+
     docker = enabled;
     containerization.k3s = disabled;
     gpu.nvidiaMX350 = {

@@ -69,5 +69,22 @@ in
         "x-scheme-handler/terminal" = "alacritty.desktop";
       };
     };
+    # FIX: not working in GNOME
+    xdg.terminal-exec = {
+      enable = false;
+      package = pkgs.alacritty;
+      settings = {
+        GNOME = [
+          # "com.raggesilver.BlackBox.desktop"
+          # "org.gnome.Terminal.desktop"
+          "alacritty.desktop"
+          "Alacritty.desktop"
+        ];
+        default = [
+          "alacritty.desktop"
+          "Alacritty.desktop"
+        ];
+      };
+    };
   };
 }
