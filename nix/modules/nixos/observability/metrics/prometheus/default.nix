@@ -18,7 +18,11 @@ in
       globalConfig = {
         scrape_interval = "30s";
         external_labels = {
-          "host" = config.networking.hostName;
+          host = config.networking.hostName;
+          # labels expected by most grafana dashboards
+          environment = "dev";
+          cluster = "none";
+          namespace = "none";
         };
       };
       extraFlags = [
