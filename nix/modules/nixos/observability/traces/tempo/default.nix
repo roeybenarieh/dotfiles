@@ -75,6 +75,7 @@ in
               }
             ];
           };
+          traces_storage.path = "/var/lib/tempo/generator/traces";
           registry.external_labels = {
             source = "tempo";
           };

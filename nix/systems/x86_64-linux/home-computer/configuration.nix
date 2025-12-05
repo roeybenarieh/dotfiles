@@ -32,7 +32,7 @@ in
         };
       };
       traces.tempo = {
-        enable = false;
+        enable = true;
         inherit otel_traces_grpc_port;
       };
     };
