@@ -63,7 +63,10 @@ in
           local.path = "/var/lib/tempo/blocks";
         };
         # metric generator
-        overrides.defaults.metrics_generator.processors = [ "service-graphs" "local-blocks" ];
+        overrides.defaults.metrics_generator = {
+          processors = [ "service-graphs" "span-metrics" ];
+          trace_id_label_name = "traceID";
+        };
         metrics_generator = {
           storage = {
             path = "/var/lib/tempo/generator/wal";
@@ -80,7 +83,6 @@ in
             source = "tempo";
           };
         };
-        # overrides.defaults.metrics_generator.processors = [ "service-grapths" "span-metrics" ];
         compactor.compaction.block_retention = "48h"; # total trace retention
         # send metrics to thanos 
         # metaMonitoring = {
