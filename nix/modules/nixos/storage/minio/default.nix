@@ -37,8 +37,10 @@ in
       enable = true;
       listenAddress = ":${toString cfg.port}";
       consoleAddress = ":9001"; # web UI port
-      accessKey = cfg.accessKey;
-      secretKey = cfg.secretKey;
+      rootCredentialsFile = pkgs.writeText "minio-credentials-partial" ''
+        MINIO_ROOT_USER=${cfg.accessKey}
+        MINIO_ROOT_PASSWORD=${cfg.secretKey}
+      '';
     };
 
     # configure prometheus monitoring
