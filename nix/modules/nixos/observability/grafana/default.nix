@@ -29,7 +29,7 @@ in
         enable = true;
         datasources.settings = {
           apiVersion = 1;
-          # NOTE: when changing datasource you might need to run 'sudo rm -rf /var/lib/grafana'
+          prune = true; # remove old datasources
           datasources = [
             (
               mkIf config.services.thanos.query-frontend.enable {
@@ -82,6 +82,5 @@ in
         };
       };
     };
-
   };
 } 
