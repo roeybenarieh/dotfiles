@@ -164,5 +164,32 @@ in
         tracing.config = tracing_config "query-frontend";
       };
     };
+
+    services.grafana.provision.datasources.settings.datasources = [
+      {
+        name = "Thanos";
+        type = "prometheus";
+        uid = "thanos";
+        access = "proxy";
+        orgId = 1;
+        url = http_local_endpoint_on_port http_port.query-frontend;
+        basicAuth = false;
+        isDefault = false;
+        version = 1;
+        editable = true;
+        jsonData = {
+          httpMethod = "GET";
+          timeInterval = config.services.prometheus.globalConfig.scrape_interval;
+          prometheusType = "Thanos";
+          prometheusVersion = pkgs.thanos.version;
+          exemplarTraceIdDestinations = [
+            {
+              datasourceUid = "tempo";
+              name = "traceID"; # the name of metric label that would lead to the trace id.
+            }
+          ];
+        };
+      }
+    ];
   };
 } 

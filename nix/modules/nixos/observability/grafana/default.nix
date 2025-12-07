@@ -31,33 +31,6 @@ in
           apiVersion = 1;
           prune = true; # remove old datasources
           datasources = [
-            (
-              mkIf config.services.thanos.query-frontend.enable {
-                name = "Thanos";
-                type = "prometheus";
-                uid = "thanos";
-                access = "proxy";
-                orgId = 1;
-                # FIX: change this to use variable
-                url = http_local_endpoint_on_port 10902;
-                basicAuth = false;
-                isDefault = false;
-                version = 1;
-                editable = true;
-                jsonData = {
-                  httpMethod = "GET";
-                  prometheusType = "Thanos";
-                  prometheusVersion = pkgs.thanos.version;
-                  exemplarTraceIdDestinations = [
-                    {
-                      datasourceUid = "tempo";
-                      name = "traceID"; # the name of metric label that would lead to the trace id.
-                    }
-                  ];
-                };
-              }
-            )
-            # FIX: alot
             {
               name = "Tempo";
               type = "tempo";
