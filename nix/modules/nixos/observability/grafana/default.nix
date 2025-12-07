@@ -30,28 +30,7 @@ in
         datasources.settings = {
           apiVersion = 1;
           prune = true; # remove old datasources
-          datasources = [
-            {
-              name = "Tempo";
-              type = "tempo";
-              access = "proxy";
-              uid = "tempo";
-              orgId = 1;
-              url = "http://localhost:3200";
-              basicAuth = false;
-              isDefault = true;
-              version = 1;
-              editable = true;
-              apiVersion = 1;
-              jsonData = {
-                httpMethod = "GET";
-                serviceMap = {
-                  # FIX: use thanos
-                  datasourceUid = "thanos";
-                };
-              };
-            }
-          ];
+          # datasources are configured by each product itself
         };
       };
     };

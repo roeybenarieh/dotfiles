@@ -37,6 +37,31 @@ in
         }
       ];
     };
+    # add tempo to Grafana datasources
+    services.grafana.provision.datasources.settings.datasources = [
+      {
+        # https://grafana.com/docs/grafana/latest/datasources/tempo/configure-tempo-data-source/
+        name = "Tempo";
+        type = "tempo";
+        access = "proxy";
+        uid = "tempo";
+        orgId = 1;
+        url = "http://localhost:3200";
+        basicAuth = false;
+        isDefault = true;
+        version = 1;
+        editable = true;
+        apiVersion = 1;
+        jsonData = {
+          # TODO:use variables insted of hard coded datasources ids.
+          tracesToLogsV2.datasourceUid = "loki";
+          tracesToMetrics.datasourceUid = "thanos";
+          serviceMap.datasourceUid = "thanos";
+          nodeGraph.enabled = true;
+          streamingEnabled.search = true;
+        };
+      }
+    ];
 
     # HACK: elevate tempo service permision to root
     systemd.services.tempo.serviceConfig.User = "root";
