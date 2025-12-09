@@ -27,6 +27,7 @@ in
     enable = mkBoolOpt false "Whether or not to enable minio S3 storage.";
     port = mkIntOpt 11906 "minio api port";
     bucketNames = mkListOpt [ ] "minio buckets to create";
+    region = mkstrOpt "us-east-1" "minio region";
     accessKey = mkstrOpt "minio_accesskey" "minio username";
     secretKey = mkstrOpt "minio_secretkey" "minio password";
   };
@@ -35,6 +36,7 @@ in
 
     services.minio = {
       enable = true;
+      inherit (cfg) region;
       listenAddress = ":${toString cfg.port}";
       consoleAddress = ":9001"; # web UI port
       rootCredentialsFile = pkgs.writeText "minio-credentials-partial" ''
