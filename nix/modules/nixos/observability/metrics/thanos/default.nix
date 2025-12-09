@@ -38,6 +38,10 @@ let
       insecure = true;
     };
   };
+  logging_config = {
+    format = "json";
+    level = "info";
+  };
   tracing_config = service_short_name:
     let
       service_name = "thanos-${service_short_name}";
@@ -99,6 +103,7 @@ in
         grpc-address = broadcast_listen_on_port grpc_port.sidecar;
         objstore.config = objectstore_config;
         tracing.config = tracing_config "sidecar";
+        log = logging_config;
       };
 
       receive = {
@@ -108,6 +113,7 @@ in
         remote-write.address = broadcast_listen_on_port grpc_port.receive-remote-write;
         objstore.config = objectstore_config;
         tracing.config = tracing_config "receive";
+        log = logging_config;
         labels = {
           "host" = config.networking.hostName;
           "receive" = "true";
@@ -130,6 +136,7 @@ in
         http-address = broadcast_listen_on_port http_port.compact;
         objstore.config = objectstore_config;
         tracing.config = tracing_config "compact";
+        log = logging_config;
         retention = {
           resolution-raw = "7d";
           resolution-5m = "14d";
@@ -143,6 +150,7 @@ in
         grpc-address = broadcast_listen_on_port grpc_port.store;
         objstore.config = objectstore_config;
         tracing.config = tracing_config "store";
+        log = logging_config;
       };
 
       query = {
@@ -150,6 +158,7 @@ in
         http-address = broadcast_listen_on_port http_port.query;
         grpc-address = broadcast_listen_on_port grpc_port.query;
         tracing.config = tracing_config "query";
+        log = logging_config;
         endpoints = [
           (schemaless_local_endpoint_on_port grpc_port.sidecar)
           (schemaless_local_endpoint_on_port grpc_port.store)
@@ -162,6 +171,7 @@ in
         http-address = broadcast_listen_on_port http_port.query-frontend;
         query-frontend.downstream-url = http_local_endpoint_on_port http_port.query;
         tracing.config = tracing_config "query-frontend";
+        log = logging_config;
       };
     };
 
