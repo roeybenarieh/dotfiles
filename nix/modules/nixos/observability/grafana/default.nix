@@ -1,10 +1,10 @@
-{ pkgs, namespace, lib, config, ... }:
+{ namespace, lib, config, ... }:
 
 with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.observability.grafana;
-  # onlyIf = cond: elems: if cond then elems else [ ];
+  http_port = 3000;
 in
 {
   options.${namespace}.observability.grafana = with types; {
@@ -12,6 +12,21 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    # scrape tempo metrics using prometheus
+    services.prometheus = {
+      scrapeConfigs = [
+        {
+          job_name = "grafana";
+          static_configs = [{
+            targets = [
+              (schemaless_local_endpoint_on_port http_port)
+            ];
+          }];
+        }
+      ];
+    };
+
     services.grafana = {
       enable = true;
       # for the whole list: http://localhost:3000/admin/settings
@@ -20,6 +35,7 @@ in
         # instance_name = "home-computer";
         # somthing = "else";
         # };
+        server.http_port = http_port;
         "analytics" = {
           instance_name = "home-computer";
           somthing = "else";
