@@ -49,6 +49,7 @@ in
         enable = true;
         inherit otel_traces_grpc_port;
       };
+      logs.loki = enabled;
     };
     ssh = enabled;
     laptop = enabled;
