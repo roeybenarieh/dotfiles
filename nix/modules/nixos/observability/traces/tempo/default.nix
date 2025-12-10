@@ -63,14 +63,11 @@ in
       }
     ];
 
-    # HACK: elevate tempo service permision to root
-    systemd.services.tempo.serviceConfig.User = "root";
     services.tempo = {
       enable = true;
       settings = {
         server.http_listen_port = http_listen_port;
-        # server.grpc_listen_address = cfg.otel_traces_grpc_port;
-        # otel collector configuration
+        # ddistributor configuration
         distributor.receivers.otlp.protocols.grpc.endpoint = broadcast_listen_on_port cfg.otel_traces_grpc_port;
         # s3 browser configuration
         storage.trace = {
@@ -84,8 +81,8 @@ in
             secret_key = minio_config.secretKey;
             insecure = true;
           };
-          wal.path = "/var/lib/tempo/wal";
-          local.path = "/var/lib/tempo/blocks";
+          wal.path = "/tmp/tempo/wal";
+          local.path = "/tmp/tempo/blocks";
         };
         # metric generator
         overrides.defaults.metrics_generator = {
@@ -94,7 +91,7 @@ in
         };
         metrics_generator = {
           storage = {
-            path = "/var/lib/tempo/generator/wal";
+            path = "/tmp/tempo/generator/wal";
             remote_write = [
               {
                 url = metrics_remote_write_endpoint;
@@ -103,20 +100,12 @@ in
               }
             ];
           };
-          traces_storage.path = "/var/lib/tempo/generator/traces";
+          traces_storage.path = "/tmp/tempo/generator/traces";
           registry.external_labels = {
             source = "tempo";
           };
         };
         compactor.compaction.block_retention = "48h"; # total trace retention
-        # send metrics to thanos 
-        # metaMonitoring = {
-        #   serviceMonitor.enabled = true;
-        #   grafanaAgent = {
-        #     enable = true;
-        #     metrics.remote.url = metrics_remote_write_endpoint;
-        #   };
-        # };
       };
     };
   };
