@@ -89,7 +89,7 @@ in
         };
         # metric generator
         overrides.defaults.metrics_generator = {
-          processors = [ "service-graphs" "span-metrics" ];
+          processors = [ "service-graphs" "span-metrics" "local-blocks" ];
           trace_id_label_name = "traceID";
         };
         metrics_generator = {
