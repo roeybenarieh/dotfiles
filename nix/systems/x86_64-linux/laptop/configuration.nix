@@ -50,6 +50,7 @@ in
         inherit otel_traces_grpc_port;
       };
       logs.loki = enabled;
+      opentelemetry = enabled;
     };
     ssh = enabled;
     laptop = enabled;
