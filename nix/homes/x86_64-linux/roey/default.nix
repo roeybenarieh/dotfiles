@@ -20,6 +20,7 @@ with lib.extra;
     networking = enabled;
     containers = enabled;
     python = enabled;
+    go = enabled;
     game-dev = enabled;
     office = enabled;
     services = enabled;
