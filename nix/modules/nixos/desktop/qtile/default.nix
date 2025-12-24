@@ -3,15 +3,15 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.desktop;
+  cfg = config.${namespace}.desktop.qtile;
 in
 {
-  options.${namespace}.desktop = with types; {
-    enable = mkBoolOpt false "Whether or not to enable desktop env.";
+  options.${namespace}.desktop.qtile = with types; {
+    enable = mkBoolOpt false "Whether or not to enable qtile windows tilling window manager.";
   };
 
   config = mkIf cfg.enable {
-    # HACK: when desktopManager is not set, home manager expects dconf(for some reason)
+    # HACK: needed for some Gnome apps
     programs.dconf.enable = true;
 
     # Enable the X11 windowing system.

@@ -4,7 +4,7 @@ with lib.extra;
 {
   extra = {
     cli = enabled;
-    desktop = enabled;
+    desktop = disabled; # should be enabled according to NixOS desktop environment configuration
     entertainment = enabled;
     firefox = enabled;
     git = enabled;

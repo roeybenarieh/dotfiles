@@ -14,10 +14,7 @@ in
   ${namespace} = {
     networking.hostName = "laptop";
     apps = enabled;
-    desktop = {
-      enable = mkForce false;
-      gnome = enabled;
-    };
+    desktop.gnome = mkForce enabled;
 
     docker = enabled;
     containerization.k3s = disabled;

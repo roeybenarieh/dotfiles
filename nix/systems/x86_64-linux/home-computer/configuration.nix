@@ -15,6 +15,7 @@ in
     docker = enabled;
     gaming = enabled;
     gpu.nvidia1080ti = disabled;
+    desktop.qtile = mkForce enabled;
     observability = {
       grafana = enabled;
       metrics = {
