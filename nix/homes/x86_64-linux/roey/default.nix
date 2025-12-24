@@ -12,7 +12,7 @@ with lib.extra;
     neovim = enabled;
     social = enabled;
     terminal = enabled;
-    tmux = enabled;
+    tmux = disabled;
     tor = enabled;
     vscode = enabled;
     windows = enabled;
