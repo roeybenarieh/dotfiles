@@ -6,8 +6,7 @@ let
   cfg = config.${namespace}.observability.traces.tempo;
   minio_config = config.${namespace}.storage.minio;
   tempo_bucket_name = "tempo";
-  # FIX: use as variable
-  metrics_remote_write_endpoint = (http_local_endpoint_on_port 11908) + "/api/v1/receive";
+  metrics_remote_write_endpoint = (http_local_endpoint_on_port config.${namespace}.observability.metrics.thanos.remote_write_port) + "/api/v1/receive";
   http_listen_port = 3200;
 
 in
@@ -48,7 +47,7 @@ in
         access = "proxy";
         uid = "tempo";
         orgId = 1;
-        url = "http://localhost:3200";
+        url = http_local_endpoint_on_port http_listen_port;
         basicAuth = false;
         isDefault = true;
         version = 1;

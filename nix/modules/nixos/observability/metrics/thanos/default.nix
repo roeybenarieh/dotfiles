@@ -24,7 +24,7 @@ let
     query = 11903;
     query-frontend = 11904;
     receive = 11905;
-    receive-remote-write = 11908;
+    receive-remote-write = cfg.remote_write_port;
   };
 
   # bucket storage
@@ -60,6 +60,7 @@ in
   options.${namespace}.observability.metrics.thanos = with types; {
     enable = mkBoolOpt false "Whether or not to enable thanos metrics storage.";
     otel_traces_grpc_port = mkOption { type = types.int; description = "OpenTelemetry receiver port for the otlp-grpc protocol"; };
+    remote_write_port = mkIntOpt 11908 "Prometheus remote-write endpoint port";
   };
 
   config = mkIf cfg.enable {
