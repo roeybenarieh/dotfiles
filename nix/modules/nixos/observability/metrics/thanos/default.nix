@@ -42,6 +42,22 @@ let
     format = "json";
     level = "info";
   };
+  logging_file_config = writeYaml "logging-config.yaml" {
+    http.options = {
+      level = "DEBUG";
+      decision = {
+        log_start = true;
+        log_end = true;
+      };
+    };
+    grpc.options = {
+      level = "DEBUG";
+      decision = {
+        log_start = true;
+        log_end = true;
+      };
+    };
+  };
   tracing_config = service_short_name:
     let
       service_name = "thanos-${service_short_name}";
@@ -129,6 +145,7 @@ in
           "--tsdb.path=/var/lib/thanos-receive"
           "--tracing.config-file=${toString(writeYaml "objstore-config.yaml" (tracing_config "receive"))}"
           "--tsdb.max-exemplars=9999"
+          "--request.logging-config-file=${toString(logging_file_config)}"
         ];
       };
 
