@@ -67,7 +67,10 @@ in
     services.tempo = {
       enable = true;
       settings = {
-        server.http_listen_port = http_listen_port;
+        server = {
+          inherit http_listen_port;
+          log_format = "json";
+        };
         # ddistributor configuration
         distributor.receivers.otlp.protocols.grpc.endpoint = broadcast_listen_on_port cfg.otel_traces_grpc_port;
         # s3 browser configuration
