@@ -1,4 +1,4 @@
-{ namespace, lib, config, ... }:
+{ pkgs, namespace, lib, config, ... }:
 
 with lib;
 with lib.${namespace};
@@ -23,6 +23,8 @@ in
       enable = true;
       bucketNames = [ tempo_bucket_name ];
     };
+    # HACK: sleep until the minio service is on
+    systemd.services.tempo.serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
 
     # scrape tempo metrics using prometheus
     services.prometheus = {
