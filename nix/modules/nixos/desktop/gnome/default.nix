@@ -37,6 +37,11 @@ in
       auto-brightness-toggle
       dexcom-cgm-monitor
     ];
+    # open ports required by gsconnect
+    networking.firewall = {
+      allowedTCPPortRanges = [{ from = 1716; to = 1764; }];
+      allowedUDPPortRanges = [{ from = 1716; to = 1764; }];
+    };
     programs = {
       firefox.nativeMessagingHosts.gsconnect = true;
       dconf = enabled; # must have. DB for storing GNOME related settings
