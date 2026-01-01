@@ -4,6 +4,7 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.observability.metrics.prometheus;
+  port = 9090;
 in
 {
   options.${namespace}.observability.metrics.prometheus = with types; {
@@ -12,9 +13,17 @@ in
   };
 
   config = mkIf cfg.enable {
+    # add firefox bookmarks
+    ${namespace}.observability.grafana.observability_firefox_bookmarks = [
+      {
+        name = "prometheus";
+        keyword = "prometheus";
+        url = http_local_endpoint_on_port port;
+      }
+    ];
     services.prometheus = {
       enable = true;
-      port = 9090; # default port
+      inherit port; # default port
       globalConfig = {
         scrape_interval = "30s";
         external_labels = {

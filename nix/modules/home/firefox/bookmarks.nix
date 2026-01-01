@@ -143,12 +143,6 @@
       name = "Local";
       bookmarks = [
         {
-          name = "prometheus";
-          tags = [ "prometheus" ];
-          keyword = "prometheus";
-          url = "http://localhost:9090/query";
-        }
-        {
           name = "ttyd terminal";
           tags = [ "terminal" ];
           keyword = "terminal";

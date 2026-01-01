@@ -80,10 +80,20 @@ in
   };
 
   config = mkIf cfg.enable {
-    # create S3 bucket for metrics
-    ${namespace}.storage.minio = {
-      enable = true;
-      bucketNames = [ objectstore_config.config.bucket ];
+    ${namespace} = {
+      # create S3 bucket for metrics
+      storage.minio = {
+        enable = true;
+        bucketNames = [ objectstore_config.config.bucket ];
+      };
+      # add firefox bookmarks
+      observability.grafana.observability_firefox_bookmarks = [
+        {
+          name = "thanos";
+          keyword = "thanos";
+          url = http_local_endpoint_on_port http_port.query-frontend;
+        }
+      ];
     };
 
 

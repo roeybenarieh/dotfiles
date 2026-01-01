@@ -13,6 +13,15 @@ in
   };
 
   config = mkIf cfg.enable {
+    # add firefox bookmarks
+    ${namespace}.observability.grafana.observability_firefox_bookmarks = [
+      {
+        name = "grafana alloy";
+        keyword = "alloy";
+        url = (http_local_endpoint_on_port frontend_port) + "/graph";
+      }
+    ];
+
     # give alloy service permissions to access log files
     systemd.services.alloy.serviceConfig = {
       DynamicUser = mkForce false;

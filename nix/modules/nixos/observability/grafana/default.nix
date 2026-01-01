@@ -9,11 +9,15 @@ in
 {
   options.${namespace}.observability.grafana = with types; {
     enable = mkBoolOpt false "Whether or not to enable grafana.";
+    observability_firefox_bookmarks = lib.mkOption {
+      type = lib.types.listOf types.anything;
+      default = [ ];
+    };
   };
 
   config = mkIf cfg.enable {
 
-    # scrape tempo metrics using prometheus
+    # scrape grafana metrics using prometheus
     services.prometheus = {
       scrapeConfigs = [
         {
@@ -26,6 +30,22 @@ in
         }
       ];
     };
+    # set firefox bookmarks
+    snowfallorg.users.roey.home.config.programs.firefox.profiles.default.bookmarks.settings = [{
+      name = "Something";
+      toolbar = true;
+      bookmarks = [
+        {
+          name = "observability";
+          bookmarks = cfg.observability_firefox_bookmarks ++ [
+            {
+              name = "grafana";
+              url = http_local_endpoint_on_port http_port;
+            }
+          ];
+        }
+      ];
+    }];
 
     services.grafana = {
       enable = true;
