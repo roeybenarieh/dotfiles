@@ -59,6 +59,10 @@ update-dependencies:
 collect-garbage:
   nix-collect-garbage
 
+[group('nix')]
+debug:
+  echo press ':r' to reload variables \
+  && nixos-rebuild repl --flake . 
 
 # [group('nix')]
 # rebuild-nvim:
