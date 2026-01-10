@@ -43,7 +43,7 @@ in
       allowedUDPPortRanges = [{ from = 1716; to = 1764; }];
     };
     programs = {
-      firefox.nativeMessagingHosts.gsconnect = true;
+      firefox.nativeMessagingHosts.packages = with pkgs; [ gnomeExtensions.gsconnect ];
       dconf = enabled; # must have. DB for storing GNOME related settings
       gnome-terminal = enabled; # must have. allow better integration with terminals
     };
