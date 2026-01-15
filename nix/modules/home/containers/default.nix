@@ -13,18 +13,13 @@ in
     home.packages = with pkgs;
       [
         # containers
-        docker # docker engine and cli
+        # docker # docker engine and cli
         lazydocker
 
         # containers orcestration
         kubectl
         lens # k8s IDE
         kubernetes-helm
-        minikube # local k8s like cluster
-        azure-cli
-
-        # virtual machines
-        virtualbox # needed by minikube
       ];
   };
 }

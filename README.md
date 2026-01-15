@@ -6,6 +6,9 @@
     </a>
 </p>
 
+Desktop wallpaper  
+![alt text](./assets/wallpaper.png)
+
 Specs:
 
 - Linux compatible only
@@ -59,7 +62,7 @@ reboot
 Some of the things manually needed to be created:
 
 - set up Google-authenticator at ~/.google_authenticator
-- set up Qtile Dexcom widgets at ~/.local/state/qtile-config
+- set up Dexcom username and password for Qtile bar at ~/.local/state/qtile-config/config.txt
 - set up Neovim at ~/.config/nvim
 
 ## TODOES
@@ -68,6 +71,7 @@ Some of the things manually needed to be created:
 - themes for Firefox
 - install and configure Neovim
 - configure zsh + tmux
-- use one wallpaper.png file
 - cleanup docker and zsh configurations
-- cleanup wallpaper.png problem
+- add power profiles for laptop
+- get files from Iphone
+- Airdrop support(maybe opendrop)

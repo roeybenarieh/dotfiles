@@ -16,8 +16,10 @@ in
     programs.gamemode.enable = true;
 
     environment.systemPackages = with pkgs; [
-      protonup
+      # protonup
+      protonup-ng
       protonup-qt # protonup UI
+      lutris
     ];
     environment.sessionVariables = {
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = "~/.steam/root/compatibilitytools.d";

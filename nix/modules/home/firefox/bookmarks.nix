@@ -117,6 +117,10 @@
           name = "clarity";
           url = "https://clarity.dexcom.eu";
         }
+        {
+          name = "tandem";
+          url = "https://source.tandemdiabetes.com";
+        }
       ];
     }
 
@@ -139,22 +143,16 @@
       name = "Local";
       bookmarks = [
         {
-          name = "prometheus";
-          tags = [ "prometheus" ];
-          keyword = "prometheus";
-          url = "http://localhost:9090/query";
+          name = "ttyd terminal";
+          tags = [ "terminal" ];
+          keyword = "terminal";
+          url = "http://127.0.0.1:7681";
         }
         {
           name = "stremio";
           tags = [ "stremio" ];
           keyword = "stremio";
           url = "http://127.0.0.1:11470";
-        }
-        {
-          name = "fold@home";
-          url = "http://localhost:7396";
-          tags = [ "f@h" "fold at home" "fold@home" ];
-          keyword = "fold@home";
         }
       ];
     }
@@ -165,6 +163,19 @@
         {
           name = "harvard courses";
           url = "https://cs50.harvard.edu/x/2025";
+        }
+        {
+          name = "learn security in fun way";
+          url = "https://overthewire.org/wargames";
+        }
+      ];
+    }
+    {
+      name = "IDF";
+      bookmarks = [
+        {
+          name = "torim";
+          url = "https://torim.prat.idf.il";
         }
       ];
     }

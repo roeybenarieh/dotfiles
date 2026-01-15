@@ -30,15 +30,24 @@ in
       };
     };
 
+    programs.chromium = enabled; # just in case
+
     # the firefox configuration itself
     programs.firefox = {
       enable = true;
-      package = pkgs.firefox;
+      package = pkgs.firefox.overrideAttrs (old: {
+        # MOZ_USE_XINPUT2=1 allow more smooth (pixel-level) scroll and zoom
+        buildCommand = old.buildCommand + ''
+          mv $out/bin/firefox $out/bin/firefox-no-xinput2
+          makeWrapper $out/bin/firefox-no-xinput2 $out/bin/firefox --set-default MOZ_USE_XINPUT2 1
+        '';
+      });
 
       # Check about:policies#documentation for options.
       policies = {
         DisableTelemetry = true;
         DisableFirefoxStudies = true;
+        DisplayBookmarksToolbar = "newtab"; # display bookmarks only on new tab
         EnableTrackingProtection = {
           Value = true;
           Locked = true;
@@ -55,6 +64,9 @@ in
           # about:config
           # or 
           # https://mozilla.github.io/policy-templates/#searchengines--add
+
+          # disable transltation for hebrew and english
+          "browser.translations.neverTranslateLanguages" = "en,he";
 
           # restore the previous session on startup
           "browser.startup.page" = 3; # 3 means "Show my windows and tabs from last time"
@@ -83,6 +95,13 @@ in
           "general.smoothScroll.msdPhysics.enabled" = true;
           "gfx.x11-egl.force-enabled" = true;
           "layers.acceleration.force-enabled" = true;
+
+          # Disables playback of DRM-controlled HTML5 content
+          # if enabled, automatically downloads the Widevine Content Decryption Module
+          # provided by Google Inc. Details
+          # (https://support.mozilla.org/en-US/kb/enable-drm#w_opt-out-of-cdm-playback-uninstall-cdms-and-stop-all-cdm-downloads)
+          # used by websites like Spotify to play audio
+          "media.eme.enabled" = true;
         };
         # configure search engines
         extensions = {
@@ -96,12 +115,25 @@ in
             ublock-origin
             video-downloadhelper
             privacy-badger
+            chrome-mask
           ];
           # FIX: every time I used video Downloadhelper, it changes the settings, and home manager gets error on rebuild
-          # settings = {
-          #   # Video DownloadHelper
-          #   "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}".settings = import ./extension_settings/video-downloadhelper.nix firefox-attrs;
-          # };
+          settings = {
+            #   # Video DownloadHelper
+            #   "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}".settings = import ./extension_settings/video-downloadhelper.nix firefox-attrs;
+
+            # vimium
+            "{c5093684-eceb-490e-a6cf-ad9d858eaeac}".settings = {
+              "keyMappings" = "";
+              "settingsVersion" = "2.3";
+              "exclusionRules" = [
+                {
+                  "passKeys" = "";
+                  "pattern" = "https?://127.0.0.1:7681/*";
+                }
+              ];
+            };
+          };
         };
         search = {
           default = "google";

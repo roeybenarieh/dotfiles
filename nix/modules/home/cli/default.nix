@@ -1,29 +1,9 @@
-{ namespace, lib, config, pkgs, ... }:
+{ system, namespace, inputs, lib, config, pkgs, ... }:
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.tmux;
-
-
-  # TODO: get a better solution according to what will be decided in the github issue
-  # solution from: https://discourse.nixos.org/t/how-to-specify-programs-sqlite-for-command-not-found-from-flakes/22722/2
-  # more info:
-  # https://github.com/NixOS/nixpkgs/issues/171054
-  # https://discourse.nixos.org/t/command-not-found-not-working/24023/3
-  # https://www.youtube.com/watch?v=sLGoWAGklds
-  #
-  # To find the channel url I went in:
-  # https://channels.nixos.org/ > nixos-22.05 > nixexprs.tar.gz
-  # All the available channels you can browse https://releases.nixos.org
-  nixos_tarball = pkgs.fetchzip {
-    url = "https://releases.nixos.org/nixos/22.05/nixos-22.05.3737.3933d8bb912/nixexprs.tar.xz";
-    sha256 = "sha256-+xhJb0vxEAnF3hJ6BZ1cbndYKZwlqYJR/PWeJ3aVU8k=";
-  }
-  ;
-  # extract only the sqlite file
-  programs-sqlite = pkgs.runCommand "program.sqlite" { } ''
-    cp ${nixos_tarball}/programs.sqlite $out
-  '';
+  cfg = config.${namespace}.cli;
+  programs-sqlite-db = inputs.flake-programs-sqlite.packages.${system}.programs-sqlite;
 in
 {
   options.${namespace}.cli = with types; {
@@ -33,18 +13,26 @@ in
   config = mkIf cfg.enable {
     programs = {
       # helping fix up command syntax errors
-      thefuck.enable = true;
+      pay-respects = {
+        enable = true;
+        options = [ "--alias thefuck --alias tf --alias f" ];
+      };
 
       # autocompletion
       carapace.enable = true;
 
       command-not-found = {
         enable = true;
-        dbPath = programs-sqlite;
+        dbPath = programs-sqlite-db;
       };
-      nix-index = {
-        enable = false;
-      };
+
+      # for more info: https://opencode.ai/docs/models
+      opencode = enabled;
+    };
+    home.shellAliases.ai = "opencode";
+    xdg.configFile."opencode" = {
+      source = ./opencode;
+      recursive = true;
     };
     home.packages = with pkgs; [
       xclip # better Ctrl+c Ctrl+v integration with terminal
@@ -52,10 +40,9 @@ in
       just # just cli
     ];
     home.sessionVariables = {
-      # command-not-found variables
-      # TODO: make the auto installation work
-      NIX_AUTO_RUN = "y"; # when typing a program not currently installed, automaticly will be installed via nix-shell.
-      NIX_AUTO_RUN_INTERACTIVE = 1;
-    }; # use alacritty as default terminal
+      # command-not-found: when typing a program not currently installed, automaticly will be installed via nix-shell.
+      NIX_AUTO_RUN = "y";
+      NIX_AUTO_RUN_INTERACTIVE = "";
+    };
   };
 }

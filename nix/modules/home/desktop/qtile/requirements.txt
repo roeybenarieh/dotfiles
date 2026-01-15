@@ -2,3 +2,4 @@ pydexcom
 qtile
 qtile-extras
 colour
+pydantic

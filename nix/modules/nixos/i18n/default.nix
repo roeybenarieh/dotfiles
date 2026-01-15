@@ -11,14 +11,17 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Configure console keymap
-    console.keyMap = "il";
-
     # Configure keymap in X11
-    services.xserver.xkb = {
-      layout = "us";
-      variant = "";
-    };
+    # services.xserver.xkb = {
+    #   layout = "us";
+    #   variant = "";
+    # };
+    # HACK: instead of using the services.xserver.xkb configuration, sets the keyboard layouts via 'setxkbmap' cli
+    # set hebrew and english keyboard layouts
+    # set Alt+Shift and Winkey+Space as layouts togglers
+    services.xserver.displayManager.setupCommands = ''
+      ${getExe pkgs.xorg.setxkbmap} -layout "us,il" -option "grp:alt_shift_toggle,grp:win_space_toggle"
+    '';
 
     # Set your time zone.
     time.timeZone = "Asia/Tel_Aviv";

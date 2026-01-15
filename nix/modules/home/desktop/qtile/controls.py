@@ -1,7 +1,9 @@
+from libqtile.backend.base.window import Window
 from libqtile.config import Click, Drag, Key
+from libqtile.core.manager import Qtile
 from libqtile.lazy import lazy
-from pathlib import Path
 import os
+from settings import SETTINGS
 
 # common key maps
 mod = "mod4"
@@ -10,13 +12,48 @@ alt = "mod1"
 enter_key = "Return"
 space = "space"
 control = "control"
+escape = "escape"
+tab = "Tab"
+print_screen = "Print"
 
 # dependencies
-_screenshot_dir = Path.home() / "Pictures" / "Screenshots"
-_screenshot_dir.mkdir(parents=True, exist_ok=True)
-os.environ["CM_LAUNCHER"] = "rofi"    # make clipmenu output clip selection to stdout
-os.environ["CM_HISTLENGTH"] = "10"    # number of lines of clipboard history to show
-os.environ["CM_OUTPUT_CLIP"] = "true" # launch clipmenu with rofi
+SETTINGS.screenshot_dir.mkdir(parents=True, exist_ok=True)  # make sure dir exist
+os.environ["CM_LAUNCHER"] = "rofi"  # make clipmenu output clip selection to stdout
+os.environ["CM_HISTLENGTH"] = "10"  # number of lines of clipboard history to show
+os.environ["CM_OUTPUT_CLIP"] = "true"  # launch clipmenu with rofi
+
+
+# utils functions
+@lazy.function
+def minimize_all(qtile: Qtile):
+    for win in qtile.current_group.windows:
+        if hasattr(win, "toggle_minimize"):
+            win.toggle_minimize()
+
+
+@lazy.function
+def spawn_or_focus(self: Qtile, app: str) -> None:
+    """Check if the app being launched is already running, if so focus it"""
+    window = None
+    for win in self.windows_map.values():
+        if isinstance(win, Window):
+            wm_class: list | None = win.get_wm_class()
+            if wm_class is None or win.group is None:
+                return
+            if any(item.lower() == app.lower() for item in wm_class):
+                # with open("/home/roey/logs.txt", "a") as f:
+                #     f.write(app.lower())
+                #     things = [item.lower() for item in wm_class]
+                #     for thing in things:
+                #         f.write(str(thing) + "\n")
+                window = win
+                group = win.group
+                group.toscreen(toggle=False)
+                break
+
+    if window is None:
+        self.spawn(app)
+
 
 mouse = [
     Drag(
@@ -32,39 +69,45 @@ mouse = [
 ]
 
 keys = [
+    # panel movements
+    Key([control, mod], "j", lazy.layout.down(), desc="Move focus down"),
+    Key([control, mod], "k", lazy.layout.up(), desc="Move focus up"),
+    Key([control, mod], "h", lazy.layout.left(), desc="Move focus left"),
+    Key([control, mod], "l", lazy.layout.right(), desc="Move focus right"),
+    #
     Key([mod], "e", lazy.spawn("xdg-open .")),
+    Key([mod], "d", minimize_all(), desc="Toogle minimize all windows"),
     Key([mod], "v", lazy.spawn("clipmenu")),
-    Key([mod], "h", lazy.spawn("kitty -e nmtui")),
-    Key([mod, "shift"], "v", lazy.spawn("pavucontrol")),
-    Key([mod], "l", lazy.spawn("dm-tool lock")),
+    Key([mod], "h", lazy.spawn(SETTINGS.network_manager)),
+    Key([mod, shift], "v", lazy.spawn("pavucontrol")),
+    Key([mod], "l", lazy.spawn(SETTINGS.lock_screen_command)),
     Key([mod], "f", lazy.window.toggle_floating()),
-    Key([mod], "b", lazy.spawn("firefox")),
+    Key([mod], "b", lazy.spawn(SETTINGS.browser)),
+    Key([mod], "p", lazy.spawn(SETTINGS.simple_monitors_manager)),
     Key(
         [],
-        "Print",
-        lazy.spawn(f"flameshot screen --clipboard --path {_screenshot_dir}"),
+        print_screen,
+        lazy.spawn(f"flameshot screen --clipboard --path {SETTINGS.screenshot_dir}"),
     ),  # screenshot
     Key(
         [mod, shift],
         "s",
-        lazy.spawn(f"flameshot gui --clipboard --path {_screenshot_dir}"),
+        lazy.spawn(f"flameshot gui --clipboard --path {SETTINGS.screenshot_dir}"),
     ),  # partial screenshot
-    # Key([mod], space, lazy.layout.next()),
-    # Key([alt], "Tab", lazy.layout.next()),
-    Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
+    Key([mod, shift], "h", lazy.layout.shuffle_left()),
     Key([mod], "n", lazy.layout.normalize()),
-    Key([mod], enter_key, lazy.spawn("alacritty")),
-    Key([mod], "Tab", lazy.next_layout()),
+    Key([mod], enter_key, lazy.spawn(SETTINGS.terminal)),
+    Key([mod], tab, lazy.next_layout()),
     Key([mod], "m", lazy.window.toggle_maximize(), desc="Toggle maximize"),
     Key([], "F11", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen"),
     Key([mod], "w", lazy.window.kill()),
     Key([alt], "F4", lazy.window.kill()),
-    Key([control], "escape", lazy.spawn("alacritty -e btop")),
+    Key([control], escape, lazy.spawn(SETTINGS.task_manager)),
     Key([mod, control], "r", lazy.reload_config()),
     Key([mod, control], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),
-    Key([], "F1", lazy.spawn("rofi -show drun")),
-    Key([alt], space, lazy.spawn("rofi -show drun")),
+    Key([], "F1", lazy.spawn(SETTINGS.application_launcher)),
+    Key([alt], space, lazy.spawn(SETTINGS.application_launcher)),
     # keyboard layout
     Key(
         [mod],

@@ -1,16 +1,19 @@
 import re
 import subprocess
 
+from keyboard_layout_widget import MyKeyboardLayout
 from libqtile import bar, widget
 from libqtile.widget.nvidia_sensors import NvidiaSensors
 from libqtile.lazy import lazy
+from libqtile.widget import PulseVolume
 
 import colors
 import dexcom_widget
 from utils import mk_overrides
+from settings import SETTINGS
 
 widget_defaults = dict(
-    font="JetBrainsMono Nerd Font",
+    font=SETTINGS.font,
     fontsize=12,
     padding=12,
     background=colors.BG_DARK.with_alpha(0.9),
@@ -23,31 +26,36 @@ DexcomGlucose = mk_overrides(
 )
 
 KeyboardLayout = mk_overrides(
-    widget.KeyboardLayout,
-    configured_keyboards=["us", "il"],
-    display_map={"us": "en", "il": "he"},
+    MyKeyboardLayout,
+    text="UNK",
+    update_interval=0.1,
 )
 
 # TODO: get gpu usage%
-NvidiaTemp = mk_overrides(
-    NvidiaSensors,
-    format = "{temp}°C",
-    update_interval = 5
-)
+NvidiaTemp = mk_overrides(NvidiaSensors, format="{temp}°C", update_interval=5)
 
 DexcomInRangePercentage = mk_overrides(
     dexcom_widget.DexcomInRangePercentage,
     update_interval=60 * 5,  # update every 5min
 )
 
+Volume = mk_overrides(
+    PulseVolume,
+    mouse_callbacks={
+        "Button2": lazy.spawn(SETTINGS.auidio_controller),
+        "Button3": lazy.spawn(SETTINGS.audio_visualizer),
+    },
+)
+
 
 Battery = mk_overrides(
     widget.Battery,
-    format="⚡{percent:2.0%}",
+    format="⚡{percent:2.0%} {hour:d}:{min:02d}",
     background=colors.BG_DARK.with_alpha(0.7),
+    charging_foreground=colors.GREEN_DARK.with_alpha(0.7),
     foreground=colors.TEXT_LIGHT,
-    low_background=colors.RED_DARK.with_alpha(0.7),
     low_percentage=0.1,
+    update_interval=5,
 )
 
 CPUGraph = mk_overrides(
@@ -79,15 +87,9 @@ Mpris2 = mk_overrides(
 
 Memory = mk_overrides(
     widget.Memory,
-    format="{MemUsed: .3f}Mb",
-    mouse_callbacks={
-        "Button1": lazy.spawn(
-            "kitty"
-            " -o initial_window_width=1720"
-            " -o initial_window_height=860"
-            " -e btop"
-        )
-    },
+    format="{MemUsed: .1f}GB",
+    measure_mem="G",
+    mouse_callbacks={"Button1": lazy.spawn(SETTINGS.task_manager)},
 )
 
 TaskList = mk_overrides(
@@ -108,11 +110,11 @@ TaskList = mk_overrides(
 
 Separator = mk_overrides(widget.Spacer, length=4)
 Clock = mk_overrides(
-    widget.Clock, 
+    widget.Clock,
     format="%A, %b %-d %H:%M",
     mouse_callbacks={
         "Button1": lazy.spawn("xdg-open https://calendar.google.com"),
-    }
+    },
 )
 
 
@@ -149,7 +151,7 @@ class Bar(bar.Bar):
         Memory,
         CPUGraph,
         Separator,
-        widget.PulseVolume,
+        Volume,
         KeyboardLayout,
         Clock,
         Separator,

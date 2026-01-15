@@ -3,6 +3,10 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.basic;
+  gmail-icon = pkgs.fetchurl {
+    url = "https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg";
+    sha256 = "sha256-3hKd/5OcNBvmu1YXZXGclTYvAh25NuiKdFV2LmiH+wU=";
+  };
 in
 {
   options.${namespace}.basic = with types; {
@@ -20,6 +24,9 @@ in
 
     # general shit
     home.packages = with pkgs; [
+      # xdg utils (e.g. xdg-open)
+      xdg-utils
+
       # file system
       tree
       baobab # disk usage GUI
@@ -57,8 +64,9 @@ in
     ];
     home.shellAliases = {
       c = "clear";
-      htop = "btop";
-      open = "xdg-open";
+      cdold = "cd $OLDPWD";
+      htop = "${getExe pkgs.btop}";
+      open = "${pkgs.xdg-utils}/bin/xdg-open";
     };
     # set nauilus as default folder explorer
     xdg.mimeApps.defaultApplications = {
@@ -76,7 +84,7 @@ in
       ];
     };
     home.shellAliases = {
-      cat = "bat --paging=never";
+      cat = "${getExe pkgs.bat} --paging=never";
     };
 
 
@@ -91,6 +99,7 @@ in
     };
     home.shellAliases = {
       l = "ls -lh"; # defaulty l = "ls -lFh", and -F doesnt exists in eza.
+      tree = "eza --tree";
     };
 
 
@@ -102,9 +111,9 @@ in
         --preview '
           dir_path={}
           if [[ -d {} ]]; then 
-            ${lib.getExe pkgs.tree} -L 3 {}
+            ${getExe pkgs.tree} -L 3 {}
           else 
-            ${lib.getExe pkgs.bat} -n --color=always {}
+            ${getExe pkgs.bat} -n --color=always {}
           fi
         '
         --bind 'ctrl-/:change-preview-window(down|hidden|)'
@@ -130,7 +139,19 @@ in
       ];
     };
 
-    # enable numlock on default
-    xsession.numlock.enable = true;
+    # Define Gmail as a desktop application
+    xdg.desktopEntries.gmail = {
+      name = "Gmail";
+      comment = "Google mail application";
+      exec = ''xdg-open "https://mail.google.com/mail"'';
+      terminal = false;
+      type = "Application";
+      icon = gmail-icon;
+      mimeType = [ "x-scheme-handler/mailto" ];
+    };
+    # Make Gmail the default mailto handler
+    xdg.mimeApps.defaultApplications = {
+      "x-scheme-handler/mailto" = [ "gmail.desktop" ];
+    };
   };
 }

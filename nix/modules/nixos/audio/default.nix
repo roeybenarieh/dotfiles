@@ -18,6 +18,29 @@ in
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
+      # FIX: this doesn't work, I need it to not consider HDMI audio unless explicitly selected
+      wireplumber = {
+        enable = true;
+        extraConfig = mkMerge [
+          {
+            "60-hdmi-lowprio" = {
+              "monitor.alsa.rules" = singleton {
+                matches = singleton {
+                  "api.alsa.path" = "hdmi:.*";
+                };
+
+                actions.update-props = {
+                  "node.name" = "Low Priority HDMI";
+                  "node.nick" = "Low Priority HDMI";
+                  "node.description" = "Low Priority HDMI";
+                  "priority.session" = 100;
+                  "node.pause-on-idle" = true;
+                };
+              };
+            };
+          }
+        ];
+      };
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
 

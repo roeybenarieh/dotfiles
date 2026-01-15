@@ -1,4 +1,4 @@
-{ namespace, lib, config, pkgs, ... }:
+{ namespace, lib, config, pkgs, inputs, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -16,7 +16,8 @@ in
     enable = cfg.enable;
 
     autoEnable = true;
-    image = ./wallpaper.png;
+    image = "${inputs.assets}/wallpaper1.png";
+    polarity = "dark";
     targets = {
       neovim.enable = false;
       firefox.profileNames = [ "default" ];
@@ -30,6 +31,8 @@ in
     # run 'fc-cache -rf' when changing/installing fonts
     fonts = {
       sizes = {
+        applications = 12;
+        desktop = 10;
         terminal = 15;
         popups = 15;
       };
@@ -46,6 +49,10 @@ in
       sansSerif = {
         package = pkgs.dejavu_fonts;
         name = "DejaVu Sans";
+      };
+      emoji = {
+        package = pkgs.noto-fonts-color-emoji;
+        name = "Noto Color Emoji";
       };
     };
   };

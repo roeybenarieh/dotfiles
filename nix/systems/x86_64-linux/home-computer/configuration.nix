@@ -1,50 +1,51 @@
-{ pkgs, namespace, ... }:
+{ pkgs, namespace, lib, ... }:
 
+with lib.${namespace};
+let
+  otel_traces_grpc_port = 11907;
+in
 {
   imports = [
     ./hardware-extra.nix
   ];
 
   ${namespace} = {
-    apps.enable = true;
-    docker.enable = true;
-    gaming.enable = true;
-    gpu.nvidia1080ti.enable = true;
-    metrics.prometheus.enable = true;
-    rdp.enable = true;
-    ssh.enable = true;
-    razer.enable = true;
+    networking.hostName = "home-computer";
+    apps = enabled;
+    docker = enabled;
+    gaming = enabled;
+    gpu.nvidia1080ti = disabled;
+    desktop.qtile = mkForce enabled;
+    observability = {
+      grafana = enabled;
+      metrics = {
+        scraping = {
+          node = enabled;
+          systemd = enabled;
+        };
+        prometheus = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+        thanos = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+      };
+      traces.tempo = {
+        enable = true;
+        inherit otel_traces_grpc_port;
+      };
+    };
+    rdp = enabled;
+    ssh = enabled;
+    razer = enabled;
+    virtualization = enabled;
   };
 
-  networking = {
-    hostName = "home-computer"; # Define your hostname.
-    networkmanager.enable = true; # Enable networking
-    # TODO: make sure this is working
-    # interfaces = {
-    #   enp3s0 = {
-    #     wakeOnLan = {
-    #       enable = true;
-    #     };
-    #   };
-    # };
-  };
   # nix related
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # enable zsh for users
-  programs.zsh.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.roey = {
-    isNormalUser = true;
-    description = "roey";
-    extraGroups = [
-      "networkmanager"
-      "wheel" # Enable ‘sudo’ for the user.
-      "docker"
-    ];
-    shell = pkgs.zsh;
-  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

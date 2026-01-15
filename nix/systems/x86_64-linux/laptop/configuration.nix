@@ -1,5 +1,10 @@
-{ pkgs, namespace, ... }:
+{ pkgs, namespace, lib, ... }:
 
+with lib;
+with lib.${namespace};
+let
+  otel_traces_grpc_port = 11907;
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -7,44 +12,72 @@
   ];
 
   ${namespace} = {
-    apps.enable = true;
-    docker.enable = true;
-    # gaming.enable = true;
-    # gpu.nvidia1080ti.enable = true;
+    networking.hostName = "laptop";
+    apps = enabled;
+    desktop.gnome = mkForce enabled;
+
+    docker = enabled;
+    containerization.k3s = disabled;
     gpu.nvidiaMX350 = {
-      enable = true;
+      enable = false;
       prime_config = {
-        sync.enable = true;
+        sync = enabled;
         nvidiaBusId = "PCI:1:0:0";
         intelBusId = "PCI:0:2:0";
       };
     };
-    metrics.prometheus.enable = true;
-    # rdp.enable = true;
-    ssh.enable = true;
-    laptop.enable = true;
+    observability = {
+      grafana = enabled;
+      metrics = {
+        scraping = {
+          node = enabled;
+          systemd = enabled;
+        };
+        prometheus = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+        thanos = {
+          enable = true;
+          inherit otel_traces_grpc_port;
+        };
+      };
+      traces.tempo = {
+        enable = true;
+        inherit otel_traces_grpc_port;
+      };
+      logs.loki = enabled;
+      opentelemetry = enabled;
+    };
+    ssh = enabled;
+    laptop = enabled;
+    graphics.displays = {
+      enable = true;
+      builtInDisplay = {
+        fingerprint = "00ffffffffffff000daef515000000000c1d0104a52213780228659759548e271e505400000001010101010101010101010101010101363680a0703820403020a60058c110000018000000fe004e3135364847412d4541330a20000000fe00434d4e0a202020202020202020000000fe004e3135364847412d4541330a200006";
+        config = {
+          mode = "1920x1080";
+          rotate = "normal";
+        };
+      };
+    };
+
+    rdp = disabled;
+    gaming = disabled;
+    gpu.nvidia1080ti = disabled;
   };
 
-  networking = {
-    hostName = "laptop";
-    networkmanager.enable = true;
-    # wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  };
+  # systemd.services."preload-firefox" = {
+  #   description = "Preload Firefox into RAM";
+  #   wantedBy = [ "multi-user.target" ]; # preload at boot
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #     ExecStart = ''
+  #       ${pkgs.vmtouch}/bin/vmtouch -t -l ${pkgs.firefox}
+  #     '';
+  #   };
+  # };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.roey = {
-    isNormalUser = true;
-    description = "roey";
-    extraGroups = [
-      "networkmanager"
-      "wheel" # Enable ‘sudo’ for the user.
-      "docker"
-    ];
-    shell = pkgs.zsh;
-  };
-
-  # enable zsh for users
-  programs.zsh.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

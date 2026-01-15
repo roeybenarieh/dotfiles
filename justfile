@@ -9,13 +9,18 @@ deploy:
 undeploy:
   stow --delete .
 
+# base files needed to be staged by git before building something in nix
+_base_nix_git_stage:
+  git add flake.nix flake.lock && git add ./nix/lib/** \
+  && git add ./nix/modules/home/** ./nix/homes/**
+
 [group('nix')]
 format:
   treefmt
 
 [group('nix')]
 rebuild-user:
-  git add "**.nix" \
+  @just _base_nix_git_stage \
   && home-manager switch --flake .
 
 [group('nix')]
@@ -24,7 +29,8 @@ rollback-user:
 
 [group('nix')]
 rebuild-system:
-  git add "**.nix" \
+  @just _base_nix_git_stage \
+  && git add ./nix/modules/nixos/** ./nix/systems/** \
   && sudo nixos-rebuild switch --flake .
 
 [group('nix')]
@@ -53,13 +59,10 @@ update-dependencies:
 collect-garbage:
   nix-collect-garbage
 
-
 [group('nix')]
-rebuild-desktop:
-  git add ./nix/modules/home/desktop/** \
-  && just rebuild-user \
-  && qtile cmd-obj -o cmd -f reload_config # reload qtile
-
+debug:
+  echo press ':r' to reload variables \
+  && nixos-rebuild repl --flake . 
 
 # [group('nix')]
 # rebuild-nvim:
@@ -71,4 +74,4 @@ rebuild-desktop:
 
 [group('nix')]
 rebuild-all:
-  just rebuild-system && just rebuild-user && just rebuild-desktop
+  just rebuild-system && just rebuild-user

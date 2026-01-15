@@ -40,7 +40,7 @@ in
             };
           in
           {
-            # size = 15;
+            size = mkForce 25;
             # normal = jetbrainsMono "Regular";
             bold = jetbrainsMono "Bold";
             italic = jetbrainsMono "Italic";
@@ -49,13 +49,42 @@ in
 
         cursor = { style = "Block"; };
 
-        env = { TERM = "xterm-256color"; };
+        env = {
+          TERM = "xterm-256color";
+          WINIT_X11_SCALE_FACTOR = "1.0"; # better text size in multiplee monitorrs
+        };
 
         general.live_config_reload = true;
       };
     };
     home.sessionVariables = {
       TERM = "alacritty";
+      TERMINAL = "alacritty";
+    };
+    xdg.mimeApps = {
+      enable = true;
+      # to get mime type run: file -b --mime-type <file_name>
+      defaultApplications = {
+        "terminal" = "alacritty.desktop";
+        "x-scheme-handler/terminal" = "alacritty.desktop";
+      };
+    };
+    # FIX: not working in GNOME
+    xdg.terminal-exec = {
+      enable = false;
+      package = pkgs.alacritty;
+      settings = {
+        GNOME = [
+          # "com.raggesilver.BlackBox.desktop"
+          # "org.gnome.Terminal.desktop"
+          "alacritty.desktop"
+          "Alacritty.desktop"
+        ];
+        default = [
+          "alacritty.desktop"
+          "Alacritty.desktop"
+        ];
+      };
     };
   };
 }

@@ -12,11 +12,10 @@ from libqtile.utils import guess_terminal
 
 from bar import Bar, widget_defaults
 from controls import mod, keys
-from pathlib import Path
+from settings import SETTINGS
 
 import colors
 
-_assets = Path(__file__).parent / "assets"
 
 _gap = Gap(10)
 Screen = partial(
@@ -24,11 +23,11 @@ Screen = partial(
     bottom=_gap,
     left=_gap,
     right=_gap,
-    wallpaper=_assets / "wallpaper.png",
+    wallpaper=SETTINGS.wallpaper,
     wallpaper_mode="fill",
 )
 
-screens = [Screen(top=Bar(i)) for i in range(2)]
+screens = [Screen(top=Bar(i)) for i in range(4)]
 
 layouts = [
     Columns(
@@ -107,21 +106,20 @@ auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
 
-terminal = guess_terminal(preference=["alacritty", "xterm"])
+terminal = guess_terminal(preference=[SETTINGS.terminal, "xterm"])
 
 auto_minimize = False
 wmname = "Qtile"
 
 
-
-#The first bit tells Qtile to run the autostart file when it is started. The autostart file does the wallpaper, activates the compositor,
-#and sets the keymap on my build the rest is the final options for qtile. Most of this stuff is pretty obvious, and doesn't really need to be
-#messed with. The floating layout section is a list of window types that should automatically spawn as floating. If an app you're trying to
-#glitches when spawned normally, try adding it to the list below, using the same match syntax  as with the group section. Finally at the bottom,
-#the clever people who coded Qtile lie to the computer and say that Qtile is a Java window manager so it'll work correctly.
+# The first bit tells Qtile to run the autostart file when it is started. The autostart file does the wallpaper, activates the compositor,
+# and sets the keymap on my build the rest is the final options for qtile. Most of this stuff is pretty obvious, and doesn't really need to be
+# messed with. The floating layout section is a list of window types that should automatically spawn as floating. If an app you're trying to
+# glitches when spawned normally, try adding it to the list below, using the same match syntax  as with the group section. Finally at the bottom,
+# the clever people who coded Qtile lie to the computer and say that Qtile is a Java window manager so it'll work correctly.
 @hook.subscribe.startup
 def autostart():
     # important node: the autostart.sh must be executable!
     # git saves the executable bit so you should be fine
-    home=os.path.expanduser('~/.config/qtile/scripts/autostart.sh')
+    home = os.path.expanduser("~/.config/qtile/scripts/autostart.sh")
     subprocess.call([home])

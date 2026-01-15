@@ -10,10 +10,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    nixpkgs.config.users.defaultUserShell = pkgs.zsh;
-
     programs.zsh = {
       enable = true;
+      # Enable completion for aliases
+      initContent = "setopt complete_aliases";
+
+      # save timestamp to records
+      history.extended = true;
+
       oh-my-zsh = {
         enable = true;
         plugins = [
@@ -23,7 +27,6 @@ in
           # "fast-syntax-highlighting"
           # "zsh-autocomplete"
           "common-aliases"
-          "thefuck"
           "git"
           "fzf"
           "helm"
