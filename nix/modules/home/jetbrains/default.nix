@@ -12,7 +12,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs.jetbrains; [
       # idea-community # java, kotlin, scala, groovy
-      pycharm-community # python
+      pycharm-oss # python
     ];
   };
 }
