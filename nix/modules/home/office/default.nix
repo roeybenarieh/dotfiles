@@ -1,4 +1,4 @@
-{ namespace, lib, config, pkgs, ... }:
+{ namespace, lib, config, pkgs, inputs, system, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -8,20 +8,11 @@ let
   onedrive-url = "https://onedrive.live.com";
   exec = "${config.home.shellAliases.open} ${onedrive-url}";
   categories = [ "Office" "X-Microsoft" ];
-  word-application-name = "Microsoft Word 2013";
-  poweroint-application-name = "Microsoft Powerpoint 2013";
   word-online-name = "Microsoft Word Online";
   powerpoint-online-name = "Microsoft Powerpoint Online";
-
-  # functions
-  # NOTE: this wrapper exists because playonlinux is using wine, hence in order for the wine app to get the file it needs to be pre-processed.
-  # FIX: file path with none-latin characters crashes playonlinux programs
-  # TODO: better support for hebrew characters in office programs
-  play_on_linux_exec_wrap = application:
-    "${pkgs.writeShellScript "wrapper" ''
-      #!/bin/sh
-      playonlinux --run "${application}" "$1"
-    ''} %f";
+  # NOTE: for some reason the wps package provided is not working...
+  # wpsoffice = inputs.wpsoffice.packages.${system}.default;
+  wpsoffice-fonts = inputs.wpsoffice.packages.${system}.fonts;
 
   # assets
   powerpoint-icon = pkgs.fetchurl {
@@ -58,38 +49,31 @@ in
   };
 
   config = mkIf cfg.enable {
-    xdg.desktopEntries = {
-      ${word-application-name} = {
-        name = word-application-name;
-        exec = play_on_linux_exec_wrap word-application-name;
-        icon = word-icon;
-        mimeType = [ "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ];
-        # startupNotify = true;
-        terminal = false;
-        inherit categories;
-      };
-      ${poweroint-application-name} = {
-        name = poweroint-application-name;
-        exec = play_on_linux_exec_wrap poweroint-application-name;
-        icon = powerpoint-icon;
-        mimeType = [ "application/vnd.openxmlformats-officedocument.presentationml.presentation" ];
-        # startupNotify = true;
-        terminal = false;
-        inherit categories;
-      };
-    };
+    fonts.fontconfig = enabled;
     home.packages = with pkgs; [
       # onlyoffice-bin
+      wpsoffice
       powerpoint-online
       word-online
 
-      # TODO: make the installation declaritevly + set mime types
-      # before watching windows below, mount .iso file, there you would find the setup.exe file.
-      # NOTE: the iso is commited to this repository because after a few mounths the .iso installation URLs are taken down
-      # microsoft office installation instructions: https://www.youtube.com/watch?v=LH-6tp-KBuQ&t=66s
-      playonlinux
-      samba
+      # run 'fc-cache -rf' when changing/installing fonts
+      wpsoffice-fonts
     ];
     programs.obsidian = enabled;
+
+    # set default apps
+    xdg.mimeApps.defaultApplications = {
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = [ "wps-office-wps.desktop" ];
+      "application/msword" = [ "wps-office-wps.desktop" ];
+      "application/vnd.oasis.opendocument.text" = [ "wps-office-wps.desktop" ];
+
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = [ "wps-office-et.desktop" ];
+      "application/vnd.ms-excel" = [ "wps-office-et.desktop" ];
+      "application/vnd.oasis.opendocument.spreadsheet" = [ "wps-office-et.desktop" ];
+
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation" = [ "wps-office-wpp.desktop" ];
+      "application/vnd.ms-powerpoint" = [ "wps-office-wpp.desktop" ];
+      "application/vnd.oasis.opendocument.presentation" = [ "wps-office-wpp.desktop" ];
+    };
   };
 }

@@ -521,7 +521,8 @@
         "nur": "nur",
         "snowfall-lib": "snowfall-lib",
         "spicetify-nix": "spicetify-nix",
-        "stylix": "stylix"
+        "stylix": "stylix",
+        "wpsoffice": "wpsoffice"
       }
     },
     "snowfall-lib": {
@@ -820,6 +821,26 @@
       "original": {
         "owner": "pyproject-nix",
         "repo": "uv2nix",
+        "type": "github"
+      }
+    },
+    "wpsoffice": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1763010066,
+        "narHash": "sha256-6CHqEYyIBm+NK+pyCWDk04To2ZuX4TFH1tSwL+FbUMc=",
+        "owner": "alex-karev",
+        "repo": "wpsoffice-flake",
+        "rev": "ebd64051f3ac2f7ca82111af300e3e01531e15c9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alex-karev",
+        "repo": "wpsoffice-flake",
         "type": "github"
       }
     }
