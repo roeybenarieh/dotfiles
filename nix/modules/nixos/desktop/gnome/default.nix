@@ -19,6 +19,8 @@ in
         games = disabled;
         core-developer-tools = disabled;
         core-apps = disabled;
+        core-shell = enabled; # service manager
+        localsearch = enabled; # search files/directories in gnome search bar
       };
     };
     environment.systemPackages = with pkgs.gnomeExtensions; [
@@ -29,6 +31,8 @@ in
       clipboard-indicator
       appindicator
       gsconnect
+      hide-top-bar
+      hibernate-status-button
       # qtile like
       unite # doesnt seems to work
       undecorate # doesnt work
@@ -36,7 +40,7 @@ in
 
       auto-brightness-toggle
       dexcom-cgm-monitor
-    ];
+    ] ++ [ pkgs.gnome-system-monitor ];
     # open ports required by gsconnect
     networking.firewall = {
       allowedTCPPortRanges = [{ from = 1716; to = 1764; }];
@@ -69,6 +73,7 @@ in
         console = [ "<Super>f" ];
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
@@ -76,6 +81,11 @@ in
         command = "gnome-terminal --maximize --name terminal";
         # command = config.snowfallorg.users.roey.home.config.home.sessionVariables.TERMINAL;
         binding = "<Super>Return";
+      };
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+        name = "open-system-monitor";
+        command = getExe pkgs.gnome-system-monitor;
+        binding = "<Control>Escape";
       };
       "org/gnome/desktop/peripherals/touchpad".click-method = "areas"; # allow right click in touchpad
 
