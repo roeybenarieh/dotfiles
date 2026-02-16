@@ -30,7 +30,7 @@ in
       defaultEditor = true;
       withPython3 = true;
       withNodeJs = true;
-      extraLuaConfig = mkForce ""; # in order to put my own init.lua configuraiton
+      initLua = mkForce ""; # in order to put my own init.lua configuraiton
       # TODO: understand why this is working although it is not documented
       extraPackages = with pkgs; [
         ripgrep
