@@ -23,7 +23,7 @@ rollback-user:
 rebuild-system:
   @just _base_nix_git_stage \
   && git add ./nix/modules/nixos/** ./nix/systems/** \
-  && sudo nixos-rebuild switch --flake .
+  && sudo nice -19 nixos-rebuild switch --flake .
 
 [group('nix')]
 copy-existing-nixos-config system:
