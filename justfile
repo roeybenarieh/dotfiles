@@ -1,14 +1,6 @@
 default:
   @just --list
 
-[group('stow')]
-deploy:
-  stow .
-
-[group('stow')]
-undeploy:
-  stow --delete .
-
 # base files needed to be staged by git before building something in nix
 _base_nix_git_stage:
   git add flake.nix flake.lock && git add ./nix/lib/** \
