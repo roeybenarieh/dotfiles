@@ -12,77 +12,27 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ openfortivpn ];
     networking = {
       inherit (cfg) hostName; # Define your hostname.
       networkmanager = {
         enable = true;
-        # networking.networkmanager.ensureProfiles
-        dispatcherScripts = [
-          {
-            # for viewing logs: "journalctl -f | grep AutoHotspot"
-            type = "pre-up";
-            source = pkgs.writeShellScript "autohotspot" ''
-              #!/usr/bin/env bash
-              # Dispatcher arguments:
-              IFACE="$1" # $1 = interface name
-              STATUS="$2" # $2 = status (up|down)
-              # Hotspot connection profile name
-              HOTSPOT_CONN="AutoHotspot"
-
-              # Get interface type
-              # FIX: this doesn't work, I can't get the interface type
-              sleep 5 # HACK: wait for the interface to be up, only that its possible to get its type
-              TYPE=$(nmcli -g GENERAL.TYPE device show "$IFACE" 2>/dev/null)
-              TYPE=$(nmcli -g GENERAL.TYPE device show "$IFACE" 2>/dev/null)
-
-              logger "AutoHotspot: 1"
-              logger "AutoHotspot: $IFACE"
-              logger "AutoHotspot: $STATUS"
-              logger "AutoHotspot: $TYPE"
-              logger "AutoHotspot: $CONNECTION_ID"
-              logger "AutoHotspot: --------------------------"
-              # Only act on Ethernet interfaces
-              if [ "$TYPE" != "ethernet" ]; then
-              	exit 0
-              fi
-
-              logger "AutoHotspot: 2"
-              # When ethernet goes UP → start hotspot
-              if [ "$STATUS" = "up" ]; then
-
-              	logger "AutoHotspot: Ethernet up, starting hotspot"
-              	nmcli connection up "$HOTSPOT_CONN"
-              fi
-
-              # When ethernet goes DOWN → stop hotspot
-              if [ "$STATUS" = "down" ]; then
-              	logger "AutoHotspot: Ethernet down, stopping hotspot."
-              	nmcli connection down "$HOTSPOT_CONN"
-              fi
-            '';
-          }
-        ];
         ensureProfiles.profiles = {
-          autoHotspot = {
+          "jutomate-fortivpn" = {
             connection = {
-              id = cfg.hotspotName;
-              type = "wifi";
-              autoconnect = false; # Do NOT auto-connect(only connect using the dispatcher script)
+              id = "Jutomate FortiVPN";
+              type = "vpn";
+              autoconnect = false;
             };
-            wifi-security = {
-              auth-alg = "open";
-              key-mgmt = "wpa-psk"; # wpa-psk, sae, wpa-eap, 
-              psk = "${cfg.hotspotName}123";
+            vpn = {
+              service-type = "org.freedesktop.NetworkManager.fortisslvpn";
+              gateway = "149.106.132.26:10443";
+              user = "roey";
+              trusted-cert = "30a034feac05b7cfdf3d758e1dd359649ddb6d4e84b96031e619c6a90b1f207f";
             };
-            wifi = {
-              mode = "ap"; # Access point mode
-              ssid = cfg.hotspotName; # Hotspot name
-            };
-            # NAT + DHCP for hotspot clients
-            ipv4.method = "shared";
-            ipv6.method = "shared";
           };
         };
+        plugins = [ pkgs.networkmanager-fortisslvpn ];
       };
 
       localCommands = ''
