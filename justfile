@@ -56,14 +56,6 @@ debug:
   echo press ':r' to reload variables \
   && nixos-rebuild repl --flake . 
 
-# [group('nix')]
-# rebuild-nvim:
-#   cp ~/.config/nvim/lazyvim.json ./.config/nvim/lazyvim.json \
-#   && cp ~/.config/nvim/lazy-lock.json ./.config/nvim/lazy-lock.json \
-#   && git add ./.config/nvim/** \
-#   && just rebuild-user \
-
-
 [group('nix')]
 rebuild-all:
   just rebuild-system && just rebuild-user
