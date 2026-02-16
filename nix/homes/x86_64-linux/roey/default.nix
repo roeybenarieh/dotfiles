@@ -23,7 +23,6 @@ with lib.extra;
     go = enabled;
     game-dev = enabled;
     office = enabled;
-    services = enabled;
   };
 
   home = {
