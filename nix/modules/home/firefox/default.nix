@@ -91,6 +91,10 @@ in
           # telemetry
           "toolkit.telemetry.server" = "data:,"; # change telemetry server
 
+          # save memory
+          "browser.tabs.unloadOnLowMemory" = true;
+          "browser.tabs.loadInBackground" = false;
+
           # smooth scrolling
           "general.smoothScroll.msdPhysics.enabled" = true;
           "gfx.x11-egl.force-enabled" = true;
@@ -116,6 +120,7 @@ in
             video-downloadhelper
             privacy-badger
             chrome-mask
+            auto-tab-discard
           ];
           # FIX: every time I used video Downloadhelper, it changes the settings, and home manager gets error on rebuild
           settings = {
