@@ -46,7 +46,7 @@ in
       playerctl # control playing
       brightnessctl # control brightness
       flameshot # screenshots
-      xorg.setxkbmap # for changing keyboard layout
+      setxkbmap # for changing keyboard layout
       btop # for viewing system resources
       arandr # for editing monitors layout(positioning them relative to each other)
       alttab # window switcher

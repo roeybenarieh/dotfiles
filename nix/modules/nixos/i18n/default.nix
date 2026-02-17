@@ -20,7 +20,7 @@ in
     # set hebrew and english keyboard layouts
     # set Alt+Shift and Winkey+Space as layouts togglers
     services.xserver.displayManager.setupCommands = ''
-      ${getExe pkgs.xorg.setxkbmap} -layout "us,il" -option "grp:alt_shift_toggle,grp:win_space_toggle"
+      ${getExe pkgs.setxkbmap} -layout "us,il" -option "grp:alt_shift_toggle,grp:win_space_toggle"
     '';
 
     # Set your time zone.
