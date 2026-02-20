@@ -11,10 +11,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    ${namespace} = {
-      graphics.displaylink = enabled;
-    };
-
     # Enable touchpad support
     services.libinput = {
       enable = true;
