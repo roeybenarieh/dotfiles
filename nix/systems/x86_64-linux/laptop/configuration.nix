@@ -49,7 +49,7 @@ in
       logs.loki = enabled;
       opentelemetry = enabled;
     };
-    ssh = enabled;
+    ssh = disabled;
     laptop = enabled;
     graphics.displays = {
       enable = true;
