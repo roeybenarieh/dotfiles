@@ -30,7 +30,12 @@ in
       };
     };
 
-    programs.chromium = enabled; # just in case
+    programs.chromium = {
+      enable = true;
+      extensions = [
+        "epcnnfbjfcgphgdmggkamkmgojdagdnn" # ublock
+      ];
+    };
 
     # the firefox configuration itself
     programs.firefox = {
