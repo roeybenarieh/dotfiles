@@ -27,27 +27,27 @@ in
       };
     };
     observability = {
-      grafana = enabled;
+      grafana = disabled;
       metrics = {
         scraping = {
-          node = enabled;
-          systemd = enabled;
+          node = disabled;
+          systemd = disabled;
         };
         prometheus = {
-          enable = true;
+          enable = false;
           inherit otel_traces_grpc_port;
         };
         thanos = {
-          enable = true;
+          enable = false;
           inherit otel_traces_grpc_port;
         };
       };
       traces.tempo = {
-        enable = true;
+        enable = false;
         inherit otel_traces_grpc_port;
       };
-      logs.loki = enabled;
-      opentelemetry = enabled;
+      logs.loki = disabled;
+      opentelemetry = disabled;
     };
     ssh = disabled;
     laptop = enabled;
