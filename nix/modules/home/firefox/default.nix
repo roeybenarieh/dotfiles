@@ -35,6 +35,9 @@ in
       extensions = [
         "epcnnfbjfcgphgdmggkamkmgojdagdnn" # ublock
       ];
+      commandLineArgs = [
+        "--enable-features=TouchpadOverscrollHistoryNavigation" # use touchpad to navigate between pages
+      ];
     };
 
     # the firefox configuration itself
