@@ -2,10 +2,10 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.vscode;
+  cfg = config.${namespace}.software-development.ide.vscode;
 in
 {
-  options.${namespace}.vscode = with types; {
+  options.${namespace}.software-development.ide.vscode = with types; {
     enable = mkBoolOpt false "Whether or not to enable vscode.";
   };
 

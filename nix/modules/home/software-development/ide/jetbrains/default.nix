@@ -2,7 +2,7 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.jetbrains;
+  cfg = config.${namespace}.software-development.ide.jetbrains;
   pycharmPackage = pkgs.jetbrains.pycharm;
   openPycharmScript = pkgs.writeShellScriptBin "open-pycharm" ''
     set -euo pipefail
@@ -16,14 +16,15 @@ let
   '';
 in
 {
-  options.${namespace}.jetbrains = with types; {
+  options.${namespace}.software-development.ide.jetbrains = with types; {
     enable = mkBoolOpt false "Whether or not to enable jetbrains applications.";
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs.jetbrains; [
+    home.packages = with pkgs; [
       # idea-community # java, kotlin, scala, groovy
       pycharmPackage # python
+      claude-code # used by IDE for claude code integration
       openPycharmScript
     ];
   };

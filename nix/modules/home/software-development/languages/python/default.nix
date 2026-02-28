@@ -2,10 +2,10 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.python;
+  cfg = config.${namespace}.software-development.languages.python;
 in
 {
-  options.${namespace}.python = with types; {
+  options.${namespace}.software-development.languages.python = with types; {
     enable = mkBoolOpt false "Whether or not to install python.";
   };
 

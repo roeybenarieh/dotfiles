@@ -2,7 +2,7 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.neovim;
+  cfg = config.${namespace}.software-development.ide.neovim;
   nvim-wrapper = pkgs.writeShellScriptBin "nvim-wrapper" ''
     #!/bin/sh
     if [[ -z "$DISPLAY" ]]; then
@@ -20,7 +20,7 @@ let
   nvim-wrapper-executable = getExe nvim-wrapper;
 in
 {
-  options.${namespace}.neovim = with types; {
+  options.${namespace}.software-development.ide.neovim = with types; {
     enable = mkBoolOpt false "Whether or not to enable neovim.";
   };
 

@@ -2,10 +2,10 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.go;
+  cfg = config.${namespace}.software-development.languages.go;
 in
 {
-  options.${namespace}.go = with types; {
+  options.${namespace}.software-development.languages.go = with types; {
     enable = mkBoolOpt false "Whether or not to install go language.";
   };
 
