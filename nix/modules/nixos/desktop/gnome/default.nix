@@ -23,6 +23,7 @@ in
         localsearch = enabled; # search files/directories in gnome search bar
       };
     };
+    environment.gnome.excludePackages = with pkgs; [ gnome-tour gnome-user-docs ];
     environment.systemPackages = with pkgs.gnomeExtensions; [
       user-themes
       dash-to-dock
