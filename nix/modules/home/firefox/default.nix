@@ -34,6 +34,7 @@ in
       enable = true;
       extensions = [
         "epcnnfbjfcgphgdmggkamkmgojdagdnn" # ublock
+        "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
       ];
       commandLineArgs = [
         "--enable-features=TouchpadOverscrollHistoryNavigation" # use touchpad to navigate between pages
