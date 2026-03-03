@@ -38,6 +38,10 @@
       url = "github:alex-karev/wpsoffice-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-desktop = {
+      url = "github:aaddrick/claude-desktop-debian";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -60,6 +64,7 @@
       # overlays config
       overlays = with inputs; [
         nur.overlays.default
+        claude-desktop.overlays.default
       ];
 
       # home manager modules

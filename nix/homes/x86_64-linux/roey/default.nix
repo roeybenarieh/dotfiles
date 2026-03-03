@@ -29,6 +29,7 @@ with lib.extra;
     };
     game-dev = enabled;
     office = enabled;
+    claude = enabled;
   };
 
   home = {

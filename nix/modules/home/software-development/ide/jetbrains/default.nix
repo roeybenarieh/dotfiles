@@ -24,7 +24,6 @@ in
     home.packages = with pkgs; [
       # idea-community # java, kotlin, scala, groovy
       pycharmPackage # python
-      claude-code # used by IDE for claude code integration
       openPycharmScript
     ];
   };

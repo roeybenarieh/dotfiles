@@ -1,0 +1,20 @@
+{ namespace, lib, config, pkgs, ... }:
+with lib;
+with lib.${namespace};
+let
+  cfg = config.${namespace}.claude;
+in
+{
+  options.${namespace}.claude = with types; {
+    enable = mkBoolOpt false "Whether or not to enable claude-desktop.";
+  };
+
+  config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      claude-desktop-fhs # claude code
+      bubblewrap # TODO: delete this
+      claude-code # cli
+    ];
+    programs.chromium.extensions = [ "fcoeoabgfenejglbffodgkkbkcdhcgfn" ]; # claude chrome extention
+  };
+}
