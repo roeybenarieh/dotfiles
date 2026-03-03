@@ -8,19 +8,25 @@ with lib.extra;
     entertainment = enabled;
     firefox = enabled;
     git = enabled;
-    jetbrains = enabled;
-    neovim = enabled;
     social = enabled;
     terminal = enabled;
     tmux = disabled;
     tor = enabled;
-    vscode = enabled;
     windows = enabled;
     zsh = enabled;
     networking = enabled;
-    containers = enabled;
-    python = enabled;
-    go = enabled;
+    software-development = {
+      containers = enabled;
+      ide = {
+        jetbrains = enabled;
+        neovim = enabled;
+        vscode = enabled;
+      };
+      languages = {
+        go = enabled;
+        python = enabled;
+      };
+    };
     game-dev = enabled;
     office = enabled;
   };
