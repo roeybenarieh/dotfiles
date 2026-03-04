@@ -103,6 +103,10 @@
           name = "NotebookLM - ask questions about text/websites/audio";
           url = "https://notebooklm.google.com";
         }
+        {
+          name = "perplexity.ai - AI+Google, ask ai and get answers from up to date google sources";
+          url = "https://www.perplexity.ai/";
+        }
       ];
     }
 
