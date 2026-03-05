@@ -12,7 +12,6 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       claude-desktop-fhs # claude code
-      bubblewrap # TODO: delete this
       claude-code # cli
     ];
     programs.chromium.extensions = [ "fcoeoabgfenejglbffodgkkbkcdhcgfn" ]; # claude chrome extention
