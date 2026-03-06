@@ -1,11 +1,10 @@
 import re
 import subprocess
 
-from keyboard_layout_widget import MyKeyboardLayout
 from libqtile import bar, widget
 from libqtile.widget.nvidia_sensors import NvidiaSensors
 from libqtile.lazy import lazy
-from libqtile.widget import PulseVolume
+from libqtile.widget import PulseVolume, KeyboardLayout
 
 import colors
 import dexcom_widget
@@ -25,11 +24,7 @@ DexcomGlucose = mk_overrides(
     update_interval=10,  # update every 10s
 )
 
-KeyboardLayout = mk_overrides(
-    MyKeyboardLayout,
-    text="UNK",
-    update_interval=0.1,
-)
+KeyboardLayout = mk_overrides(KeyboardLayout, configured_keyboards=["us", "il"])
 
 # TODO: get gpu usage%
 NvidiaTemp = mk_overrides(NvidiaSensors, format="{temp}°C", update_interval=5)
@@ -42,8 +37,10 @@ DexcomInRangePercentage = mk_overrides(
 Volume = mk_overrides(
     PulseVolume,
     mouse_callbacks={
-        "Button2": lazy.spawn(SETTINGS.auidio_controller),
-        "Button3": lazy.spawn(SETTINGS.audio_visualizer),
+        "Button1": lazy.spawn(SETTINGS.auidio_controller),  # left click
+        "Button2": lazy.spawn(SETTINGS.audio_visualizer),  # wheel click
+        "Button4": lazy.spawn("pamixer --increase 5"),  # Scroll Up
+        "Button5": lazy.spawn("pamixer --decrease 5"),  # Scroll Down
     },
 )
 
