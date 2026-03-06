@@ -56,7 +56,7 @@ in
       gnutar
 
       # fun
-      neofetch
+      fastfetch
       cmatrix
       asciiquarium
       lolcat
