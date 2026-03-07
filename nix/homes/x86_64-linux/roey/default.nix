@@ -1,10 +1,10 @@
-{ lib, ... }:
+{ lib, osConfig ? { }, ... }:
 
 with lib.extra;
 {
   extra = {
     cli = enabled;
-    desktop = disabled; # should be enabled according to NixOS desktop environment configuration
+    desktop.enable = osConfig.services.xserver.windowManager.qtile.enable or false;
     entertainment = enabled;
     firefox = enabled;
     git = enabled;
