@@ -87,12 +87,14 @@ keys = [
     Key(
         [],
         print_screen,
-        lazy.spawn(f"flameshot screen --clipboard --path {SETTINGS.screenshot_dir}"),
+        lazy.spawn(f"gscreenshot --notify --clip --filename {SETTINGS.screenshot_dir}"),
     ),  # screenshot
     Key(
         [mod, shift],
         "s",
-        lazy.spawn(f"flameshot gui --clipboard --path {SETTINGS.screenshot_dir}"),
+        lazy.spawn(
+            f"gscreenshot --selection --notify --clip --filename {SETTINGS.screenshot_dir}"
+        ),
     ),  # partial screenshot
     Key([mod, shift], "h", lazy.layout.shuffle_left()),
     Key([mod], "n", lazy.layout.normalize()),

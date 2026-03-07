@@ -45,7 +45,8 @@ in
       pamixer # control volume
       playerctl # control playing
       brightnessctl # control brightness
-      flameshot # screenshots
+      gscreenshot # screenshots
+      libnotify # used by gscreenshot to raise notifications
       setxkbmap # for changing keyboard layout
       btop # for viewing system resources
       arandr # for editing monitors layout(positioning them relative to each other)
