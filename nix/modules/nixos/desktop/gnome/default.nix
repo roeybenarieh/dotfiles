@@ -121,6 +121,7 @@ in
       # GNOME extentions related
       "org/gnome/shell/keybindings" = {
         "toggle-message-tray" = [ ]; # Super+v by default
+        "show-screenshot-ui" = [ "<Shift><Super>s" ];
       };
       "org/gnome/shell/extensions/clipboard-indicator" = {
         "toggle-menu" = [ "<Super>v" ];
