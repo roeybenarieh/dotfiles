@@ -116,7 +116,7 @@ in
       "org/gnome/mutter" = {
         workspaces-only-on-primary = false;
         center-new-windows = true;
-        edge-tiling = false; # Tiling
+        edge-tiling = true; # Tiling TODO: make sure this change was applied after restart
       };
       # GNOME extentions related
       "org/gnome/shell/keybindings" = {
