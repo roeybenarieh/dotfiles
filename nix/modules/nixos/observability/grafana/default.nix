@@ -60,6 +60,7 @@ in
           instance_name = "home-computer";
           somthing = "else";
         };
+        security.secret_key = "SW2YcwTIb9zpOOhoPsMm";
       };
       provision = {
         enable = true;
