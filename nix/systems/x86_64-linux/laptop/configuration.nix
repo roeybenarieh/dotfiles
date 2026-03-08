@@ -14,7 +14,7 @@ in
   ${namespace} = {
     networking.hostName = "laptop";
     apps = enabled;
-    desktop.gnome = mkForce enabled;
+    desktop.qtile = enabled;
 
     docker = enabled;
     containerization.k3s = disabled;
