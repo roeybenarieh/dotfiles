@@ -104,6 +104,7 @@ in
           gsconnect.extensionUuid
           unite.extensionUuid
           dexcom-cgm-monitor.extensionUuid
+          hide-top-bar.extensionUuid
           advanced-alttab-window-switcher.extensionUuid
         ];
       };
