@@ -33,7 +33,7 @@ in
       appindicator
       gsconnect
       hide-top-bar
-      hibernate-status-button
+      advanced-alttab-window-switcher
       # qtile like
       unite # doesnt seems to work
       undecorate # doesnt work
@@ -104,6 +104,7 @@ in
           gsconnect.extensionUuid
           unite.extensionUuid
           dexcom-cgm-monitor.extensionUuid
+          advanced-alttab-window-switcher.extensionUuid
         ];
       };
       "org/gnome/mutter" = {
@@ -143,6 +144,20 @@ in
         "show-notifications" = false;
         "show-indicator" = "never";
         "enable-mpris" = true;
+      };
+      "org/gnome/shell/extensions/advanced-alt-tab-window-switcher" = {
+        "switcher-popup-timeout" = 0;
+        "app-switcher-popup-include-show-apps-icon" = false;
+        "app-switcher-popup-fav-apps" = false;
+        "app-switcher-popup-raise-first-only" = true;
+        "app-switcher-popup-search-pref-running" = true;
+        "app-switcher-popup-hide-win-counter-for-single-window" = true;
+        "app-switcher-popup-icon-size" = 96;
+        "switcher-popup-monitor" = 2; # show switcher in monitor with focused window
+        "switcher-ws-thumbnails" = 1; # show workspace thumbnails
+        "switcher-popup-tooltip-title" = 1; # dont show full title for each icon
+        "app-switcher-popup-titles" = true; # show application name
+        "switcher-popup-up-down-action" = 3; # toggle single app instances by using ↑↓
       };
     };
   };
