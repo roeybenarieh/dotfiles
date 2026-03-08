@@ -1,4 +1,4 @@
-{ namespace, lib, config, ... }:
+{ namespace, lib, config, pkgs, ... }:
 
 with lib;
 with lib.${namespace};
@@ -53,5 +53,8 @@ in
         };
       };
     };
+    services.xserver.displayManager.sessionCommands = ''
+      ${pkgs.autorandr}/bin/autorandr --change
+    '';
   };
 }
