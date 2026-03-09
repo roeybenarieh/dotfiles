@@ -29,6 +29,16 @@ in
       enable = true;
       matchEdid = true;
       profiles = {
+        "Only builtin display" = mkIf (cfg.builtInDisplay.config != null) {
+          inherit fingerprint;
+          config = {
+            eDP-1 = cfg.builtInDisplay.config // {
+              enable = true;
+              position = "0x0";
+              primary = true;
+            };
+          };
+        };
         "Home Thinkpad dock" = {
           inherit fingerprint;
           config = {
