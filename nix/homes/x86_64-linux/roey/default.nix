@@ -7,8 +7,8 @@ with lib.extra;
     desktop.enable = osConfig.services.xserver.windowManager.qtile.enable or false;
     entertainment = enabled;
     browser = {
-      default_browser = "firefox";
-      firefox = enabled;
+      default_browser = "chromium";
+      chromium = enabled;
     };
     git = enabled;
     social = enabled;
