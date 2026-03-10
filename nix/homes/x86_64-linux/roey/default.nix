@@ -6,7 +6,10 @@ with lib.extra;
     cli = enabled;
     desktop.enable = osConfig.services.xserver.windowManager.qtile.enable or false;
     entertainment = enabled;
-    firefox = enabled;
+    browser = {
+      default_browser = "firefox";
+      firefox = enabled;
+    };
     git = enabled;
     social = enabled;
     terminal = enabled;

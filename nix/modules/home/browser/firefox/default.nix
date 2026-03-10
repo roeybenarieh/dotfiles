@@ -2,46 +2,14 @@
 with lib;
 with lib.${namespace};
 let
-  cfg = config.${namespace}.firefox;
+  cfg = config.${namespace}.browser.firefox;
 in
 {
-  options.${namespace}.firefox = with types; {
+  options.${namespace}.browser.firefox = with types; {
     enable = mkBoolOpt false "Whether or not to enable firefox.";
   };
 
   config = mkIf cfg.enable {
-    home.sessionVariables = {
-      BROWSER = "firefox";
-    };
-    # make firefox the default for opening things
-    xdg.mimeApps = {
-      enable = true;
-      # to get mime type run: file -b --mime-type <file_name>
-      defaultApplications = {
-        "text/html" = "firefox.desktop";
-        "application/pdf" = "firefox.desktop";
-        "image/jpeg" = "firefox.desktop";
-        "image/png" = "firefox.desktop";
-        "image/gif" = "firefox.desktop";
-        "x-scheme-handler/http" = "firefox.desktop";
-        "x-scheme-handler/https" = "firefox.desktop";
-        "x-scheme-handler/about" = "firefox.desktop";
-        "x-scheme-handler/unknown" = "firefox.desktop";
-      };
-    };
-
-    programs.chromium = {
-      enable = true;
-      extensions = [
-        "epcnnfbjfcgphgdmggkamkmgojdagdnn" # ublock
-        "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
-      ];
-      commandLineArgs = [
-        "--enable-features=TouchpadOverscrollHistoryNavigation" # use touchpad to navigate between pages
-      ];
-    };
-
-    # the firefox configuration itself
     programs.firefox = {
       enable = true;
       package = pkgs.firefox.overrideAttrs (old: {
