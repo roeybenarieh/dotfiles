@@ -18,7 +18,7 @@ let
     sha256 = "sha256-7OL0wemiIgMHkXSRxSuWZRzlH3nMKtlCidX/Ypp+fdc=";
   };
   lock_screen_command = "${pkgs.systemd}/bin/loginctl lock-session self";
-  lock_screen_and_suspend = "${pkgs.systemd}/bin/systemctl -i suspend"; # gets locked by light-locker
+  lock_screen_and_sleep = "${pkgs.systemd}/bin/systemctl -i suspend-then-hibernate"; # gets locked by light-locker
   terminal = config.home.sessionVariables.TERMINAL;
 in
 {
@@ -144,18 +144,22 @@ in
       # NOTE: The delays add onto the previous value (and the value is in seconds)
       timers = [
         {
-          delay = 60 * 10;
-          command = lock_screen_command;
+          delay = 5 * 60;
+          command = "${getExe pkgs.brightnessctl} --save set 10%";
+          canceller = "${getExe pkgs.brightnessctl} --restore";
         }
         {
-          delay = 60;
-          command = "${pkgs.systemd}/bin/systemctl -i suspend";
-        }
-        {
-          delay = 60 * 10;
-          command = "${pkgs.systemd}/bin/systemctl -i hibernate";
+          # Lock the session after 10 min idle
+          delay = 5 * 60;
+          command = "${getExe pkgs.brightnessctl} --restore || ${lock_screen_and_sleep}";
         }
       ];
+    };
+
+    services.screen-locker = {
+      enable = true;
+      lockCmd = lock_screen_command;
+      xautolock = disabled;
     };
 
     xdg.configFile = {
@@ -166,7 +170,7 @@ in
       };
       "qtile-injection/config.json" = {
         text = builtins.toJSON rec {
-          lock_screen_command = lock_screen_and_suspend;
+          lock_screen_command = lock_screen_and_sleep;
           browser = config.home.sessionVariables.BROWSER;
           wallpaper = "${inputs.assets}/wallpaper.png";
           inherit terminal;
