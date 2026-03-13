@@ -43,6 +43,8 @@ Volume = mk_overrides(
     mouse_callbacks={
         "Button2": lazy.spawn(SETTINGS.auidio_controller),
         "Button3": lazy.spawn(SETTINGS.audio_visualizer),
+        "Button4": lazy.spawn("pamixer --increase 5"),  # Scroll Up
+        "Button5": lazy.spawn("pamixer --decrease 5"),  # Scroll Down
     },
 )
 
