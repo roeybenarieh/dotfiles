@@ -21,15 +21,10 @@ in
       "displaylink"
       "modesetting"
     ];
-    # wayland specific
     boot = {
       extraModulePackages = [ config.boot.kernelPackages.evdi ];
-      initrd = {
-        # List of modules that are always loaded by the initrd.
-        kernelModules = [
-          "evdi"
-        ];
-      };
+      kernelModules = [ "evdi" ];
+      kernelParams = [ "usbcore.autosuspend=-1" ]; # make sure input is not suspended!
     };
     # Gnome specific
     systemd.services.dlm.wantedBy = [ "multi-user.target" ];
