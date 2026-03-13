@@ -27,7 +27,6 @@ DexcomGlucose = mk_overrides(
 
 KeyboardLayout = mk_overrides(
     MyKeyboardLayout,
-    text="UNK",
     update_interval=0.1,
 )
 
