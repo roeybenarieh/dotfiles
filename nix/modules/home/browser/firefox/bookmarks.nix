@@ -107,6 +107,10 @@
           name = "perplexity.ai - AI+Google, ask ai and get answers from up to date google sources";
           url = "https://www.perplexity.ai/";
         }
+        {
+          name = "skywork.ai - AI with files handling (e.g. presentations/images/sheets/images)";
+          url = "https://skywork.ai";
+        }
       ];
     }
 
