@@ -24,13 +24,10 @@ in
       enable = true;
       enabledExtensions = with spicePkgs.extensions; [
         adblock
-        fullAppDisplay
-        hidePodcasts
-        keyboardShortcut
-        songStats
-      ];
-      enabledCustomApps = with spicePkgs.apps; [
-        lyricsPlus
+        oneko # cat follows mouse
+        keyboardShortcut # vim like keyboard shortcuts
+        songStats # show more start on each song
+        autoSkipVideo
       ];
     };
   };
