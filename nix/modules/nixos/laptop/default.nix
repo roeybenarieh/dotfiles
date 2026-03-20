@@ -47,6 +47,7 @@ in
         AutoEnable = true;
       };
     };
+    services.blueman = enabled; # needed by oversdride
 
     # taken from : https://nixos.wiki/wiki/Laptop
     # power management

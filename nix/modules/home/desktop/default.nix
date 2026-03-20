@@ -5,10 +5,6 @@ with lib.${namespace};
 let
   cfg = config.${namespace}.desktop;
   reload_qtile_command = "${getExe pkgs.python3.pkgs.qtile} cmd-obj -o cmd -f reload_config";
-  blueooth-icon = pkgs.fetchurl {
-    url = "https://upload.wikimedia.org/wikipedia/commons/e/ed/Antu_bluetooth.svg";
-    sha256 = "sha256-JfGCuTF2o9X0iiUTemolD7eGFrrKPN8ArAJ6szFiY3o=";
-  };
   volume-control-icon = pkgs.fetchurl {
     url = "https://upload.wikimedia.org/wikipedia/commons/a/a0/Circle-icons-speaker.svg";
     sha256 = "sha256-qvAZqJNs2RMQMg5N6WrH/JROFPQoDjyawYQO9vJcxIw=";
@@ -51,23 +47,11 @@ in
       btop # for viewing system resources
       arandr # for editing monitors layout(positioning them relative to each other)
       alttab # window switcher
-      blueberry # bluetooth manager
       xkb-switch # for switching keyboard layouts
       networkmanager_dmenu # handling network connections(nmtui alternative)
       linux-wifi-hotspot # create wifi hotsport
     ];
 
-    # manually set blueberry desktop entry in order to have icon
-    xdg.desktopEntries.blueberry = {
-      name = "Bluetooth";
-      genericName = "Bluetooth Settings";
-      comment = "Manage Bluetooth devices";
-      exec = getExe' pkgs.blueberry "blueberry";
-      icon = blueooth-icon;
-      terminal = false;
-      type = "Application";
-      categories = [ "Settings" "HardwareSettings" ];
-    };
     # manually set pavucontrol desktop entry in order to have icon
     xdg.desktopEntries."org.pulseaudio.pavucontrol" = {
       name = "volume control";
