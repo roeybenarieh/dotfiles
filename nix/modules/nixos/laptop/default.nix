@@ -66,7 +66,7 @@ in
           turbo = "never";
         };
         charger = {
-          governor = "performance";
+          governor = "auto";
           turbo = "auto";
         };
       };
