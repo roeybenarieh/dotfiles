@@ -23,8 +23,8 @@ in
     ];
     boot = {
       extraModulePackages = [ config.boot.kernelPackages.evdi ];
-      kernelModules = [ "evdi" ];
       kernelParams = [ "usbcore.autosuspend=-1" ]; # make sure input is not suspended!
+      initrd.kernelModules = [ "evdi" ];
     };
     # Gnome specific
     systemd.services.dlm.wantedBy = [ "multi-user.target" ];
