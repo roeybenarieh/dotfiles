@@ -13,6 +13,7 @@ in
     home.packages = with pkgs; [
       claude-desktop-fhs # claude code
       claude-code # cli
+      sox # for using voice
     ];
     programs.chromium.extensions = [ "fcoeoabgfenejglbffodgkkbkcdhcgfn" ]; # claude chrome extention
   };
