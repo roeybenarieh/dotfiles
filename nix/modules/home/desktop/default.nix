@@ -13,6 +13,10 @@ let
     url = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/X.Org_Logo.svg/1024px-X.Org_Logo.svg.png";
     sha256 = "sha256-7OL0wemiIgMHkXSRxSuWZRzlH3nMKtlCidX/Ypp+fdc=";
   };
+  network-manager-icon = pkgs.fetchurl {
+    url = "https://iconvulture.com/wp-content/uploads/2019/10/si-glyph-network.png";
+    sha256 = "sha256-k19dqXmpufa12yS9yBBjtzutGp2Z+kBU0KOB6z5tTx0=";
+  };
   lock_screen_command = "${pkgs.systemd}/bin/loginctl lock-session self";
   lock_screen_and_sleep = "${pkgs.systemd}/bin/systemctl -i suspend-then-hibernate"; # gets locked by light-locker
   terminal = config.home.sessionVariables.TERMINAL;
@@ -59,6 +63,16 @@ in
       comment = "control the volume of your audio devices";
       exec = getExe pkgs.pavucontrol;
       icon = volume-control-icon;
+      terminal = false;
+      type = "Application";
+      categories = [ "Settings" "HardwareSettings" ];
+    };
+    xdg.desktopEntries."networkmanager_dmenu" = {
+      name = "network manager - Dmenu";
+      genericName = "network manager";
+      comment = "control network related objects";
+      exec = getExe pkgs.networkmanager_dmenu;
+      icon = network-manager-icon;
       terminal = false;
       type = "Application";
       categories = [ "Settings" "HardwareSettings" ];
