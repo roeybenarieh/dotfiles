@@ -37,17 +37,19 @@ in
         libinput-gestures
         wmctrl # needed by libinput-gestures to switch workspaces
         xdotool
+        bluejay # bluetooth manager
       ];
     };
 
     # enable bluetooth
     hardware.bluetooth = {
       enable = true;
-      settings.Policy = {
-        AutoEnable = true;
+      powerOnBoot = true;
+      settings = {
+        Policy.AutoEnable = true;
+        General.Experimental = true; # required for some features on newer iOS versions
       };
     };
-    services.blueman = enabled; # needed by oversdride
 
     # taken from : https://nixos.wiki/wiki/Laptop
     # power management
