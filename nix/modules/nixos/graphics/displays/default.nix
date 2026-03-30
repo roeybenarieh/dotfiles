@@ -53,14 +53,14 @@ in
               mode = "1920x1080";
               position = "1920x263";
               rotate = "normal";
-              dpi = 96;
+              dpi = 120;
             };
             DVI-I-3-2 = {
               enable = true;
               mode = "2560x1440";
               position = "3840x0";
               rotate = "normal";
-              dpi = 96;
+              dpi = 120;
             };
           };
         };
