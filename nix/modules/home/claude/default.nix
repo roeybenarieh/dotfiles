@@ -14,6 +14,11 @@ in
       claude-desktop-fhs # claude code
       claude-code # cli
       sox # for using voice
+
+      # MCP related
+      nodejs # needed for some MCPs
+      pyright # needed in none pycharm environments for python analystics using LSP
+      # gh # used by GitHub MCP server
     ];
     programs.chromium.extensions = [ "fcoeoabgfenejglbffodgkkbkcdhcgfn" ]; # claude chrome extention
   };
