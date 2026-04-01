@@ -15,6 +15,7 @@ in
       wine-staging
       winetricks
       powershell # windows powershell
+      # winboat # easly run almost every windows application.(use VM underneath)
     ];
     home.shellAliases = { powershell = "pwsh"; };
   };
