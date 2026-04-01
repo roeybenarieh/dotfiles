@@ -11,6 +11,10 @@ format:
   treefmt
 
 [group('nix')]
+show-dependencies:
+  nix-tree .
+
+[group('nix')]
 rebuild-user:
   @just _base_nix_git_stage \
   && home-manager switch --flake .
