@@ -40,4 +40,7 @@ with lib.extra;
     homeDirectory = "/home/roey";
     stateVersion = "24.05";
   };
+  # options related to the fact that my stateVersion is old :-(
+  gtk.gtk4.theme = null;
+  programs.git.signing.format = null;
 }
