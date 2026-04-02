@@ -108,8 +108,10 @@ in
           registry.external_labels = {
             source = "tempo";
           };
+          processor.local_blocks.flush_to_storage = true;
         };
-        compactor.compaction.block_retention = "48h"; # total trace retention
+        ingester.flush_all_on_shutdown = true;
+        compactor.compaction.block_retention = "720h"; # 30 days
       };
     };
   };
