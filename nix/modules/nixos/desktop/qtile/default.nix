@@ -21,6 +21,13 @@ in
       displayManager.lightdm.enable = true;
       windowManager.qtile = {
         enable = true;
+        # qtile 0.35.0 tests are broken on Python 3.13; intercept .override so
+        # doCheck = false survives the nixos module's finalPackage re-instantiation
+        package =
+          let qtile = pkgs.python3.pkgs.qtile;
+          in qtile // {
+            override = args: (qtile.override args).overrideAttrs (_: { doInstallCheck = false; });
+          };
         extraPackages = python3Packages: with python3Packages; [
           qtile-extras
           pydexcom
