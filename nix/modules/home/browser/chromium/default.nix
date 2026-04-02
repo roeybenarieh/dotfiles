@@ -16,10 +16,14 @@ in
       extensions = [
         "epcnnfbjfcgphgdmggkamkmgojdagdnn" # ublock
         "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
+        "khncfooichmfjbepaaaebmommgaepoid" # Unhook - Remove YouTube Recommended & Shorts
       ];
       commandLineArgs = [
         "--enable-features=TouchpadOverscrollHistoryNavigation" # use touchpad to navigate between pages
       ];
+      # extraOpts = {
+      #   "RestoreOnStartup" = 1; # restore tabs on startup
+      # };
     };
   };
 }

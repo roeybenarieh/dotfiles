@@ -20,7 +20,7 @@ print_screen = "Print"
 SETTINGS.screenshot_dir.mkdir(parents=True, exist_ok=True)  # make sure dir exist
 os.environ["CM_LAUNCHER"] = "rofi"  # make clipmenu output clip selection to stdout
 os.environ["CM_HISTLENGTH"] = "10"  # number of lines of clipboard history to show
-os.environ["CM_OUTPUT_CLIP"] = "true"  # launch clipmenu with rofi
+os.environ["CM_OUTPUT_CLIP"] = "1"  # launch clipmenu with rofi
 
 
 # utils functions

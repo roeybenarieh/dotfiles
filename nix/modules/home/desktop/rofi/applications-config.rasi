@@ -16,6 +16,7 @@ configuration {
   matching: "fuzzy";
   sort: true;
   sorting-method: "fzf";
+  kb-cancel:                  "Escape,F1"; /* TODO: this is a hard coded 'F1' that is also coded in qtile...*/
 }
 
 /*****----- Main Window -----*****/
