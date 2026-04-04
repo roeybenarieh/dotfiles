@@ -1,5 +1,6 @@
-{ inputs, pkgs, ... }:
+{ inputs, pkgs, lib, ... }:
 
+with lib;
 {
   # nix flake show github:NixOS/nixos-hardware/master | grep common
   imports = with inputs.nixos-hardware.nixosModules; [
@@ -11,7 +12,7 @@
   # Remap keys: this laptop's firmware sends F<num> instead of the appropriate special keymaps
   # (i.e. XF86MonBrightnessUp/Down keysyms for brightness control), so fix it at the X11 level.
   services.xserver.displayManager.sessionCommands = ''
-    xmodmap=${pkgs.xorg.xmodmap}/bin/xmodmap
+    xmodmap=${getExe pkgs.xmodmap}
     $xmodmap -e "keycode 67 = XF86AudioMute"        # F1
     $xmodmap -e "keycode 68 = XF86AudioLowerVolume" # F2
     $xmodmap -e "keycode 69 = XF86AudioRaiseVolume" # F3
