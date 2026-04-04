@@ -20,6 +20,11 @@ in
       pyright # needed in none pycharm environments for python analystics using LSP
       # gh # used by GitHub MCP server
     ];
-    programs.chromium.extensions = [ "fcoeoabgfenejglbffodgkkbkcdhcgfn" ]; # claude chrome extention
+    programs.chromium = {
+      extensions = [ "fcoeoabgfenejglbffodgkkbkcdhcgfn" ]; # claude chrome extention
+      commandLineArgs = [
+        "--remote-debugging-port=9222" # enable Chrome's remote debugging API - used by claude sometimes
+      ];
+    };
   };
 }
