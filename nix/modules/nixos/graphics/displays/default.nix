@@ -25,6 +25,7 @@ in
   # create new profile from current xrandr configuration(after editing it in arandr): autorandr --config
   # get new monitor fingerprint: autorandr --fingerprint
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs;[ arandr ]; # for manually setting displays layouts
     services.autorandr = {
       enable = true;
       matchEdid = true;
