@@ -108,7 +108,7 @@ keys = [
     Key([mod, control], "r", lazy.reload_config()),
     Key([mod, control], "q", lazy.shutdown()),
     Key([mod], "r", lazy.spawncmd()),
-    Key([], "F1", lazy.spawn(SETTINGS.application_launcher)),
+    Key([], "F12", lazy.spawn(SETTINGS.application_launcher)),
     Key([alt], space, lazy.spawn(SETTINGS.application_launcher)),
     # keyboard layout
     Key(

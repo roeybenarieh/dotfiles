@@ -94,7 +94,7 @@ in
     services.xcape = {
       enable = true;
       mapExpression = {
-        "Super_L" = "F1";
+        "Super_L" = "F12";
       };
     };
 
