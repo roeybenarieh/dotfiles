@@ -24,7 +24,7 @@ in
       enable = true;
       enabledExtensions = with spicePkgs.extensions; [
         adblock
-        oneko # cat follows mouse
+        catJamSynced # cat follows mouse
         keyboardShortcut # vim like keyboard shortcuts
         songStats # show more start on each song
         autoSkipVideo
