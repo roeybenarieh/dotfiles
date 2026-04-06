@@ -16,7 +16,7 @@ in
     enable = cfg.enable;
 
     autoEnable = true;
-    image = "${inputs.assets}/wallpaper1.png";
+    image = "${inputs.assets}/theme.png";
     polarity = "dark";
     targets = {
       neovim.enable = false;
