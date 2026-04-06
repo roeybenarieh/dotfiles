@@ -18,7 +18,7 @@ in
       # MCP related
       nodejs # needed for some MCPs
       pyright # needed in none pycharm environments for python analystics using LSP
-      # gh # used by GitHub MCP server
+      gh # needed for interacting with github
     ];
     programs.chromium = {
       extensions = [ "fcoeoabgfenejglbffodgkkbkcdhcgfn" ]; # claude chrome extention
