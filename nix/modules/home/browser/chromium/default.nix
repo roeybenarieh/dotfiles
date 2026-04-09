@@ -13,6 +13,9 @@ in
   config = mkIf cfg.enable {
     programs.chromium = {
       enable = true;
+      package = pkgs.chromium.override {
+        enableWideVine = true; # allows playing DRM-protected content (like Netflix, Spotify, or Amazon Prime)
+      };
       extensions = [
         "epcnnfbjfcgphgdmggkamkmgojdagdnn" # ublock
         "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
