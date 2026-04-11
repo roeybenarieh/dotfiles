@@ -1,4 +1,4 @@
-{ namespace, lib, config, ... }:
+{ namespace, lib, config, pkgs, ... }:
 
 with lib;
 with lib.${namespace};
@@ -23,10 +23,25 @@ in
       ];
       commandLineArgs = [
         "--enable-features=TouchpadOverscrollHistoryNavigation" # use touchpad to navigate between pages
+        "--enable-background-mode" # keep process alive after last window closes, so preload is always ready
       ];
       # extraOpts = {
       #   "RestoreOnStartup" = 1; # restore tabs on startup
       # };
+    };
+
+    systemd.user.services.chromium-preload = {
+      Unit = {
+        Description = "Preload Chromium at login for instant startup";
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        ExecStart = "${pkgs.chromium}/bin/chromium --no-startup-window";
+        Restart = "always";
+        RestartSec = "2";
+      };
+      Install.WantedBy = [ "graphical-session.target" ];
     };
   };
 }

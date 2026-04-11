@@ -1,4 +1,4 @@
-{ namespace, lib, config, pkgs, ... }:
+{ namespace, lib, config, pkgs, inputs, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -138,6 +138,12 @@ in
         "--cmd cd" # configure zoxide to be used as 'cd'
       ];
     };
+
+    # Rebuild the hicolor icon cache so Nautilus can find icons from home-manager packages.
+    home.activation.updateIconCache = inputs.home-manager.lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      ${pkgs.gtk3}/bin/gtk-update-icon-cache --force --ignore-theme-index \
+        "$HOME/.nix-profile/share/icons/hicolor" || true
+    '';
 
     # Define Gmail as a desktop application
     xdg.desktopEntries.gmail = {

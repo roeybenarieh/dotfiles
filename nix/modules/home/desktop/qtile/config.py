@@ -35,6 +35,7 @@ layouts = [
         margin=4,
         border_focus=colors.BLUE_DARK,
         border_normal=colors.BG_DARK,
+        border_on_single=True,
     )
 ]
 

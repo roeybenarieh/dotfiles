@@ -45,10 +45,7 @@ in
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
-      settings = {
-        Policy.AutoEnable = true;
-        General.Experimental = true; # required for some features on newer iOS versions
-      };
+      settings.General.Experimental = true; # required for some features on newer iOS versions
     };
 
     # taken from : https://nixos.wiki/wiki/Laptop
