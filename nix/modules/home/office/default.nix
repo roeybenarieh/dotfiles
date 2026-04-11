@@ -1,4 +1,7 @@
-{ namespace, lib, config, pkgs, inputs, system, ... }:
+# NOTES: 
+# WPS doesn't have good support with Hebrew.
+# Maybe possible to diclerativly install windows via 
+{ namespace, lib, config, pkgs, inputs, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -10,9 +13,6 @@ let
   categories = [ "Office" "X-Microsoft" ];
   word-online-name = "Microsoft Word Online";
   powerpoint-online-name = "Microsoft Powerpoint Online";
-  # NOTE: for some reason the wps package provided is not working...
-  # wpsoffice = inputs.wpsoffice.packages.${system}.default;
-  wpsoffice-fonts = inputs.wpsoffice.packages.${system}.fonts;
 
   # assets
   powerpoint-icon = pkgs.fetchurl {
@@ -51,29 +51,51 @@ in
   config = mkIf cfg.enable {
     fonts.fontconfig = enabled;
     home.packages = with pkgs; [
-      # onlyoffice-bin
-      wpsoffice
+      libreoffice-fresh
       powerpoint-online
       word-online
 
-      # run 'fc-cache -rf' when changing/installing fonts
-      wpsoffice-fonts
+      # Hebrew fonts
+      culmus
     ];
     programs.obsidian = enabled;
 
+    # Configure LibreOffice with Hebrew CTL for automatic RTL direction detection.
+    # LibreOffice automatically sets paragraph direction to RTL when Hebrew is typed.
+    # only write this if the file doesn't exist yet, to avoid overwriting user changes.
+    home.activation.libreofficeHebrewCTL = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            lo_config_dir="$HOME/.config/libreoffice/4/user"
+            lo_config="$lo_config_dir/registrymodifications.xcu"
+            mkdir -p "$lo_config_dir"
+            if [ ! -f "$lo_config" ]; then
+              cat > "$lo_config" << 'XMLEOF'
+      <?xml version="1.0" encoding="UTF-8"?>
+      <oor:items xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <item oor:path="/org.openoffice.Office.Writer/LanguageConfig/LanguageSettings/Languages">
+          <prop oor:name="CTLLocale" oor:op="fuse">
+            <value>he-IL</value>
+          </prop>
+        </item>
+      </oor:items>
+      XMLEOF
+            elif ! grep -q "CTLLocale" "$lo_config"; then
+              ${pkgs.gnused}/bin/sed -i 's|</oor:items>|  <item oor:path="/org.openoffice.Office.Writer/LanguageConfig/LanguageSettings/Languages">\n    <prop oor:name="CTLLocale" oor:op="fuse"><value>he-IL</value></prop>\n  </item>\n</oor:items>|' "$lo_config"
+            fi
+    '';
+
     # set default apps
     xdg.mimeApps.defaultApplications = {
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = [ "wps-office-wps.desktop" ];
-      "application/msword" = [ "wps-office-wps.desktop" ];
-      "application/vnd.oasis.opendocument.text" = [ "wps-office-wps.desktop" ];
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = [ "libreoffice-writer.desktop" ];
+      "application/msword" = [ "libreoffice-writer.desktop" ];
+      "application/vnd.oasis.opendocument.text" = [ "libreoffice-writer.desktop" ];
 
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = [ "wps-office-et.desktop" ];
-      "application/vnd.ms-excel" = [ "wps-office-et.desktop" ];
-      "application/vnd.oasis.opendocument.spreadsheet" = [ "wps-office-et.desktop" ];
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = [ "libreoffice-calc.desktop" ];
+      "application/vnd.ms-excel" = [ "libreoffice-calc.desktop" ];
+      "application/vnd.oasis.opendocument.spreadsheet" = [ "libreoffice-calc.desktop" ];
 
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation" = [ "wps-office-wpp.desktop" ];
-      "application/vnd.ms-powerpoint" = [ "wps-office-wpp.desktop" ];
-      "application/vnd.oasis.opendocument.presentation" = [ "wps-office-wpp.desktop" ];
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation" = [ "libreoffice-impress.desktop" ];
+      "application/vnd.ms-powerpoint" = [ "libreoffice-impress.desktop" ];
+      "application/vnd.oasis.opendocument.presentation" = [ "libreoffice-impress.desktop" ];
     };
   };
 }

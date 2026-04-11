@@ -33,11 +33,6 @@
       url = "gitlab:gitlab-org/grafana-dashboards";
       flake = false;
     };
-    # WPS office alternative
-    wpsoffice = {
-      url = "github:alex-karev/wpsoffice-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     claude-desktop = {
       url = "github:aaddrick/claude-desktop-debian";
       inputs.nixpkgs.follows = "nixpkgs";
