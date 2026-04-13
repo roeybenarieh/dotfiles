@@ -9,6 +9,7 @@ with lib.extra;
     browser = {
       default_browser = "chromium";
       chromium = enabled;
+      firefox = enabled; # sometime still usefull. (i.e. when connecting to wifi, firefox is the only one recognizing the internet provider connection website)
     };
     git = enabled;
     social = enabled;

@@ -15,16 +15,11 @@ show-dependencies:
   nix-tree .
 
 [group('nix')]
-rebuild-user:
-  @just _base_nix_git_stage \
-  && home-manager switch --flake .
-
-[group('nix')]
 rollback-user:
   bash $(home-manager generations | fzf | awk -F '-> ' '{print $2 "/activate"}')
 
 [group('nix')]
-rebuild-system:
+rebuild:
   @just _base_nix_git_stage \
   && git add ./nix/modules/nixos/** ./nix/systems/** \
   && sudo nice -19 nixos-rebuild switch --flake .
@@ -42,13 +37,7 @@ show-flake:
   nix flake show
 
 [group('nix')]
-list-builds:
-  home-manager generations \
-  && echo "IMPORTANT:" \
-  && echo "run the /nix/store/<hash>-home-manager-generation/activate script to return to that generation"
-
-[group('nix')]
-update-dependencies:
+update-all-dependencies:
   nix flake update
 
 [group('nix')]
@@ -60,6 +49,3 @@ debug:
   echo press ':r' to reload variables \
   && nixos-rebuild repl --flake . 
 
-[group('nix')]
-rebuild-all:
-  just rebuild-system && just rebuild-user

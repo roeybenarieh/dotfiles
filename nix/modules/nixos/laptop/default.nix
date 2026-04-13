@@ -54,6 +54,7 @@ in
       enable = true;
       powertop.enable = true;
     };
+    networking.networkmanager.wifi.powersave = true;
     # cpu thermal management
     services.thermald.enable = true;
     # cpu usage management

@@ -11,14 +11,15 @@ NixOS + Home Manager dotfiles using [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 All build commands require uncommitted changes to be staged first (handled automatically by the `just` recipes via `_base_nix_git_stage`).
 
 ```bash
-just rebuild-user      # Rebuild and switch Home Manager config
-just rebuild-system    # Rebuild and switch NixOS system config (sudo)
-just rebuild-all       # Rebuild both system and user
-just format            # Format all Nix files with treefmt
-just update-dependencies  # Update flake.lock
-just collect-garbage   # Run nix-collect-garbage
-just rollback-user     # Interactively roll back to a previous HM generation (fzf)
-just debug             # Open nixos-rebuild REPL (press :r to reload)
+just rebuild              # Rebuild and switch NixOS system config + Home Manager (sudo)
+just format               # Format all Nix files with treefmt
+just update-all-dependencies  # Update flake.lock
+just collect-garbage      # Run nix-collect-garbage
+just rollback-user        # Interactively roll back to a previous HM generation (fzf)
+just debug                # Open nixos-rebuild REPL (press :r to reload)
+just show-dependencies    # Visualize package dependency tree (nix-tree)
+just show-flake           # Show flake outputs
+just copy-existing-nixos-config <system>  # Copy /etc/nixos/* into the repo for a given system
 ```
 
 **Important:** New files must be `git add`-ed before rebuilding, because Nix Flakes only sees tracked files. The just recipes handle this for known paths, but any new module files need to be staged manually first.
@@ -89,3 +90,7 @@ Options are exposed under `extra.<module-name>` and enabled in `nix/homes/` or `
 ### CI
 
 GitHub Actions runs on push/PR: flake lock staleness check, git-leaks secret scanning, Nix formatting check (`treefmt`), and FlakHub publishing.
+
+## Workflow Guidelines
+
+**Verify changes before finishing:** After making a config change and rebuilding, test that it actually works before declaring the task done. For GUI/desktop changes, use `xdotool` and rofi's `-dmenu` mode (or equivalent) to verify behavior programmatically, or ask the user to confirm. Don't rely solely on the config parsing correctly — test the behavior.
