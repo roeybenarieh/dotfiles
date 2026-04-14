@@ -44,8 +44,20 @@ in
     # enable bluetooth
     hardware.bluetooth = {
       enable = true;
-      powerOnBoot = true;
       settings.General.Experimental = true; # required for some features on newer iOS versions
+    };
+
+    # hardware.bluetooth.powerOnBoot doesn't work reliably; power on bluetooth via a systemd service instead
+    systemd.services.bluetooth-power-on = {
+      description = "Power on Bluetooth adapter at boot";
+      after = [ "bluetooth.service" ];
+      requires = [ "bluetooth.service" ];
+      wantedBy = [ "default.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.util-linux}/bin/rfkill unblock bluetooth";
+        RemainAfterExit = true;
+      };
     };
 
     # taken from : https://nixos.wiki/wiki/Laptop
