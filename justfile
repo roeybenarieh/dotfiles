@@ -38,7 +38,7 @@ show-flake:
 
 [group('nix')]
 update-all-dependencies:
-  nix flake update
+  nix flake update && just rebuild
 
 [group('nix')]
 collect-garbage:
