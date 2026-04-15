@@ -44,4 +44,5 @@ with lib.extra;
   # options related to the fact that my stateVersion is old :-(
   gtk.gtk4.theme = null;
   programs.git.signing.format = null;
+  programs.neovim.withRuby = false;
 }
