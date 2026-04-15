@@ -19,6 +19,14 @@ in
       krita # GUI paint app
     ];
 
+    xdg.desktopEntries.spotify = {
+      name = "Spotify";
+      exec = "${getExe pkgs.cpulimit} --include-children --limit 200 -- spotify %U";
+      terminal = false;
+      icon = "spotify-client";
+      type = "Application";
+      categories = [ "Audio" "Music" "Player" ];
+    };
     # Spicetify (Spotify)
     programs.spicetify = {
       enable = true;
