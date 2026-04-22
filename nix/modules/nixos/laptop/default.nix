@@ -17,6 +17,7 @@ in
       touchpad = {
         accelStepScroll = 0.001;
         horizontalScrolling = true;
+        naturalScrolling = true;
         disableWhileTyping = true;
       };
     };
