@@ -30,12 +30,11 @@ in
     # x11 compositor with animations & rounded-corners
     services.picom = {
       enable = true;
-      backend = "glx";
-      extraArgs = [
-        # "--experimental-backends" # for glx backend and reounded corners
-        "-b" # run the backend
-      ];
     };
+    # Override the generated service to use the custom config from xdg.configFile."picom"
+    # instead of the minimal HM-generated one (which has no effects/animations).
+    systemd.user.services.picom.Service.ExecStart = mkForce
+      "${pkgs.picom}/bin/picom --config ${config.xdg.configHome}/picom/picom.conf";
     xdg.desktopEntries.picom = {
       name = "picom";
       noDisplay = true;
@@ -189,7 +188,7 @@ in
       # };
       "picom" = {
         source = ./picom;
-        onChange = "${getExe pkgs.killall} picom || true; ${getExe pkgs.picom} -b";
+        onChange = "systemctl --user restart picom.service || true";
       };
       "rofi".source = ./rofi;
     };
