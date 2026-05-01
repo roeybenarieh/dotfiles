@@ -31,6 +31,29 @@ def minimize_all(qtile: Qtile):
             win.toggle_minimize()
 
 
+def _move_window_to_physical_screen(qtile: Qtile, direction: int):
+    if not qtile.current_window:
+        return
+    current = qtile.current_screen
+    sorted_screens = sorted(qtile.screens, key=lambda s: s.x)
+    current_pos = sorted_screens.index(current)
+    target_pos = current_pos + direction
+    if 0 <= target_pos < len(sorted_screens):
+        target = sorted_screens[target_pos]
+        qtile.current_window.togroup(target.group.name)
+        qtile.focus_screen(qtile.screens.index(target))
+
+
+@lazy.function
+def window_to_prev_screen(qtile: Qtile):
+    _move_window_to_physical_screen(qtile, -1)
+
+
+@lazy.function
+def window_to_next_screen(qtile: Qtile):
+    _move_window_to_physical_screen(qtile, 1)
+
+
 @lazy.function
 def spawn_or_focus(self: Qtile, app: str) -> None:
     """Check if the app being launched is already running, if so focus it"""
@@ -96,6 +119,8 @@ keys = [
             f"gscreenshot --selection --notify --clip --filename {SETTINGS.screenshot_dir}"
         ),
     ),  # partial screenshot
+    Key([mod, shift], "Left", window_to_prev_screen(), desc="Move window to left screen"),
+    Key([mod, shift], "Right", window_to_next_screen(), desc="Move window to right screen"),
     Key([mod, shift], "h", lazy.layout.shuffle_left()),
     Key([mod], "n", lazy.layout.normalize()),
     Key([mod], enter_key, lazy.spawn(SETTINGS.terminal)),
