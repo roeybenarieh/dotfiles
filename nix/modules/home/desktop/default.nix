@@ -45,6 +45,7 @@ in
       playerctl # control playing
       brightnessctl # control brightness
       gscreenshot # screenshots
+      simplescreenrecorder # screeen recording
       libnotify # used by gscreenshot to raise notifications
       setxkbmap # for changing keyboard layout
       btop # for viewing system resources
