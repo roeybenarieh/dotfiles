@@ -51,12 +51,19 @@ in
   config = mkIf cfg.enable {
     fonts.fontconfig = enabled;
     home.packages = with pkgs; [
-      libreoffice-fresh
+      libreoffice
       powerpoint-online
       word-online
 
       # Hebrew fonts
       culmus
+
+      # Microsoft fonts (Calibri, Cambria, etc.) — needed to render Hebrew in Calibri
+      vista-fonts
+
+      # spell check
+      hunspell
+      hunspellDicts.he-il
     ];
     programs.obsidian = enabled;
 
