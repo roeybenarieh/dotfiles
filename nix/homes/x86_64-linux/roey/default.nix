@@ -1,4 +1,4 @@
-{ lib, osConfig ? { }, ... }:
+{ lib, config, osConfig ? { }, ... }:
 
 with lib.extra;
 {
@@ -45,4 +45,5 @@ with lib.extra;
   gtk.gtk4.theme = null;
   programs.git.signing.format = null;
   programs.neovim.withRuby = false;
+  programs.firefox.configPath = "${config.xdg.configHome}/mozilla/firefox";
 }
