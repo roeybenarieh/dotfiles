@@ -14,6 +14,7 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ openfortivpn ];
+    programs.localsend = enabled;
     networking = {
       inherit (cfg) hostName; # Define your hostname.
       networkmanager = {
