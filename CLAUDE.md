@@ -94,3 +94,5 @@ GitHub Actions runs on push/PR: flake lock staleness check, git-leaks secret sca
 ## Workflow Guidelines
 
 **Verify changes before finishing:** After making a config change and rebuilding, test that it actually works before declaring the task done. For GUI/desktop changes, use `xdotool` and rofi's `-dmenu` mode (or equivalent) to verify behavior programmatically, or ask the user to confirm. Don't rely solely on the config parsing correctly — test the behavior.
+
+**Fonts:** When making any font-related changes, run `fc-cache -rf` after rebuilding to refresh the font cache.
