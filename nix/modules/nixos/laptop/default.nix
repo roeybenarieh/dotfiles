@@ -11,6 +11,25 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Remap laptop Fn-row keys to their XF86 equivalents so Hyprland bindings
+    # and system tools pick them up without any per-app configuration.
+    services.keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = [ "*" ];
+        settings.main = {
+          f1  = "mute";           # speaker mute
+          f2  = "volumedown";
+          f3  = "volumeup";
+          f4  = "micmute";        # microphone mute
+          f5  = "brightnessdown";
+          f6  = "brightnessup";
+          f8  = "rfkill";         # airplane mode toggle
+          f10 = "coffee";         # lock screen (XF86ScreenSaver)
+        };
+      };
+    };
+
     # Enable touchpad support
     services.libinput = {
       enable = true;
