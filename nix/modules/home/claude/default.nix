@@ -10,6 +10,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    # TODO: you programs.claude-code instead
     home.packages = with pkgs; [
       claude-desktop-fhs # claude code
       claude-code # cli

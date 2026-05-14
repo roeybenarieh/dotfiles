@@ -21,6 +21,7 @@ in
         url = http_local_endpoint_on_port port;
       }
     ];
+    # TODO: use prometheus.configText so tracing could be configured. Create your own option for this so other modules could merge their configuration part.
     services.prometheus = {
       enable = true;
       inherit port; # default port
