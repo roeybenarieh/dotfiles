@@ -24,7 +24,7 @@ with lib.extra;
       ide = {
         jetbrains = enabled;
         neovim = enabled;
-        vscode = enabled;
+        vscode = disabled;
       };
       languages = {
         go = enabled;

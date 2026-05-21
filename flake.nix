@@ -22,6 +22,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    spotify-adblock = {
+      url = "github:abba23/spotify-adblock";
+      flake = false;
+    };
     flake-programs-sqlite.url = "github:wamserma/flake-programs-sqlite";
     flake-programs-sqlite.inputs.nixpkgs.follows = "nixpkgs";
     grub2-themes = {
@@ -35,6 +39,10 @@
     };
     claude-desktop = {
       url = "github:aaddrick/claude-desktop-debian";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    ambxst = {
+      url = "github:Axenide/Ambxst";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -73,6 +81,7 @@
         stylix.nixosModules.stylix
         home-manager.nixosModules.home-manager
         grub2-themes.nixosModules.default
+        ambxst.nixosModules.default
       ];
     };
 }
