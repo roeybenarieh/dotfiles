@@ -3,19 +3,22 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.software-development.ide.neovim;
+  hyprctl = "${pkgs.hyprland}/bin/hyprctl";
   nvim-wrapper = pkgs.writeShellScriptBin "nvim-wrapper" ''
     #!/bin/sh
-    if [[ -z "$DISPLAY" ]]; then
-      exec nvim
+    if [[ -n "$WAYLAND_DISPLAY" ]]; then
+      active=$(${hyprctl} activewindow -j)
+      addr=$(echo "$active" | ${getExe pkgs.jq} -r '.address')
+      workspace=$(echo "$active" | ${getExe pkgs.jq} -r '.workspace.id')
+      ${hyprctl} dispatch movetoworkspacesilent "special:nvim-hidden,address:$addr"
+      ${getExe pkgs.neovide} "$@" 2>/dev/null
+      ${hyprctl} dispatch movetoworkspace "$workspace,address:$addr"
+    else
+      win_id=$(${getExe pkgs.xdotool} getactivewindow)
+      ${getExe pkgs.xdotool} windowunmap "$win_id"
+      ${getExe pkgs.neovide} "$@" 2>/dev/null
+      ${getExe pkgs.xdotool} windowmap "$win_id"
     fi
-    # Get the currently active window (your Alacritty)
-    win_id=$(${getExe pkgs.xdotool} getactivewindow)
-    # Send it to the background
-    ${getExe pkgs.xdotool} windowunmap "$win_id"
-    # Launch Neovide in the same directory
-    ${getExe pkgs.neovide} "$@" 2> /dev/null
-    # Send original windowd to foreground (bring it back)
-    ${getExe pkgs.xdotool} windowmap "$win_id"
   '';
   nvim-wrapper-executable = getExe nvim-wrapper;
 in
