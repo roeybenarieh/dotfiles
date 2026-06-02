@@ -64,6 +64,7 @@ in
       cdold = "cd $OLDPWD";
       htop = "${getExe pkgs.btop}";
       open = "${pkgs.xdg-utils}/bin/xdg-open";
+      neofetch = "fastfetch";
     };
     # set nauilus as default folder explorer
     xdg.mimeApps.defaultApplications = {
