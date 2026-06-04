@@ -18,14 +18,14 @@ in
       keyboards.default = {
         ids = [ "*" ];
         settings.main = {
-          f1  = "mute";           # speaker mute
-          f2  = "volumedown";
-          f3  = "volumeup";
-          f4  = "micmute";        # microphone mute
-          f5  = "brightnessdown";
-          f6  = "brightnessup";
-          f8  = "rfkill";         # airplane mode toggle
-          f10 = "coffee";         # lock screen (XF86ScreenSaver)
+          f1 = "mute"; # speaker mute
+          f2 = "volumedown";
+          f3 = "volumeup";
+          f4 = "micmute"; # microphone mute
+          f5 = "brightnessdown";
+          f6 = "brightnessup";
+          f8 = "rfkill"; # airplane mode toggle
+          f10 = "coffee"; # lock screen (XF86ScreenSaver)
         };
       };
     };

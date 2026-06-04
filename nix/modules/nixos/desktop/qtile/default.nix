@@ -18,7 +18,7 @@ in
     # Enable the Budgie Desktop environment.
     services.xserver = {
       enable = true;
-      displayManager.lightdm.enable = true;
+      # displayManager.lightdm.enable = true;
       windowManager.qtile = {
         enable = true;
         # qtile 0.35.0 tests are broken on Python 3.13; intercept .override so
@@ -36,6 +36,8 @@ in
         ];
       };
     };
+
+    services.displayManager.sessionPackages = [ pkgs.python3.pkgs.qtile ];
     # Enable the corresponding configuration at the user level.
     snowfallorg.users.roey.home.config.${namespace}.desktop = mkForce enabled;
   };

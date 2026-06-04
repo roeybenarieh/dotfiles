@@ -14,7 +14,11 @@ in
   ${namespace} = {
     networking.hostName = "laptop";
     apps = enabled;
-    desktop.qtile = enabled;
+    desktop.hyprland = {
+      enable = true;
+      ambxst = enabled;
+    };
+    desktop.sddm = enabled;
 
     docker = enabled;
     containerization.k3s = disabled;

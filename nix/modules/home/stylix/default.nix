@@ -20,6 +20,7 @@ in
     polarity = "dark";
     targets = {
       neovim.enable = false;
+      spicetify.enable = false;
       firefox.profileNames = [ "default" ];
       vscode.profileNames = [ "default" ];
     };

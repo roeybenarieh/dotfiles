@@ -13,6 +13,10 @@ in
   config = mkIf cfg.enable {
     services.pulseaudio.enable = false;
     security.rtkit.enable = true;
+
+    # Track the most recently active MPRIS player so media keys always target
+    # it (fixes playerctl choosing a browser tab over Spotify).
+    services.playerctld = enabled;
     services.pipewire = {
       enable = true;
       alsa.enable = true;

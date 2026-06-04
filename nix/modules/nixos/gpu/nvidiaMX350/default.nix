@@ -13,7 +13,7 @@ in
 
   config = mkIf cfg.enable {
     services.xserver.videoDrivers = [ "nvidia" ];
-    hardware.graphics = enabled;
+    hardware.graphics.enable = true;
     nixpkgs.config.nvidia.acceptLicence = enabled;
     hardware.nvidia = {
       open = false;

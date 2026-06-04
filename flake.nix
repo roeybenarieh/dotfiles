@@ -42,7 +42,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     ambxst = {
-      url = "github:Axenide/Ambxst";
+      url = "github:roeybenarieh/Ambxst";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -74,6 +74,7 @@
       homes.modules = with inputs; [
         stylix.homeModules.stylix
         spicetify-nix.homeManagerModules.default
+        ambxst.homeManagerModules.default
       ];
 
       # nixos modules
