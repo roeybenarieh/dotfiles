@@ -8,15 +8,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1779243039,
-        "narHash": "sha256-0mL7cGtrW57K9DGCWGO0lyV5ZSPo6cEz9Lrri+/15kE=",
-        "owner": "Axenide",
+        "lastModified": 1780611161,
+        "narHash": "sha256-oRe2ML0WD/gjexqEVerCBCztg98J/jBMiTA/vRUY7YE=",
+        "owner": "roeybenarieh",
         "repo": "Ambxst",
-        "rev": "989d923ff324693a2aadae12770a7bce6679d992",
+        "rev": "5a06cc3116de00584d6c3fa32a19fcd354e493ca",
         "type": "github"
       },
       "original": {
-        "owner": "Axenide",
+        "owner": "roeybenarieh",
         "repo": "Ambxst",
         "type": "github"
       }

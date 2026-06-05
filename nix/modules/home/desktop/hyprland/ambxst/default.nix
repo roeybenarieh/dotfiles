@@ -9,13 +9,12 @@ in
 {
   options.${namespace}.desktop.hyprland.ambxst = with types; {
     enable = mkBoolOpt false "Enable Ambxst shell integration for Hyprland.";
-    settings = mkOpt (attrsOf anything) { } "Ambxst config settings. Each key maps to ~/.config/ambxst/config/<key>.json.";
   };
 
   config = mkIf cfg.enable {
     programs.ambxst = {
       enable = true;
-      settings = cfg.settings;
+      settings = import ./settings.nix;
     };
 
     wayland.windowManager.hyprland = {
