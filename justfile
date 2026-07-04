@@ -38,11 +38,15 @@ show-flake:
 
 [group('nix')]
 update-all-dependencies:
-  nix flake update && just rebuild
+  sudo nix flake update && just rebuild && just collect-garbage
 
+  # NOTE: after collecting garbage, I re-fetch the flake to store in order for neovim to not complaint that the flake doesn't exists
 [group('nix')]
-collect-garbage:
-  nix-collect-garbage
+collect-garbage days="30" home_manager_days="90" nixos_days="90":
+  sudo nix-env -p /nix/var/nix/profiles/system --delete-generations {{nixos_days}}d \
+  && nix-env -p ~/.local/state/nix/profiles/home-manager --delete-generations {{home_manager_days}}d \
+  && nix-collect-garbage --delete-older-than {{days}}d \
+  && nix flake prefetch # prefetch-inputs
 
 [group('nix')]
 debug:
