@@ -42,7 +42,6 @@ with lib.extra;
     stateVersion = "24.05";
   };
   # options related to the fact that my stateVersion is old :-(
-  gtk.gtk4.theme = null;
   programs.git.signing.format = null;
   programs.neovim.withRuby = false;
   programs.firefox.configPath = "${config.xdg.configHome}/mozilla/firefox";

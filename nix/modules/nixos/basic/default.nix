@@ -44,7 +44,7 @@ in
     };
 
     services.ttyd = {
-      enable = true;
+      enable = false;
       writeable = true;
       port = 7681;
     };
