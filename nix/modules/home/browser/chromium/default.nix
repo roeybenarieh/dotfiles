@@ -37,7 +37,7 @@ in
         PartOf = [ "graphical-session.target" ];
       };
       Service = {
-        ExecStart = "${pkgs.chromium}/bin/chromium --no-startup-window";
+        ExecStart = "${config.programs.chromium.package}/bin/chromium --no-startup-window";
         Restart = "always";
         RestartSec = "2";
       };
