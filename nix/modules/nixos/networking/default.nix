@@ -4,6 +4,8 @@ with lib.${namespace};
 let
   cfg = config.${namespace}.networking;
   lastResortConnection = { method = "auto"; "route-metric" = 1000; };
+  phoneMac = "04:68:65:4D:6C:C1";
+  phoneMacUnderscored = builtins.replaceStrings [ ":" ] [ "_" ] phoneMac;
 in
 {
   options.${namespace}.networking = with types; {
@@ -41,7 +43,7 @@ in
               autoconnect = true;
             };
             bluetooth = {
-              bdaddr = "04:68:65:4D:6C:C1"; # my phone mac address
+              bdaddr = phoneMac;
               type = "panu";
             };
             ipv4 = lastResortConnection;
