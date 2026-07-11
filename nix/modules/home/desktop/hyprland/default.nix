@@ -18,6 +18,23 @@ in
       wdisplays
     ];
 
+    # Per-window keyboard layout (us/il): each window remembers its own
+    # layout; new windows start on the first layout (us). No native HM
+    # option exists for this daemon, hence the manual user service.
+    systemd.user.services.hyprland-per-window-layout = {
+      Unit = {
+        Description = "Per-window keyboard layout for Hyprland";
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        ExecStart = "${pkgs.hyprland-per-window-layout}/bin/hyprland-per-window-layout";
+        Restart = "on-failure";
+        RestartSec = 2;
+      };
+      Install.WantedBy = [ "graphical-session.target" ];
+    };
+
     wayland.windowManager.hyprland = {
       enable = true;
       configType = "hyprlang";
