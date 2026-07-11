@@ -11,7 +11,7 @@ NixOS + Home Manager dotfiles using [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 All build commands require uncommitted changes to be staged first (handled automatically by the `just` recipes via `_base_nix_git_stage`).
 
 ```bash
-just rebuild              # Rebuild and switch NixOS system config + Home Manager (sudo)
+just rebuild              # Rebuild and switch NixOS system config + Home Manager (sudo) — requires interactive sudo, so Claude cannot run this. Always tell the user to run `! just rebuild` in their terminal instead.
 just format               # Format all Nix files with treefmt
 just update-all-dependencies  # Update flake.lock
 just collect-garbage      # Run nix-collect-garbage
@@ -93,6 +93,10 @@ GitHub Actions runs on push/PR: flake lock staleness check, git-leaks secret sca
 
 ## Workflow Guidelines
 
+**Diagnosing problems:** When the user reports a computer problem, first read the relevant NixOS and Home Manager configuration files (`nix/systems/`, `nix/homes/`, `nix/modules/`) to see what modules are currently enabled, then use that context to diagnose the issue. Do not suggest causes or fixes without first understanding what's actually running.
+
 **Verify changes before finishing:** After making a config change and rebuilding, test that it actually works before declaring the task done. For GUI/desktop changes, use `xdotool` and rofi's `-dmenu` mode (or equivalent) to verify behavior programmatically, or ask the user to confirm. Don't rely solely on the config parsing correctly — test the behavior.
 
 **Fonts:** When making any font-related changes, run `fc-cache -rf` after rebuilding to refresh the font cache.
+
+**Prefer native NixOS/Home Manager options:** Before writing a manual solution (custom `systemd.user.services`, shell scripts, raw package installs), check whether a native `services.*` or `programs.*` option already exists in NixOS or Home Manager. Use `man home-configuration.nix` or the NixOS module search to verify.
