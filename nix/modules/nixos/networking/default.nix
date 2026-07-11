@@ -67,5 +67,13 @@ in
         };
       };
     };
+    services.pipewire.wireplumber.extraConfig."50-iphone-no-audio" = {
+      "monitor.bluez.rules" = [
+        {
+          matches = [{ "device.name" = "bluez_card.${phoneMacUnderscored}"; }];
+          actions.update-props."bluez5.auto-connect" = [ ];
+        }
+      ];
+    };
   };
 }
