@@ -108,6 +108,8 @@ in
         ];
 
         bind = [
+          # Consume $mod+Space key binding, that way nothing else can ran in the same operation.
+          "$mod, space, exec, true"
           "$mod, Return, exec, ${terminal}"
           "$mod, B, exec, ${browser}"
           "$mod, E, exec, xdg-open ."
