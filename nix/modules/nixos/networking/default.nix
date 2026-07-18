@@ -4,8 +4,6 @@ with lib.${namespace};
 let
   cfg = config.${namespace}.networking;
   lastResortConnection = { method = "auto"; "route-metric" = 1000; };
-  phoneMac = "04:68:65:4D:6C:C1";
-  phoneMacUnderscored = builtins.replaceStrings [ ":" ] [ "_" ] phoneMac;
 in
 {
   options.${namespace}.networking = with types; {
@@ -35,16 +33,15 @@ in
               trusted-cert = "30a034feac05b7cfdf3d758e1dd359649ddb6d4e84b96031e619c6a90b1f207f";
             };
           };
-          "phone-bt-tether" = {
+          "phone-wifi-tether" = {
             connection = {
               id = "RoeyBA Iphone Network";
-              uuid = "1636e344-74a6-4e71-aeb7-e72e2696ace3";
-              type = "bluetooth";
+              type = "wifi";
               autoconnect = true;
             };
-            bluetooth = {
-              bdaddr = phoneMac;
-              type = "panu";
+            wifi = {
+              ssid = "RoeyBA Iphone";
+              mode = "infrastructure";
             };
             ipv4 = lastResortConnection;
             ipv6 = lastResortConnection // { "never-default" = true; }; # the never-default helps increase upload speeds when this connection is not good and a better one exists
@@ -68,14 +65,6 @@ in
           Settings.AutoConnect = true;
         };
       };
-    };
-    services.pipewire.wireplumber.extraConfig."50-iphone-no-audio" = {
-      "monitor.bluez.rules" = [
-        {
-          matches = [{ "device.name" = "bluez_card.${phoneMacUnderscored}"; }];
-          actions.update-props."bluez5.auto-connect" = [ ];
-        }
-      ];
     };
   };
 }
