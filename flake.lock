@@ -142,11 +142,11 @@
         "uv2nix": "uv2nix_2"
       },
       "locked": {
-        "lastModified": 1763363347,
-        "narHash": "sha256-tkCkDB/sn8iOwK/JA3MFj+w81JUwPQxKM8c/5zYIaUs=",
+        "lastModified": 1784968285,
+        "narHash": "sha256-F8sUqUIwZVIB6DqWGyAbOfehnYHwM3FVOvwuI6gPLpI=",
         "owner": "roeybenarieh",
         "repo": "doh1-autofill",
-        "rev": "615570668dbc71445df32e50384dcea201a1da98",
+        "rev": "c2ffe51d08761a0f5901ba20653bad967becbba7",
         "type": "github"
       },
       "original": {

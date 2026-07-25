@@ -19,6 +19,15 @@ in
       boot.enable = true;
       networking.enable = true;
     };
+    # use lix instaed of nix
+    nixpkgs.overlays = [ (final: prev: {
+      inherit (prev.lixPackageSets.stable)
+        nixpkgs-review
+        nix-eval-jobs
+        nix-fast-build
+        colmena;
+    }) ];
+    nix.package = pkgs.lixPackageSets.stable.lix;
 
     # Define a user account. Don't forget to set a password with ‘passwd’.
     programs.zsh = enabled;

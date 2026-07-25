@@ -148,8 +148,8 @@ in
         arguments = [
           "--grpc-address=${broadcast_listen_on_port grpc_port.receive}"
           "--http-address=${broadcast_listen_on_port http_port.receive}"
-          ''  --label=host=\"${config.networking.hostName}\"   ''
-          ''  --label=receive=\"true\"                         ''
+          ''--label=host=\"${config.networking.hostName}\"''
+          ''--label=receive=\"true\"''
           "--objstore.config-file=${toString(writeYaml "objstore-config.yaml" objectstore_config)}"
           "--remote-write.address=${broadcast_listen_on_port grpc_port.receive-remote-write}"
           "--tsdb.path=/var/lib/thanos-receive"
