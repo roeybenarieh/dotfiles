@@ -83,5 +83,9 @@ in
       n = nvim;
       cn = "clear;${nvim}";
     };
+
+    xdg.mimeApps.defaultApplications = {
+      "text/plain" = "neovide.desktop";
+    };
   };
 }
