@@ -5,6 +5,7 @@ let
   cfg = config.${namespace}.networking;
   lastResortConnection = { method = "auto"; "route-metric" = 1000; };
   phoneMac = "28:02:2e:8a:cb:1a";
+  phoneWifiPassword = "sisma111";
   phoneMacUnderscored = builtins.replaceStrings [ ":" ] [ "_" ] phoneMac;
 in
 {
@@ -35,8 +36,23 @@ in
               trusted-cert = "30a034feac05b7cfdf3d758e1dd359649ddb6d4e84b96031e619c6a90b1f207f";
             };
           };
-          # FIX: in order for this to work, I must use bluejay: 
-          # pair the phone(manuall 2 auth is needed in the phone) and only that the auto conection is working in network manager
+          "phone-wifi" = {
+            connection = {
+              id = "RoeyBA Iphone Network";
+              type = "wifi";
+              autoconnect = true;
+            };
+            wifi = {
+              ssid = "RoeyBA Iphone";
+              mode = "infrastructure";
+            };
+            wifi-security = {
+              key-mgmt = "wpa-psk";
+              psk = phoneWifiPassword;
+            };
+            ipv4 = lastResortConnection;
+            ipv6 = lastResortConnection // { "never-default" = true; }; # the never-default helps increase upload speeds when this connection is not good and a better one exists
+          };
           "phone-bt-tether" = {
             connection = {
               id = "RoeyBA Iphone BT";
