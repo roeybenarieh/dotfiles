@@ -141,6 +141,8 @@ in
           "$mod SHIFT, 0, movetoworkspace, 10"
           "$mod, P, exec, wdisplays"
           ", XF86ScreenSaver, exec, loginctl lock-session"
+          "$mod SHIFT, left, movewindow, mon:l"
+          "$mod SHIFT, right, movewindow, mon:r"
         ];
 
         bindm = [
