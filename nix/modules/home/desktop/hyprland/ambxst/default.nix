@@ -30,6 +30,12 @@ in
           "$mod SHIFT, s, exec, ambxst run screenshot"
         ];
 
+        # TODO: I want to see the UI showing the brightness level
+        bindel = [
+          ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+          ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+        ];
+
         bindr = [
           "SUPER, Super_L, exec, ambxst run launcher"
         ];
