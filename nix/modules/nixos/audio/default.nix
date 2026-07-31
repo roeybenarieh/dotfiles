@@ -42,6 +42,12 @@ in
                 };
               };
             };
+            "50-bluez-no-sink" = {
+              # BlueZ won't offer other devices to be an audio output for them.
+              "monitor.bluez.properties" = {
+                "bluez5.roles" = [ "a2dp_source" "hsp_hs" "hfp_hf" ];
+              };
+            };
           }
         ];
       };
