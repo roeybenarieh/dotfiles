@@ -16,6 +16,9 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       wdisplays
+      grimblast
+      satty
+      kooha
     ];
 
     # Per-window keyboard layout (us/il): each window remembers its own
@@ -151,6 +154,8 @@ in
           ", XF86ScreenSaver, exec, loginctl lock-session"
           "$mod SHIFT, left, movewindow, mon:l"
           "$mod SHIFT, right, movewindow, mon:r"
+          "$mod SHIFT, s, exec, grimblast --freeze save area - | satty --filename -"
+          "$mod SHIFT, r, exec, kooha"
         ];
 
         bindm = [
