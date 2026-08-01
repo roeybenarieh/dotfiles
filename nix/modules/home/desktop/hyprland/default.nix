@@ -113,9 +113,11 @@ in
           ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ];
 
+        bindr = [
+          "$mod, Super_L, exec, ${pkgs.rofi}/bin/rofi -show drun -config ${./rofi/applications-config.rasi}"
+        ];
+
         bind = [
-          # Consume $mod+Space key binding, that way nothing else can ran in the same operation.
-          "$mod, space, exec, true"
           "$mod, Return, exec, ${terminal}"
           "$mod, B, exec, ${browser}"
           "$mod, E, exec, xdg-open ."
