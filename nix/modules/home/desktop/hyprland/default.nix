@@ -107,6 +107,12 @@ in
           "SAL_USE_VCLPLUGIN,gtk4"
         ];
 
+        bindel = [
+          ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+          ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ];
+
         bind = [
           # Consume $mod+Space key binding, that way nothing else can ran in the same operation.
           "$mod, space, exec, true"
