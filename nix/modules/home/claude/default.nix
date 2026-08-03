@@ -10,6 +10,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    home.shellAliases.claude = "claude --permission-mode auto";
+
     # TODO: you programs.claude-code instead
     home.packages = with pkgs; [
       claude-desktop-fhs # claude code
