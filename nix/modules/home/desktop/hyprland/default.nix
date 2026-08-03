@@ -17,9 +17,6 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       wdisplays
-      grimblast
-      satty
-      kooha
     ];
 
     # Per-window keyboard layout (us/il): each window remembers its own
@@ -115,8 +112,6 @@ in
           { _args = [ "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")'') { repeating = true; locked = true; } ]; }
           { _args = [ "XF86AudioMute"        (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")'') { repeating = true; locked = true; } ]; }
 
-          # open rofi on super key release (bindr equivalent)
-          { _args = [ "SUPER + Super_L" (lua ''hl.dsp.exec_cmd("${pkgs.rofi}/bin/rofi -show drun -config ${./rofi/applications-config.rasi}")'') { release = true; } ]; }
           { _args = [ "SUPER + Return"  (lua ''hl.dsp.exec_cmd("${terminal}")'') ]; }
           { _args = [ "SUPER + B"       (lua ''hl.dsp.exec_cmd("${browser}")'') ]; }
           { _args = [ "SUPER + E"       (lua ''hl.dsp.exec_cmd("xdg-open .")'') ]; }
@@ -125,16 +120,12 @@ in
           { _args = [ "SUPER + F" (lua "hl.dsp.window.fullscreen()") ]; }
 
           { _args = [ "SUPER + H" (lua ''hl.dsp.focus({ direction = "left" })'') ]; }
-          { _args = [ "SUPER + L" (lua ''hl.dsp.focus({ direction = "right" })'') ]; }
           { _args = [ "SUPER + K" (lua ''hl.dsp.focus({ direction = "up" })'') ]; }
           { _args = [ "SUPER + J" (lua ''hl.dsp.focus({ direction = "down" })'') ]; }
 
           { _args = [ "SUPER + P"           (lua ''hl.dsp.exec_cmd("wdisplays")'') ]; }
-          { _args = [ "XF86ScreenSaver"      (lua ''hl.dsp.exec_cmd("loginctl lock-session")'') ]; }
           { _args = [ "SUPER + SHIFT + left"  (lua ''hl.dsp.window.move({ monitor = "l" })'') ]; }
           { _args = [ "SUPER + SHIFT + right" (lua ''hl.dsp.window.move({ monitor = "r" })'') ]; }
-          { _args = [ "SUPER + SHIFT + S"    (lua ''hl.dsp.exec_cmd("${pkgs.grimblast}/bin/grimblast --freeze save area - | ${pkgs.satty}/bin/satty --filename -")'') ]; }
-          { _args = [ "SUPER + SHIFT + R"    (lua ''hl.dsp.exec_cmd("kooha")'') ]; }
 
           { _args = [ "SUPER + mouse:272" (lua "hl.dsp.window.drag()")   { mouse = true; } ]; }
           { _args = [ "SUPER + mouse:273" (lua "hl.dsp.window.resize()") { mouse = true; } ]; }
@@ -151,6 +142,5 @@ in
       '';
     };
 
-    xdg.configFile."rofi/applications-config.rasi".source = ./rofi/applications-config.rasi;
   };
 }
