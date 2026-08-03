@@ -5,6 +5,10 @@ with lib.extra;
   extra = {
     cli = enabled;
     desktop.enable = osConfig.services.xserver.windowManager.qtile.enable or false;
+    desktop.hyprland = {
+      enable = true;
+      wayle = enabled;
+    };
     entertainment = enabled;
     browser = {
       default_browser = "chromium";
