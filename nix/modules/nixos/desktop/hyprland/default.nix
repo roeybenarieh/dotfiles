@@ -8,7 +8,7 @@ let
 in
 {
   options.${namespace}.desktop.hyprland = with types; {
-    enable = mkBoolOpt false "Whether or not to enable Hyprland Wayland compositor with Ambxst shell.";
+    enable = mkBoolOpt false "Whether or not to enable Hyprland Wayland compositor.";
   };
 
   config = mkIf cfg.enable {
