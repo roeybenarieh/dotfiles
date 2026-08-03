@@ -6,6 +6,7 @@ let
   cfg = config.${namespace}.desktop.hyprland;
   terminal = config.home.sessionVariables.TERMINAL;
   browser = config.home.sessionVariables.BROWSER;
+  lua = lib.generators.mkLuaInline;
 in
 {
   options.${namespace}.desktop.hyprland = with types; {
@@ -40,129 +41,116 @@ in
 
     wayland.windowManager.hyprland = {
       enable = true;
-      configType = "hyprlang";
+      configType = "lua";
       systemd.enable = cfg.systemd.enable;
 
       settings = {
-        ecosystem."no_update_news" = true;
-        monitor = ",preferred,auto,1";
-
-        "$mod" = "SUPER";
-
-        general = {
-          gaps_in = 5;
-          gaps_out = 10;
-          border_size = 2;
-          layout = "dwindle";
-          "col.inactive_border" = mkForce "rgba(00000000)"; # no border for inactive panels
-        };
-
-        decoration = {
-          rounding = 10;
-        };
-
-        animations = {
-          enabled = true;
-          bezier = "ease, 0.05, 0.9, 0.1, 1.05";
-          animation = [
-            "windows, 1, 7, ease"
-            "windowsOut, 1, 7, default, popin 80%"
-            "border, 1, 10, default"
-            "fade, 1, 7, default"
-            "workspaces, 1, 6, default"
-          ];
-        };
-
-        input = {
-          kb_layout = "us,il";
-          kb_options = "grp:alt_shift_toggle,grp:win_space_toggle";
-          numlock_by_default = true;
-          follow_mouse = 1;
-          sensitivity = 0;
-          touchpad = {
-            natural_scroll = true;
-            disable_while_typing = true;
-          };
-        };
-
-        gesture = [ "3, horizontal, workspace" ];
-
-        gestures = {
-          workspace_swipe_use_r = true;
-        };
-
-        dwindle = {
-          preserve_split = true;
-        };
-
-        # cursor = {
-        #   no_hardware_cursors = true;
-        # };
-
-        misc = {
-          force_default_wallpaper = 0;
-          disable_hyprland_logo = true;
+        monitor = {
+          output = "";
+          mode = "preferred";
+          position = "auto";
+          scale = 1;
         };
 
         # GTK4 backend fixes jumpy/discrete touchpad scrolling in LibreOffice on
         # Wayland — GTK3 discretizes smooth axis events, GTK4 handles them properly.
         env = [
-          "SAL_USE_VCLPLUGIN,gtk4"
+          { _args = [ "SAL_USE_VCLPLUGIN" "gtk4" ]; }
         ];
 
-        bindel = [
-          ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-          ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        # Main Hyprland config. Stylix auto-injects border/group/shadow colors here.
+        config = {
+          ecosystem.no_update_news = true;
+          general = {
+            gaps_in = 5;
+            gaps_out = 10;
+            border_size = 2;
+            layout = "dwindle";
+            # override Stylix's inactive border — we want no border for inactive windows
+            "col.inactive_border" = mkForce "rgba(00000000)";
+          };
+          decoration.rounding = 10;
+          animations.enabled = true;
+          input = {
+            kb_layout = "us,il";
+            kb_options = "grp:alt_shift_toggle,grp:win_space_toggle";
+            numlock_by_default = true;
+            follow_mouse = 1;
+            sensitivity = 0;
+            touchpad = {
+              natural_scroll = true;
+              disable_while_typing = true;
+            };
+          };
+          dwindle.preserve_split = true;
+          misc = {
+            force_default_wallpaper = 0;
+            disable_hyprland_logo = true;
+          };
+        };
+
+        curve = {
+          _args = [
+            "ease"
+            { type = "bezier"; points = [ [ 0.05 0.9 ] [ 0.1 1.05 ] ]; }
+          ];
+        };
+
+        animation = [
+          { leaf = "windows";    enabled = true; speed = 7;  bezier = "ease"; }
+          { leaf = "windowsOut"; enabled = true; speed = 7;  bezier = "default"; style = "popin 80%"; }
+          { leaf = "border";     enabled = true; speed = 10; bezier = "default"; }
+          { leaf = "fade";       enabled = true; speed = 7;  bezier = "default"; }
+          { leaf = "workspaces"; enabled = true; speed = 6;  bezier = "default"; }
         ];
 
-        bindr = [
-          "$mod, Super_L, exec, ${pkgs.rofi}/bin/rofi -show drun -config ${./rofi/applications-config.rasi}"
+        gesture = [
+          { fingers = 3; direction = "horizontal"; action = "workspace"; }
         ];
+
+        config.gestures.workspace_swipe_use_r = true;
 
         bind = [
-          "$mod, Return, exec, ${terminal}"
-          "$mod, B, exec, ${browser}"
-          "$mod, E, exec, xdg-open ."
-          "$mod, Q, killactive"
-          "$mod, F, fullscreen"
-          "$mod, H, movefocus, l"
-          "$mod, L, movefocus, r"
-          "$mod, K, movefocus, u"
-          "$mod, J, movefocus, d"
-          "$mod, 1, workspace, 1"
-          "$mod, 2, workspace, 2"
-          "$mod, 3, workspace, 3"
-          "$mod, 4, workspace, 4"
-          "$mod, 5, workspace, 5"
-          "$mod, 6, workspace, 6"
-          "$mod, 7, workspace, 7"
-          "$mod, 8, workspace, 8"
-          "$mod, 9, workspace, 9"
-          "$mod, 0, workspace, 10"
-          "$mod SHIFT, 1, movetoworkspace, 1"
-          "$mod SHIFT, 2, movetoworkspace, 2"
-          "$mod SHIFT, 3, movetoworkspace, 3"
-          "$mod SHIFT, 4, movetoworkspace, 4"
-          "$mod SHIFT, 5, movetoworkspace, 5"
-          "$mod SHIFT, 6, movetoworkspace, 6"
-          "$mod SHIFT, 7, movetoworkspace, 7"
-          "$mod SHIFT, 8, movetoworkspace, 8"
-          "$mod SHIFT, 9, movetoworkspace, 9"
-          "$mod SHIFT, 0, movetoworkspace, 10"
-          "$mod, P, exec, wdisplays"
-          ", XF86ScreenSaver, exec, loginctl lock-session"
-          "$mod SHIFT, left, movewindow, mon:l"
-          "$mod SHIFT, right, movewindow, mon:r"
-          "$mod SHIFT, s, exec, grimblast --freeze save area - | satty --filename -"
-          "$mod SHIFT, r, exec, kooha"
-        ];
+          { _args = [ "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")'') { repeating = true; locked = true; } ]; }
+          { _args = [ "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")'') { repeating = true; locked = true; } ]; }
+          { _args = [ "XF86AudioMute"        (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")'') { repeating = true; locked = true; } ]; }
 
-        bindm = [
-          "$mod, mouse:272, movewindow"
-          "$mod, mouse:273, resizewindow"
+          # open rofi on super key release (bindr equivalent)
+          { _args = [ "SUPER + Super_L" (lua ''hl.dsp.exec_cmd("${pkgs.rofi}/bin/rofi -show drun -config ${./rofi/applications-config.rasi}")'') { release = true; } ]; }
+          { _args = [ "SUPER + Return"  (lua ''hl.dsp.exec_cmd("${terminal}")'') ]; }
+          { _args = [ "SUPER + B"       (lua ''hl.dsp.exec_cmd("${browser}")'') ]; }
+          { _args = [ "SUPER + E"       (lua ''hl.dsp.exec_cmd("xdg-open .")'') ]; }
+
+          { _args = [ "SUPER + Q" (lua "hl.dsp.window.close()") ]; }
+          { _args = [ "SUPER + F" (lua "hl.dsp.window.fullscreen()") ]; }
+
+          { _args = [ "SUPER + H" (lua ''hl.dsp.focus({ direction = "left" })'') ]; }
+          { _args = [ "SUPER + L" (lua ''hl.dsp.focus({ direction = "right" })'') ]; }
+          { _args = [ "SUPER + K" (lua ''hl.dsp.focus({ direction = "up" })'') ]; }
+          { _args = [ "SUPER + J" (lua ''hl.dsp.focus({ direction = "down" })'') ]; }
+
+          { _args = [ "SUPER + P"           (lua ''hl.dsp.exec_cmd("wdisplays")'') ]; }
+          { _args = [ "XF86ScreenSaver"      (lua ''hl.dsp.exec_cmd("loginctl lock-session")'') ]; }
+          { _args = [ "SUPER + SHIFT + left"  (lua ''hl.dsp.window.move({ monitor = "l" })'') ]; }
+          { _args = [ "SUPER + SHIFT + right" (lua ''hl.dsp.window.move({ monitor = "r" })'') ]; }
+          { _args = [ "SUPER + SHIFT + S"    (lua ''hl.dsp.exec_cmd("${pkgs.grimblast}/bin/grimblast --freeze save area - | ${pkgs.satty}/bin/satty --filename -")'') ]; }
+          { _args = [ "SUPER + SHIFT + R"    (lua ''hl.dsp.exec_cmd("kooha")'') ]; }
+
+          { _args = [ "SUPER + mouse:272" (lua "hl.dsp.window.drag()")   { mouse = true; } ]; }
+          { _args = [ "SUPER + mouse:273" (lua "hl.dsp.window.resize()") { mouse = true; } ]; }
         ];
       };
+
+      # Workspace 1–10 bindings as a loop (cleaner than 20 explicit entries)
+      extraConfig = ''
+        for i = 1, 10 do
+          local key = i % 10
+          hl.bind("SUPER + " .. key,         hl.dsp.focus({ workspace = i }))
+          hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+        end
+      '';
     };
+
+    xdg.configFile."rofi/applications-config.rasi".source = ./rofi/applications-config.rasi;
   };
 }

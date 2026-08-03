@@ -10,9 +10,9 @@ let
       active=$(${hyprctl} activewindow -j)
       addr=$(echo "$active" | ${getExe pkgs.jq} -r '.address')
       workspace=$(echo "$active" | ${getExe pkgs.jq} -r '.workspace.id')
-      ${hyprctl} dispatch movetoworkspacesilent "special:nvim-hidden,address:$addr"
+      ${hyprctl} dispatch "hl.dsp.window.move({ workspace = 'special:nvim-hidden', follow = false, window = 'address:$addr' })"
       ${getExe pkgs.neovide} "$@" 2>/dev/null
-      ${hyprctl} dispatch movetoworkspace "$workspace,address:$addr"
+      ${hyprctl} dispatch "hl.dsp.window.move({ workspace = $workspace, window = 'address:$addr' })"
     else
       win_id=$(${getExe pkgs.xdotool} getactivewindow)
       ${getExe pkgs.xdotool} windowunmap "$win_id"
