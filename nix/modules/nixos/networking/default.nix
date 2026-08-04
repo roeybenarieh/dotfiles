@@ -3,10 +3,14 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.networking;
-  lastResortConnection = { method = "auto"; "route-metric" = 1000; };
   phoneMac = "28:02:2e:8a:cb:1a";
   phoneWifiPassword = "sisma111";
   phoneMacUnderscored = builtins.replaceStrings [ ":" ] [ "_" ] phoneMac;
+  metricEthernet = 10;
+  metricIphoneWifi = 600;
+  metricIphoneBt = 1000;
+  nameIphoneWifi = "RoeyBA Iphone";
+  nameIphoneBt = "RoeyBA Iphone BT";
 in
 {
   options.${namespace}.networking = with types; {
@@ -41,8 +45,8 @@ in
               # Higher priority than NM's auto-created "Wired connection 1" (which gets -999)
               autoconnect-priority = 100;
             };
-            ipv4 = { method = "auto"; "route-metric" = 10; };
-            ipv6 = { method = "auto"; "route-metric" = 10; };
+            ipv4 = { method = "auto"; "route-metric" = metricEthernet; };
+            ipv6 = { method = "auto"; "route-metric" = metricEthernet; };
           };
 
           "Jutomate FortiVPN" = {
@@ -59,14 +63,14 @@ in
             };
           };
           # NOTE: this connection work automatically in Iphone only if there is an automation that toogle off and on the hotspot every time you want to start using it.
-          "RoeyBA Iphone" = {
+          ${nameIphoneWifi} = {
             connection = {
-              id = "RoeyBA Iphone";
+              id = nameIphoneWifi;
               type = "wifi";
               autoconnect = true;
             };
             wifi = {
-              ssid = "RoeyBA Iphone";
+              ssid = nameIphoneWifi;
               mode = "infrastructure";
               hidden = true; # iOS suppresses hotspot beacons; active probing is required to find it
             };
@@ -74,14 +78,16 @@ in
               key-mgmt = "wpa-psk";
               psk = phoneWifiPassword;
             };
-            ipv4 = { method = "auto"; "route-metric" = 600; "never-default" = true; };
-            ipv6 = { method = "auto"; "route-metric" = 600; "never-default" = true; };
+            # never-default: NM must not install a default route for iPhone on its own.
+            # The dispatcher script below injects one only when ethernet is explicitly down.
+            ipv4 = { method = "auto"; "route-metric" = metricIphoneWifi; "never-default" = true; };
+            ipv6 = { method = "auto"; "route-metric" = metricIphoneWifi; "never-default" = true; };
           };
 
           # NOTE: this connection must be configured manually at first time via bluejay
-          "RoeyBA Iphone BT" = {
+          ${nameIphoneBt} = {
             connection = {
-              id = "RoeyBA Iphone BT";
+              id = nameIphoneBt;
               type = "bluetooth";
               autoconnect = true;
             };
@@ -89,11 +95,104 @@ in
               bdaddr = phoneMac;
               type = "panu";
             };
-            ipv4 = { method = "auto"; "route-metric" = 1000; "never-default" = true; };
-            ipv6 = { method = "auto"; "route-metric" = 1000; "never-default" = true; };
+            ipv4 = { method = "auto"; "route-metric" = metricIphoneBt; "never-default" = true; };
+            ipv6 = { method = "auto"; "route-metric" = metricIphoneBt; "never-default" = true; };
           };
         };
         plugins = [ pkgs.networkmanager-fortisslvpn ];
+        dispatcherScripts = [
+          {
+            source = pkgs.writeShellScript "iphone-default-route" ''
+              IFACE="$1"
+              ACTION="$2"
+
+              [[ "$ACTION" == "up" || "$ACTION" == "down" || "$ACTION" == "dhcp4-change" || "$ACTION" == "dhcp6-change" ]] || exit 0
+
+              # NM dispatcher runs with an empty PATH — use full store paths for every binary.
+              nmcli="${pkgs.networkmanager}/bin/nmcli"
+              ip="${pkgs.iproute2}/bin/ip"
+              awk="${pkgs.gawk}/bin/awk"
+              grep="${pkgs.gnugrep}/bin/grep"
+
+              # Get the kernel IP interface for a named NM connection.
+              # Uses connection name instead of parsing device status to avoid the BT MAC
+              # address (28:02:2E:8A:CB:1A) breaking colon-delimited parsing.
+              get_ip_iface() {
+                "$nmcli" -t -f GENERAL.IP-IFACE connection show "$1" 2>/dev/null \
+                  | "$awk" -F: 'NR==1 {print $2}'
+              }
+
+              # NM never stores the gateway when never-default=true, so derive it:
+              # first host address in the interface's link-local subnet (e.g. 172.20.10.0/28 → 172.20.10.1).
+              get_ipv4_gateway() {
+                local subnet network
+                subnet=$("$ip" -4 route show dev "$1" scope link 2>/dev/null | "$awk" 'NR==1 {print $1}')
+                [[ -z "$subnet" ]] && return
+                network="''${subnet%/*}"
+                IFS=. read -r a b c d <<< "$network"
+                echo "$a.$b.$c.$((d + 1))"
+              }
+
+              get_ipv6_gateway() {
+                "$ip" -6 neigh show dev "$1" nud reachable nud stale 2>/dev/null \
+                  | "$awk" 'NR==1 {print $1}'
+              }
+
+              # True when at least one ethernet device is in NM "connected" state.
+              is_ethernet_connected() {
+                "$nmcli" -t -f TYPE,STATE device 2>/dev/null | "$grep" -q "^ethernet:connected"
+              }
+
+              declare -A iphone_metric=(
+                ["${nameIphoneWifi}"]=${toString metricIphoneWifi}
+                ["${nameIphoneBt}"]=${toString metricIphoneBt}
+              )
+
+              add_iphone_routes() {
+                for conn in "''${!iphone_metric[@]}"; do
+                  dev=$(get_ip_iface "$conn")
+                  [[ -z "$dev" ]] && continue
+                  metric=''${iphone_metric[$conn]}
+                  gw4=$(get_ipv4_gateway "$dev")
+                  [[ -n "$gw4" ]] \
+                    && "$ip" -4 route replace default via "$gw4" dev "$dev" metric "$metric" 2>/dev/null || true
+                  gw6=$(get_ipv6_gateway "$dev")
+                  [[ -n "$gw6" ]] \
+                    && "$ip" -6 route replace default via "$gw6" dev "$dev" metric "$metric" 2>/dev/null || true
+                done
+              }
+
+              remove_iphone_routes() {
+                for conn in "''${!iphone_metric[@]}"; do
+                  dev=$(get_ip_iface "$conn")
+                  [[ -z "$dev" ]] && continue
+                  "$ip" -4 route del default dev "$dev" 2>/dev/null || true
+                  "$ip" -6 route del default dev "$dev" 2>/dev/null || true
+                done
+              }
+
+              iface_type=$("$nmcli" -t -f GENERAL.TYPE device show "$IFACE" 2>/dev/null \
+                | "$awk" -F: 'NR==1 {print $2}')
+
+              if [[ "$iface_type" == "ethernet" ]]; then
+                if [[ "$ACTION" == "down" ]]; then
+                  add_iphone_routes
+                elif [[ "$ACTION" == "up" || "$ACTION" == "dhcp4-change" ]]; then
+                  remove_iphone_routes
+                fi
+              elif [[ "$ACTION" == "up" || "$ACTION" == "dhcp4-change" || "$ACTION" == "dhcp6-change" ]]; then
+                # iPhone (or BT) got a new IP. Add default routes only when ethernet
+                # is not currently connected — this covers both the "never plugged in at
+                # boot" case and the "ethernet went down at runtime" case without needing
+                # a flag file.
+                if ! is_ethernet_connected; then
+                  add_iphone_routes
+                fi
+              fi
+            '';
+            type = "basic";
+          }
+        ];
       };
 
       localCommands = ''
