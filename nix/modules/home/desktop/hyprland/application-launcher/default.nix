@@ -35,6 +35,12 @@ in
         icon = icon "system-hibernate";
         categories = [ "System" ];
       };
+      power-suspend = {
+        name = "Suspend";
+        exec = "systemctl suspend";
+        icon = icon "system-suspend";
+        categories = [ "System" ];
+      };
       power-lock-screen = {
         name = "Lock Screen";
         exec = "hyprlock";
