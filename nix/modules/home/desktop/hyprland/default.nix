@@ -7,6 +7,7 @@ let
   terminal = config.home.sessionVariables.TERMINAL;
   browser = config.home.sessionVariables.BROWSER;
   lua = lib.generators.mkLuaInline;
+  playerctl = getExe pkgs.playerctl;
 in
 {
   options.${namespace}.desktop.hyprland = with types; {
@@ -111,6 +112,9 @@ in
           { _args = [ "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")'') { repeating = true; locked = true; } ]; }
           { _args = [ "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")'') { repeating = true; locked = true; } ]; }
           { _args = [ "XF86AudioMute"        (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")'') { repeating = true; locked = true; } ]; }
+          { _args = [ "XF86AudioPlay"        (lua ''hl.dsp.exec_cmd("${playerctl} play-pause")'') { locked = true; } ]; }
+          { _args = [ "XF86AudioPrev"        (lua ''hl.dsp.exec_cmd("${playerctl} previous")'') { locked = true; } ]; }
+          { _args = [ "XF86AudioNext"        (lua ''hl.dsp.exec_cmd("${playerctl} next")'') { locked = true; } ]; }
 
           { _args = [ "SUPER + Return"  (lua ''hl.dsp.exec_cmd("${terminal}")'') ]; }
           { _args = [ "SUPER + B"       (lua ''hl.dsp.exec_cmd("${browser}")'') ]; }
