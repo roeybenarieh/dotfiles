@@ -25,9 +25,6 @@ in
         "--enable-features=TouchpadOverscrollHistoryNavigation" # use touchpad to navigate between pages
         "--enable-background-mode" # keep process alive after last window closes, so preload is always ready
       ];
-      # extraOpts = {
-      #   "RestoreOnStartup" = 1; # restore tabs on startup
-      # };
     };
 
     systemd.user.services.chromium-preload = {

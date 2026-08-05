@@ -88,6 +88,11 @@ in
 
     # enable numlock on start up
     services.xserver.displayManager.setupCommands = ''${getExe pkgs.numlockx} on'';
+
+    # chromium restore tabs on startup
+    programs.chromium.extraOpts = {
+      "RestoreOnStartup" = 1;
+    };
   };
 }
  
