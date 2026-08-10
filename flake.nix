@@ -45,6 +45,24 @@
       url = "github:roeybenarieh/Ambxst";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprshell.url = "github:H3rmt/hyprshell";
+
+    # Python packaging via uv2nix (used for graphify)
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -68,6 +86,9 @@
       overlays = with inputs; [
         nur.overlays.default
         claude-desktop.overlays.default
+        (final: _: {
+          graphifyy = final.callPackage ./nix/packages/graphifyy { inherit inputs; };
+        })
       ];
 
       # home manager modules
@@ -75,6 +96,7 @@
         stylix.homeModules.stylix
         spicetify-nix.homeManagerModules.default
         ambxst.homeManagerModules.default
+        hyprshell.homeModules.default
       ];
 
       # nixos modules

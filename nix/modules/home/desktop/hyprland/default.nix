@@ -9,6 +9,7 @@ let
   lua = lib.generators.mkLuaInline;
   playerctl = getExe pkgs.playerctl;
   brightnessctl = getExe pkgs.brightnessctl;
+  hyprctl = "${pkgs.hyprland}/bin/hyprctl";
 in
 {
   options.${namespace}.desktop.hyprland = with types; {
@@ -145,6 +146,9 @@ in
 
           { _args = [ "SUPER + mouse:272" (lua "hl.dsp.window.drag()")   { mouse = true; } ]; }
           { _args = [ "SUPER + mouse:273" (lua "hl.dsp.window.resize()") { mouse = true; } ]; }
+
+          { _args = [ "switch:on:Lid Switch"  (lua ''hl.dsp.exec_cmd("${hyprctl} eval 'hl.dsp.dpms(false)'")'') { locked = true; } ]; }
+          { _args = [ "switch:off:Lid Switch" (lua ''hl.dsp.exec_cmd("${hyprctl} eval 'hl.dsp.dpms(true)'")'')  { locked = true; } ]; }
         ];
       };
 

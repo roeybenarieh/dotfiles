@@ -21,14 +21,22 @@ in
   };
 
   config = mkIf cfg.enable {
-    # TODO: for the love of god, when installing stremio make sure to disable caching!!!
-    # from my experience it make stremio playing videos WAY MORE smoothly
-    home.packages = with pkgs;[
-      stremio-linux-shell # streaming app
-      # TODO: find a better place for krita
-      krita # GUI paint app
+    home.packages = with pkgs; [
+      stremio-linux-shell
+      krita
       spotify
     ];
+
+    # Disable Stremio streaming cache — improves playback smoothness significantly.
+    # Uses activation so it doesn't overwrite user changes on rebuild.
+    home.activation.stremioDisableCache = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      cfg_dir="$HOME/.local/share/com.stremio.stremio"
+      cfg_file="$cfg_dir/app-settings.json"
+      mkdir -p "$cfg_dir"
+      if [ ! -f "$cfg_file" ]; then
+        echo '{"cacheSize":0,"cacheEnabled":false}' > "$cfg_file"
+      fi
+    '';
 
     xdg.configFile."spotify-adblock/config.toml".text = ''
       allowlist = [

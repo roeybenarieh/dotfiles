@@ -33,7 +33,7 @@ in
     };
 
     systemd.tmpfiles.rules = [
-      "d ${cfg.dataDir} 0750 root root -"
+      "d ${cfg.dataDir} 0777 root root -"
     ];
   };
 }

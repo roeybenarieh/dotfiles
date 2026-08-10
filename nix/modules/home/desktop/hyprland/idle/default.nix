@@ -6,6 +6,8 @@ let
   cfg = config.${namespace}.desktop.hyprland.idle;
   brightnessctl = getExe pkgs.brightnessctl;
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
+  dpmsOn  = "${hyprctl} eval 'hl.dsp.dpms(true)'";
+  dpmsOff = "${hyprctl} eval 'hl.dsp.dpms(false)'";
 in
 {
   options.${namespace}.desktop.hyprland.idle = with types; {
@@ -19,7 +21,7 @@ in
         general = {
           # Lock the screen before the system suspends so we never wake to an unlocked session.
           before_sleep_cmd = "loginctl lock-session";
-          after_sleep_cmd = "${hyprctl} dispatch dpms on";
+          after_sleep_cmd = dpmsOn;
           # Respect DBus inhibitors set by media players (audio suppression).
           ignore_dbus_inhibit = false;
         };
@@ -39,8 +41,8 @@ in
           {
             # 5.5 min: screen off.
             timeout = 330;
-            on-timeout = "${hyprctl} dispatch dpms off";
-            on-resume = "${hyprctl} dispatch dpms on";
+            on-timeout = dpmsOff;
+            on-resume = dpmsOn;
           }
           {
             # 30 min: suspend. AC caffeine (nixos module) blocks this while plugged in.
