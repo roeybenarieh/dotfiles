@@ -15,6 +15,9 @@ in
       applicationLauncher = enabled;
       screenCapture = enabled;
       screensaver = enabled;
+      idle = enabled;
+      clipboard = enabled;
+      windowSwitcher = enabled;
     };
 
     services.wayle = {
@@ -29,7 +32,7 @@ in
               show = true;
               left = [ "dashboard" "hyprland-workspaces" ];
               center = [ "clock" ];
-              right = [ "network" "bluetooth" "battery" "power" "volume" ];
+              right = [ "network" "bluetooth" "battery" "volume" ];
             }
           ];
         };
