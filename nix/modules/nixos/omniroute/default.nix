@@ -8,7 +8,7 @@ in
   options.${namespace}.omniroute = with types; {
     enable = mkBoolOpt false "Enable OmniRoute AI gateway (local proxy for 290+ AI providers).";
     port = mkIntOpt 20128 "Port OmniRoute listens on.";
-    image = mkstrOpt "diegosouzapw/omniroute:v3.8.49" "Docker image to use.";
+    image = mkstrOpt "diegosouzapw/omniroute:latest" "Docker image to use.";
     dataDir = mkstrOpt "/var/lib/omniroute" "Persistent data directory for OmniRoute's SQLite database.";
 
     # Secrets are loaded from an env file, NOT baked into the nix store.

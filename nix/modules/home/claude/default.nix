@@ -20,7 +20,8 @@ let
 
   claudeSettings = {
     attribution = { commit = ""; pr = ""; };
-    model = "claude-sonnet-4-6";
+    # When OmniRoute is active, use its auto-routing model ID; otherwise use the direct Anthropic model.
+    model = if cfg.omniroute.enable then "auto/claude-sonnet" else "claude-sonnet-4-6";
     theme = "dark-ansi";
     voiceEnabled = true;
     skipDangerousModePermissionPrompt = true;
