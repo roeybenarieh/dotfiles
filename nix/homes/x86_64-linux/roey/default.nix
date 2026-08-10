@@ -7,7 +7,9 @@ with lib.extra;
     desktop.enable = osConfig.services.xserver.windowManager.qtile.enable or false;
     desktop.hyprland = {
       enable = true;
+      ambxst = disabled;
       wayle = enabled;
+      session = disabled;
     };
     entertainment = enabled;
     browser = {
@@ -37,7 +39,10 @@ with lib.extra;
     };
     game-dev = enabled;
     office = enabled;
-    claude = enabled;
+    claude = {
+      enable = true;
+      omniroute.enable = true;
+    };
   };
 
   home = {

@@ -16,11 +16,12 @@ in
     apps = enabled;
     desktop.hyprland = {
       enable = true;
-      ambxst = enabled;
+      ambxst = disabled;
     };
     desktop.sddm = enabled;
 
     docker = enabled;
+    omniroute = enabled;
     containerization.k3s = disabled;
     gpu.nvidiaMX350 = {
       enable = false;
