@@ -12,6 +12,9 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Ensure screenshot directory exists.
+    home.file."Pictures/Screenshots/.keep".text = "";
+
     home.packages = with pkgs; [
       grimblast
       satty
@@ -19,7 +22,12 @@ in
     ];
 
     wayland.windowManager.hyprland.settings.bind = [
-      { _args = [ "SUPER + SHIFT + S" (lua ''hl.dsp.exec_cmd("${pkgs.grimblast}/bin/grimblast --freeze save area - | ${pkgs.satty}/bin/satty --filename -")'') ]; }
+      {
+        _args = [
+          "SUPER + SHIFT + S"
+          (lua ''hl.dsp.exec_cmd("${pkgs.grimblast}/bin/grimblast --freeze save area - | ${pkgs.satty}/bin/satty --filename - --output-filename '${config.home.homeDirectory}/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png'")'')
+        ];
+      }
       { _args = [ "SUPER + SHIFT + R" (lua ''hl.dsp.exec_cmd("kooha")'') ]; }
     ];
   };
