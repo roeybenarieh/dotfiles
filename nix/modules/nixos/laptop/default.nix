@@ -34,10 +34,13 @@ in
     services.libinput = {
       enable = true;
       touchpad = {
+        accelProfile = "flat";
         accelStepScroll = 0.001;
         horizontalScrolling = true;
         naturalScrolling = true;
         disableWhileTyping = true;
+        # Right-click via bottom-right corner tap area.
+        clickMethod = "buttonareas";
       };
     };
 
