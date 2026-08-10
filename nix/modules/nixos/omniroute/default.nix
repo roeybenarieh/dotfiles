@@ -10,13 +10,9 @@ in
     port = mkIntOpt 20128 "Port OmniRoute listens on.";
     image = mkstrOpt "diegosouzapw/omniroute:latest" "Docker image to use.";
     dataDir = mkstrOpt "/var/lib/omniroute" "Persistent data directory for OmniRoute's SQLite database.";
-
-    # Secrets are loaded from an env file, NOT baked into the nix store.
-    # Create /etc/omniroute/env with:
-    #   JWT_SECRET=$(openssl rand -base64 48)
-    #   API_KEY_SECRET=$(openssl rand -hex 32)
-    #   INITIAL_PASSWORD=<choose-a-strong-password>
-    envFile = mkstrOpt "/etc/omniroute/env" "Path to the secrets env file (not managed by nix).";
+    jwtSecret = mkstrOpt "9g1zdbpMmteZGdH7LSySoNQNMyCemLHy6j8HHkFLEfJDzVG4" "JWT signing key for dashboard sessions.";
+    apiKeySecret = mkstrOpt "d54c367b832d957b59ef766866363484db7d9e7f21429dd086ede6ce725990a5" "Encryption key for API keys stored in the database.";
+    initialPassword = mkstrOpt "omniroute123" "Initial dashboard admin password.";
   };
 
   config = mkIf cfg.enable {
@@ -26,10 +22,12 @@ in
         image = cfg.image;
         ports = [ "127.0.0.1:${toString cfg.port}:20128" ];
         volumes = [ "${cfg.dataDir}:/app/data" ];
-        environmentFiles = [ cfg.envFile ];
         environment = {
           DATA_DIR = "/app/data";
           REQUIRE_API_KEY = "false";
+          JWT_SECRET = cfg.jwtSecret;
+          API_KEY_SECRET = cfg.apiKeySecret;
+          INITIAL_PASSWORD = cfg.initialPassword;
         };
       };
     };
