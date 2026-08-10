@@ -8,6 +8,7 @@ let
   browser = config.home.sessionVariables.BROWSER;
   lua = lib.generators.mkLuaInline;
   playerctl = getExe pkgs.playerctl;
+  brightnessctl = getExe pkgs.brightnessctl;
 in
 {
   options.${namespace}.desktop.hyprland = with types; {
@@ -18,6 +19,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       wdisplays
+      pkgs.brightnessctl
     ];
 
     # Per-window keyboard layout (us/il): each window remembers its own
@@ -109,12 +111,16 @@ in
         config.gestures.workspace_swipe_use_r = true;
 
         bind = [
-          { _args = [ "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")'') { repeating = true; locked = true; } ]; }
-          { _args = [ "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")'') { repeating = true; locked = true; } ]; }
-          { _args = [ "XF86AudioMute"        (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")'') { repeating = true; locked = true; } ]; }
-          { _args = [ "XF86AudioPlay"        (lua ''hl.dsp.exec_cmd("${playerctl} play-pause")'') { locked = true; } ]; }
-          { _args = [ "XF86AudioPrev"        (lua ''hl.dsp.exec_cmd("${playerctl} previous")'') { locked = true; } ]; }
-          { _args = [ "XF86AudioNext"        (lua ''hl.dsp.exec_cmd("${playerctl} next")'') { locked = true; } ]; }
+          { _args = [ "XF86AudioRaiseVolume"  (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")'')          { repeating = true; locked = true; } ]; }
+          { _args = [ "XF86AudioLowerVolume"  (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")'')          { repeating = true; locked = true; } ]; }
+          { _args = [ "XF86AudioMute"         (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")'')        { repeating = true; locked = true; } ]; }
+          { _args = [ "XF86AudioMicMute"      (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")'')     { locked = true; } ]; }
+          { _args = [ "XF86AudioPlay"         (lua ''hl.dsp.exec_cmd("${playerctl} play-pause")'')                          { locked = true; } ]; }
+          { _args = [ "XF86AudioPrev"         (lua ''hl.dsp.exec_cmd("${playerctl} previous")'')                            { locked = true; } ]; }
+          { _args = [ "XF86AudioNext"         (lua ''hl.dsp.exec_cmd("${playerctl} next")'')                                { locked = true; } ]; }
+          { _args = [ "XF86AudioStop"         (lua ''hl.dsp.exec_cmd("${playerctl} stop")'')                                { locked = true; } ]; }
+          { _args = [ "XF86MonBrightnessUp"   (lua ''hl.dsp.exec_cmd("${brightnessctl} set 5%+")'')                        { repeating = true; locked = true; } ]; }
+          { _args = [ "XF86MonBrightnessDown" (lua ''hl.dsp.exec_cmd("${brightnessctl} set 5%-")'')                        { repeating = true; locked = true; } ]; }
 
           { _args = [ "SUPER + Return"  (lua ''hl.dsp.exec_cmd("${terminal}")'') ]; }
           { _args = [ "SUPER + B"       (lua ''hl.dsp.exec_cmd("${browser}")'') ]; }
@@ -123,9 +129,15 @@ in
           { _args = [ "SUPER + Q" (lua "hl.dsp.window.close()") ]; }
           { _args = [ "SUPER + F" (lua "hl.dsp.window.fullscreen()") ]; }
 
-          { _args = [ "SUPER + H" (lua ''hl.dsp.focus({ direction = "left" })'') ]; }
-          { _args = [ "SUPER + K" (lua ''hl.dsp.focus({ direction = "up" })'') ]; }
-          { _args = [ "SUPER + J" (lua ''hl.dsp.focus({ direction = "down" })'') ]; }
+          { _args = [ "SUPER + CTRL + H" (lua ''hl.dsp.focus({ direction = "left" })'') ]; }
+          { _args = [ "SUPER + CTRL + J" (lua ''hl.dsp.focus({ direction = "down" })'') ]; }
+          { _args = [ "SUPER + CTRL + K" (lua ''hl.dsp.focus({ direction = "up" })'') ]; }
+          { _args = [ "SUPER + CTRL + L" (lua ''hl.dsp.focus({ direction = "right" })'') ]; }
+
+          { _args = [ "SUPER + CTRL + SHIFT + H" (lua ''hl.dsp.window.move({ direction = "left" })'') ]; }
+          { _args = [ "SUPER + CTRL + SHIFT + J" (lua ''hl.dsp.window.move({ direction = "down" })'') ]; }
+          { _args = [ "SUPER + CTRL + SHIFT + K" (lua ''hl.dsp.window.move({ direction = "up" })'') ]; }
+          { _args = [ "SUPER + CTRL + SHIFT + L" (lua ''hl.dsp.window.move({ direction = "right" })'') ]; }
 
           { _args = [ "SUPER + P"           (lua ''hl.dsp.exec_cmd("wdisplays")'') ]; }
           { _args = [ "SUPER + SHIFT + left"  (lua ''hl.dsp.window.move({ monitor = "l" })'') ]; }
