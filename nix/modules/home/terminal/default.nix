@@ -50,7 +50,8 @@ in
         cursor = { style = "Block"; };
 
         env = {
-          TERM = "xterm-256color";
+          TERM = "alacritty";
+          COLORTERM = "truecolor";
           WINIT_X11_SCALE_FACTOR = "1.0"; # better text size in multiplee monitorrs
         };
 
