@@ -9,6 +9,10 @@ with lib;
   ];
   hardware.enableAllFirmware = true;
 
+  # Tell ACPI firmware it's running on Linux so it doesn't use Windows-specific
+  # code paths that cause IRQ/9 (ACPI SCI) interrupt storms on Lenovo hardware.
+  boot.kernelParams = [ "acpi_osi=Linux" ];
+
   # Remap keys: this laptop's firmware sends F<num> instead of the appropriate special keymaps
   # (i.e. XF86MonBrightnessUp/Down keysyms for brightness control), so fix it at the X11 level.
   services.xserver.displayManager.sessionCommands = ''
