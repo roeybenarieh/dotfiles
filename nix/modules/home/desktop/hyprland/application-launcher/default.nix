@@ -19,25 +19,25 @@ in
     xdg.desktopEntries = {
       power-shutdown = {
         name = "Shutdown";
-        exec = "systemctl poweroff";
+        exec = "systemctl -i poweroff";
         icon = icon "system-shutdown";
         categories = [ "System" ];
       };
       power-restart = {
         name = "Restart";
-        exec = "systemctl reboot";
+        exec = "systemctl -i reboot";
         icon = icon "system-reboot";
         categories = [ "System" ];
       };
       power-hibernate = {
         name = "Hibernate";
-        exec = "systemctl hibernate";
+        exec = "systemctl -i hibernate";
         icon = icon "system-hibernate";
         categories = [ "System" ];
       };
       power-suspend = {
         name = "Suspend";
-        exec = "systemctl suspend";
+        exec = "systemctl -i suspend";
         icon = icon "system-suspend";
         categories = [ "System" ];
       };

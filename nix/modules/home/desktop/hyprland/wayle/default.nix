@@ -32,11 +32,21 @@ in
               show = true;
               left = [ "dashboard" "hyprland-workspaces" ];
               center = [ "clock" ];
-              right = [ "network" "bluetooth" "battery" "volume" ];
+              right = [ "idle-inhibit" "network" "bluetooth" "battery" "volume" ];
             }
           ];
         };
         modules = {
+          idle-inhibit = {
+            startup-duration = 120;
+            icon-show = true;
+            label-show = true;
+            format = "{{ remaining }}";
+            left-click = "wayle idle toggle";
+            right-click = "";
+            scroll-up = "wayle idle remaining +5";
+            scroll-down = "wayle idle remaining -5";
+          };
           clock = {
             format = "%H:%M";
           };
@@ -67,9 +77,6 @@ in
         osd = {
           monitor = "*";
         };
-        # styling = {
-        #   theme-provider = "wallust";
-        # };
       };
     };
   };
