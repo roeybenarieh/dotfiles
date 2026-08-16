@@ -1,0 +1,117 @@
+{
+  ".claude/settings.local.json": {
+    "mtime": 1785944261.5943675,
+    "ast_hash": "3c4a6637c59366f0545421e81da296ce",
+    "semantic_hash": "3c4a6637c59366f0545421e81da296ce"
+  },
+  "nix/modules/home/cli/opencode/opencode.json": {
+    "mtime": 1776165793.6250167,
+    "ast_hash": "68fcdd6363ba462fbfce48c9bec9634c",
+    "semantic_hash": "68fcdd6363ba462fbfce48c9bec9634c"
+  },
+  "nix/modules/home/desktop/qtile/bar.py": {
+    "mtime": 1778759128.4125123,
+    "ast_hash": "615d4a989a14744297cb79c48372dd14",
+    "semantic_hash": "615d4a989a14744297cb79c48372dd14"
+  },
+  "nix/modules/home/desktop/qtile/colors.py": {
+    "mtime": 1776165793.6250167,
+    "ast_hash": "8766851623a48d59239472784e253532",
+    "semantic_hash": "8766851623a48d59239472784e253532"
+  },
+  "nix/modules/home/desktop/qtile/config.py": {
+    "mtime": 1776165793.6250167,
+    "ast_hash": "c14e34246390a3f0590087993f0c1f2d",
+    "semantic_hash": "c14e34246390a3f0590087993f0c1f2d"
+  },
+  "nix/modules/home/desktop/qtile/controls.py": {
+    "mtime": 1777625591.9724278,
+    "ast_hash": "fc0555aea708c3c992b68bc905ef7819",
+    "semantic_hash": "fc0555aea708c3c992b68bc905ef7819"
+  },
+  "nix/modules/home/desktop/qtile/dexcom_widget.py": {
+    "mtime": 1776165793.6250167,
+    "ast_hash": "26617e65a996930030106cfbccbdadb0",
+    "semantic_hash": "26617e65a996930030106cfbccbdadb0"
+  },
+  "nix/modules/home/desktop/qtile/keyboard_layout_widget.py": {
+    "mtime": 1776165793.625798,
+    "ast_hash": "47c033fe461bcea81cbd698b6cf709f7",
+    "semantic_hash": "47c033fe461bcea81cbd698b6cf709f7"
+  },
+  "nix/modules/home/desktop/qtile/scripts/autostart.sh": {
+    "mtime": 1777404948.8642423,
+    "ast_hash": "ba67b488e9c967d3e2ee4a4446d1a97a",
+    "semantic_hash": "ba67b488e9c967d3e2ee4a4446d1a97a"
+  },
+  "nix/modules/home/desktop/qtile/settings.py": {
+    "mtime": 1776165793.625798,
+    "ast_hash": "7103cd2b8e7ab05f3c93333a83024203",
+    "semantic_hash": "7103cd2b8e7ab05f3c93333a83024203"
+  },
+  "nix/modules/home/desktop/qtile/utils.py": {
+    "mtime": 1776165793.625798,
+    "ast_hash": "175eb31a0f7c8b1213be4b1a1d3b1677",
+    "semantic_hash": "175eb31a0f7c8b1213be4b1a1d3b1677"
+  },
+  ".github/workflows/check-flake-lock.yml": {
+    "mtime": 1768479289.6145537,
+    "ast_hash": "6bbffc77740f0b735a5243ffe3bad6f3",
+    "semantic_hash": "6bbffc77740f0b735a5243ffe3bad6f3"
+  },
+  ".github/workflows/nix-formatting.yml": {
+    "mtime": 1776165793.5508292,
+    "ast_hash": "e9e87d8d258cb05d814fc8e73498c35b",
+    "semantic_hash": "e9e87d8d258cb05d814fc8e73498c35b"
+  },
+  ".github/workflows/push-flakhub.yml": {
+    "mtime": 1768479289.6155536,
+    "ast_hash": "f6f0564cdf0888ccd715322c21c8837f",
+    "semantic_hash": "f6f0564cdf0888ccd715322c21c8837f"
+  },
+  ".serena/project.yml": {
+    "mtime": 1785943934.9449084,
+    "ast_hash": "afb04a0ab394068168b21b214e297b92",
+    "semantic_hash": "afb04a0ab394068168b21b214e297b92"
+  },
+  "CLAUDE.md": {
+    "mtime": 1786219814.3749826,
+    "ast_hash": "1135cc16042afce7447c2ed8801a1847",
+    "semantic_hash": "1135cc16042afce7447c2ed8801a1847"
+  },
+  "CONTRIBUTE.md": {
+    "mtime": 1768479289.6155536,
+    "ast_hash": "fd732bc8cd3aa2e8729eb54b23f93c36",
+    "semantic_hash": "fd732bc8cd3aa2e8729eb54b23f93c36"
+  },
+  "DESKTOP.md": {
+    "mtime": 1786133515.2904346,
+    "ast_hash": "aa1677f30c54d2218b1ee2aebeeb6a24",
+    "semantic_hash": "aa1677f30c54d2218b1ee2aebeeb6a24"
+  },
+  "README.md": {
+    "mtime": 1785857063.597772,
+    "ast_hash": "bf0154fe2dd5ea9f34c798364b39cc63",
+    "semantic_hash": "bf0154fe2dd5ea9f34c798364b39cc63"
+  },
+  "nix/modules/home/browser/firefox/extension_settings/README.md": {
+    "mtime": 1776165793.6238692,
+    "ast_hash": "83c69b4b8e2dd5540ef20c37041ec557",
+    "semantic_hash": "83c69b4b8e2dd5540ef20c37041ec557"
+  },
+  "nix/modules/home/desktop/qtile/requirements.txt": {
+    "mtime": 1776165793.625798,
+    "ast_hash": "e5a501bb2ab4714728e827e36f5d2ddd",
+    "semantic_hash": "e5a501bb2ab4714728e827e36f5d2ddd"
+  },
+  "assets/theme.png": {
+    "mtime": 1776165793.5517974,
+    "ast_hash": "df3ef195ccc576ce015635785f71f6bc",
+    "semantic_hash": "df3ef195ccc576ce015635785f71f6bc"
+  },
+  "assets/wallpaper.png": {
+    "mtime": 1776165793.6207979,
+    "ast_hash": "b696d366ed271122e4ee6f380082ba9a",
+    "semantic_hash": "b696d366ed271122e4ee6f380082ba9a"
+  }
+}
