@@ -50,7 +50,7 @@ in
     };
 
     wayland.windowManager.hyprland.settings.bind = [
-      { _args = [ "SUPER + Super_L" (lua ''hl.dsp.exec_cmd("${pkgs.rofi}/bin/rofi -show drun -config ${./applications-config.rasi}")'') { release = true; } ]; }
+      { _args = [ "SUPER + Super_L" (lua ''hl.dsp.exec_cmd("${pkgs.rofi}/bin/rofi -show drun -config ${./applications-config.rasi}")'') ]; }
       { _args = [ "SUPER + semicolon" (lua ''hl.dsp.exec_cmd("${pkgs.rofimoji}/bin/rofimoji")'') ]; }
     ];
   };
