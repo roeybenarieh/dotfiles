@@ -26,19 +26,5 @@ in
         "--enable-background-mode" # keep process alive after last window closes, so preload is always ready
       ];
     };
-
-    systemd.user.services.chromium-preload = {
-      Unit = {
-        Description = "Preload Chromium at login for instant startup";
-        After = [ "graphical-session.target" ];
-        PartOf = [ "graphical-session.target" ];
-      };
-      Service = {
-        ExecStart = "${config.programs.chromium.package}/bin/chromium --no-startup-window";
-        Restart = "always";
-        RestartSec = "2";
-      };
-      Install.WantedBy = [ "graphical-session.target" ];
-    };
   };
 }
