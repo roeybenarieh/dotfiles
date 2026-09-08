@@ -10,14 +10,14 @@ in
   };
 
   config = mkIf cfg.enable {
-    # install git itself
-    programs.git.enable = true;
-
-    # set the git config file
-    xdg.configFile = {
-      "git" = {
-        source = ./git;
-        recursive = true;
+    programs.git = {
+      enable = true;
+      userName = "roey ben arieh";
+      userEmail = "roey280404@gmail.com";
+      extraConfig = {
+        core.editor = "nvim";
+        init.defaultBranch = "main";
+        merge.ff = false;
       };
     };
 
