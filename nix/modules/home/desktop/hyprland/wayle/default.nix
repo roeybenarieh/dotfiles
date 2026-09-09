@@ -11,13 +11,16 @@ in
   };
 
   config = mkIf cfg.enable {
-    ${namespace}.desktop.hyprland = {
-      applicationLauncher = enabled;
-      screenCapture = enabled;
-      screensaver = enabled;
-      idle = enabled;
-      clipboard = enabled;
-      windowSwitcher = enabled;
+    ${namespace}.desktop = {
+      hyprland = {
+        applicationLauncher = enabled;
+        screenCapture = enabled;
+        screensaver = enabled;
+        idle = enabled;
+        clipboard = enabled;
+        windowSwitcher = enabled;
+        keyboard-layout-indicator = enabled;
+      };
     };
 
     services.wayle = {
