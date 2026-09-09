@@ -12,9 +12,11 @@ in
   config = mkIf cfg.enable {
     programs.git = {
       enable = true;
-      userName = "roey ben arieh";
-      userEmail = "roey280404@gmail.com";
-      extraConfig = {
+      settings = {
+        user = {
+          name = "roey ben arieh";
+          email = "roey280404@gmail.com";
+        };
         core.editor = "nvim";
         init.defaultBranch = "main";
         merge.ff = false;
