@@ -11,6 +11,15 @@ in
   };
 
   config = mkIf cfg.enable {
+    # wayle isn't in the binary cache, so it must compile from source.
+    # Disabling tests cuts peak memory usage by ~3 GB (the GTK test is
+    # already #[ignore]d in the source anyway).
+    nixpkgs.overlays = [
+      (_: prev: {
+        wayle = prev.wayle.overrideAttrs (_: { doCheck = false; });
+      })
+    ];
+
     ${namespace}.desktop = {
       hyprland = {
         applicationLauncher = enabled;
