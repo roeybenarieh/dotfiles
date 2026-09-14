@@ -18,6 +18,7 @@ in
       security.enable = true;
       boot.enable = true;
       networking.enable = true;
+      stylix.enable = true;
     };
     # use lix instaed of nix
     nixpkgs.overlays = [ (final: prev: {
