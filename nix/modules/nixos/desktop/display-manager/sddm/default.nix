@@ -4,10 +4,10 @@ with lib;
 with lib.${namespace};
 
 let
-  cfg = config.${namespace}.desktop.sddm;
+  cfg = config.${namespace}.desktop.displayManager.sddm;
 in
 {
-  options.${namespace}.desktop.sddm = with types; {
+  options.${namespace}.desktop.displayManager.sddm = with types; {
     enable = mkBoolOpt false "Whether or not to enable SDDM display manager.";
   };
 

@@ -11,7 +11,7 @@ with lib.${namespace};
     networking.enable = mkForce false;
     apps = enabled;
     desktop.hyprland = enabled;
-    desktop.sddm = disabled;
+    desktop.displayManager.sddm = disabled;
   };
 
   # Share host /nix/store (nothing re-downloaded) and expose the dotfiles repo.
