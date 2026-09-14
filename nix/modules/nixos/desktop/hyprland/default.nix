@@ -16,6 +16,7 @@ in
       enable = true;
       withUWSM = true;
     };
+    services.displayManager.defaultSession = "hyprland-uwsm";
 
     snowfallorg.users.roey.home.config.${namespace}.desktop.hyprland = mkForce {
       enable = true;
