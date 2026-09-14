@@ -11,9 +11,8 @@ in
 
   config = mkIf cfg.enable {
     # install python+pip
-    # home.packages = with pkgs; [ python312 python312Packages.pip ];
     home.packages = with pkgs; [
-      (python312.withPackages (pkgs: with pkgs; [
+      (python314.withPackages (pkgs: with pkgs; [
         pip
         fastapi
         pydantic
