@@ -103,6 +103,8 @@ in
           { leaf = "border";     enabled = true; speed = 10; bezier = "default"; }
           { leaf = "fade";       enabled = true; speed = 7;  bezier = "default"; }
           { leaf = "workspaces"; enabled = true; speed = 6;  bezier = "default"; }
+          { leaf = "fadeLayersIn";  enabled = true; speed = 1; bezier = "default"; }
+          { leaf = "fadeLayersOut"; enabled = true; speed = 1; bezier = "default"; }
         ];
 
         gesture = [
