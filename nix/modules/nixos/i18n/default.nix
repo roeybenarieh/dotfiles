@@ -38,7 +38,7 @@ in
       LC_NUMERIC = "en_IL";
       LC_PAPER = "en_IL";
       LC_TELEPHONE = "en_IL";
-      LC_TIME = "en_US.UTF-8";
+      LC_TIME = "en_IL";
     };
   };
 }
