@@ -18,7 +18,7 @@ in
       enable = true;
       ambxst = disabled;
     };
-    desktop.displayManager.sddm = enabled;
+    desktop.displayManager.plasma = enabled;
 
     docker = enabled;
     omniroute = enabled;
