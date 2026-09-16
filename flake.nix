@@ -26,6 +26,10 @@
       url = "github:abba23/spotify-adblock";
       flake = false;
     };
+    injectify = {
+      url = "github:shade-solutions/Injectify";
+      flake = false;
+    };
     flake-programs-sqlite.url = "github:wamserma/flake-programs-sqlite";
     flake-programs-sqlite.inputs.nixpkgs.follows = "nixpkgs";
     grub2-themes = {

@@ -494,6 +494,22 @@
         "type": "github"
       }
     },
+    "injectify": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1777806310,
+        "narHash": "sha256-a2d2fhr5S7yaXiVfmYuyOdlh56DklhS0cdIa3Lz+48s=",
+        "owner": "shade-solutions",
+        "repo": "Injectify",
+        "rev": "0586327258b652f2e283b4a6e88bfedfb9731093",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shade-solutions",
+        "repo": "Injectify",
+        "type": "github"
+      }
+    },
     "nixos-hardware": {
       "inputs": {
         "nixpkgs": "nixpkgs_2"
@@ -767,6 +783,7 @@
         "grub2-themes": "grub2-themes",
         "home-manager": "home-manager",
         "hyprshell": "hyprshell",
+        "injectify": "injectify",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
