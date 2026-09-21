@@ -15,6 +15,16 @@ show-dependencies:
   nix-tree .
 
 [group('nix')]
+explore-dependencies output="/tmp/nix-dependency-graph.html":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  nix-store -q --graph /run/current-system "$HOME/.local/state/nix/profiles/home-manager" \
+    | python3 scripts/nix-graph-viewer.py {{output}} \
+      . "nixosConfigurations.laptop.config.environment.systemPackages,homeConfigurations.roey.config.home.packages" \
+      "NixOS=/run/current-system" "Home Manager=$HOME/.local/state/nix/profiles/home-manager"
+  xdg-open {{output}}
+
+[group('nix')]
 rollback-user:
   bash $(home-manager generations | fzf | awk -F '-> ' '{print $2 "/activate"}')
 

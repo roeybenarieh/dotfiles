@@ -1,0 +1,501 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Nix dependency graph</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #0b0b0b; overflow: hidden; height: 100%; }
+  canvas { display: block; }
+  #hud {
+    position: fixed; top: 8px; left: 8px; color: #ddd; font: 12px monospace;
+    background: rgba(0,0,0,0.5); padding: 6px 10px; border-radius: 4px; pointer-events: none;
+  }
+  #tooltip {
+    position: fixed; display: none; color: #fff; font: 12px monospace;
+    background: rgba(20,20,20,0.9); padding: 3px 6px; border-radius: 3px; pointer-events: none;
+  }
+  #panel {
+    position: fixed; display: none; top: 12px; right: 12px; width: 360px; max-height: calc(100vh - 24px);
+    overflow-y: auto; background: rgba(18,18,20,0.97); color: #e6e6e6; font: 12px/1.5 monospace;
+    border: 1px solid #333; border-radius: 6px; padding: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  #panel h2 { margin: 0 0 2px; font-size: 14px; color: #fff; word-break: break-all; }
+  #panel .path { color: #888; font-size: 11px; word-break: break-all; margin-bottom: 10px; }
+  #panel .description { color: #ccc; font-size: 12px; line-height: 1.5; margin: 4px 0 12px; }
+  #panel .row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #262626; }
+  #panel .row span:first-child { color: #999; }
+  #panel .section-title { margin: 12px 0 4px; color: #999; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+  #panel .none { color: #555; font-size: 11px; font-style: italic; }
+  #panel .info {
+    position: relative; display: inline-block; width: 13px; height: 13px; line-height: 13px;
+    text-align: center; border-radius: 50%; background: #2a2a2e; color: #888; font-size: 9px;
+    font-style: normal; cursor: help; margin-left: 3px; user-select: none;
+  }
+  #panel .info:hover { background: #3a3a40; color: #ccc; }
+  #panel .info::after {
+    content: attr(data-tip); display: none; position: absolute; top: 130%; left: 0;
+    width: 200px; background: #1a1a1c; color: #ddd; border: 1px solid #444; border-radius: 4px;
+    padding: 6px 8px; font-size: 11px; font-weight: normal; line-height: 1.4; white-space: normal;
+    z-index: 30; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  }
+  #panel .info:hover::after { display: block; }
+  #panel .chip-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  #panel .chip {
+    background: #232326; border: 1px solid #333; border-radius: 3px; padding: 2px 6px;
+    cursor: pointer; color: #9cf; font-size: 11px;
+  }
+  #panel .chip:hover { background: #2d2d33; }
+  #panel .more { color: #666; font-size: 11px; padding: 2px 0; }
+  #panel a { color: #7bd; }
+  #panel #closeBtn {
+    position: absolute; top: 10px; right: 12px; cursor: pointer; color: #888; font-size: 16px;
+    background: none; border: none;
+  }
+  #panel #closeBtn:hover { color: #fff; }
+  #search {
+    position: fixed; top: 8px; left: 50%; transform: translateX(-50%); width: 320px; z-index: 10;
+  }
+  #search input {
+    width: 100%; box-sizing: border-box; background: rgba(18,18,20,0.95); color: #eee;
+    border: 1px solid #444; border-radius: 5px; padding: 6px 10px; font: 13px monospace; outline: none;
+  }
+  #search input:focus { border-color: #7bd; }
+  #searchResults {
+    display: none; margin-top: 4px; max-height: 320px; overflow-y: auto;
+    background: rgba(18,18,20,0.97); border: 1px solid #444; border-radius: 5px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  #searchResults .result {
+    padding: 6px 10px; font: 12px monospace; color: #ddd; cursor: pointer;
+  }
+  #searchResults .result:hover, #searchResults .result.active { background: #2d2d33; }
+</style>
+</head>
+<body>
+<div id="hud">loading...</div>
+<div id="tooltip"></div>
+<div id="panel"></div>
+<div id="search">
+  <input id="searchInput" type="text" placeholder="Search packages... (Enter to jump)" autocomplete="off">
+  <div id="searchResults"></div>
+</div>
+<canvas id="c"></canvas>
+<script>
+const GRAPH_DATA = /*__GRAPH_DATA_JSON__*/;
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const hud = document.getElementById('hud');
+const tooltip = document.getElementById('tooltip');
+const panel = document.getElementById('panel');
+let W = innerWidth, H = innerHeight;
+function resize() { W = innerWidth; H = innerHeight; canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio; canvas.style.width = W+'px'; canvas.style.height = H+'px'; }
+resize();
+addEventListener('resize', resize);
+
+function humanBytes(n) {
+  if (n == null) return 'unknown';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let i = 0, v = n;
+  while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+  return (i === 0 ? v : v.toFixed(2)) + ' ' + units[i];
+}
+
+function humanDate(ts) {
+  if (!ts) return 'unknown';
+  return new Date(ts * 1000).toLocaleString();
+}
+
+// Best-effort split of a nix store name into a package name (for a search
+// link) by cutting before the first version-looking segment.
+function guessPname(label) {
+  const m = label.match(/^(.*?)-(\d[\w.+-]*)$/);
+  return m ? m[1] : label;
+}
+
+// A small hoverable "(?)" icon with a custom CSS tooltip (native `title`
+// tooltips have an inconsistent hover delay and were hard to trigger).
+function infoIcon(tip) {
+  return `<span class="info" data-tip="${tip.replace(/"/g, '&quot;')}">?</span>`;
+}
+
+// Set bits in a 32-bit word (Kernighan/SWAR trick) -- the inner loop of the
+// dependency-closure bitset union below, called millions of times, so it's
+// worth keeping branch-free.
+function popcount32(x) {
+  x = x - ((x >>> 1) & 0x55555555);
+  x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
+  x = (x + (x >>> 4)) & 0x0f0f0f0f;
+  return (x * 0x01010101) >>> 24;
+}
+
+function render(data) {
+  const nodes = data.nodes.map((label, i) => ({
+    id: i, label, path: data.paths[i], meta: data.meta[i] || {},
+  }));
+  const links = data.edges.map(([s, t]) => ({ source: s, target: t }));
+
+  const degree = new Array(nodes.length).fill(0);
+  const deps = nodes.map(() => []);       // direct dependencies (this node needs these)
+  const referrers = nodes.map(() => []);  // direct dependents (these need this node)
+  for (const l of links) {
+    degree[l.source]++; degree[l.target]++;
+    // nix-store --graph edges point from a dependency to its dependent.
+    referrers[l.source].push(l.target);
+    deps[l.target].push(l.source);
+  }
+  nodes.forEach(n => { n.degree = degree[n.id]; n.deps = deps[n.id]; n.referrers = referrers[n.id]; n.depCount = null; });
+
+  // Exact size of each node's full dependency closure (direct + transitive
+  // -- everything it needs to build/run), used to size/colour nodes instead
+  // of plain edge degree. This is a DAG (Nix store paths can't cycle), so
+  // it's computable in one topological pass: process nodes in dependency
+  // order (a node only becomes "ready" once every one of its direct deps
+  // has been processed) and OR each dependency's bitset of *its* closure
+  // into the node's own bitset. One bit per node is affordable here --
+  // this is a machine's actual closure (thousands of store paths), not all
+  // of nixpkgs (hundreds of thousands) -- so an exact bitset beats a
+  // probabilistic sketch (e.g. HyperLogLog) for both accuracy and code
+  // simplicity at this scale.
+  //
+  // Run as a generator so it can be time-sliced across animation frames
+  // instead of blocking the initial render: nodes are still shown
+  // (degree-scaled) and the force layout starts immediately, and each
+  // node's colour/size snaps to its real closure size the moment that
+  // node's bitset finishes, which the already-running draw() loop below
+  // picks up on its next frame -- no separate redraw plumbing needed.
+  let maxDepCount = 0;
+  function* closureSizeGen() {
+    const words = (nodes.length + 31) >> 5;
+    const EMPTY = new Uint32Array(words);
+    const bitsets = new Array(nodes.length);
+    const indeg = deps.map(d => d.length);
+    const queue = [];
+    for (let i = 0; i < nodes.length; i++) if (indeg[i] === 0) queue.push(i);
+
+    let processed = 0;
+    for (let qi = 0; qi < queue.length; qi++) {
+      const n = queue[qi];
+      const dlist = deps[n];
+      let bs;
+      if (dlist.length === 0) {
+        bs = EMPTY; // leaf: no deps, share the zero bitset instead of allocating
+      } else {
+        bs = new Uint32Array(words);
+        for (const d of dlist) {
+          const dbs = bitsets[d];
+          for (let w = 0; w < words; w++) bs[w] |= dbs[w];
+          bs[d >> 5] |= (1 << (d & 31)); // d itself is a dependency too, not just what d depends on
+        }
+      }
+      bitsets[n] = bs;
+
+      let count = 0;
+      for (let w = 0; w < words; w++) count += popcount32(bs[w]);
+      nodes[n].depCount = count;
+      if (count > maxDepCount) maxDepCount = count;
+
+      for (const r of referrers[n]) {
+        if (--indeg[r] === 0) queue.push(r);
+      }
+
+      if (++processed % 256 === 0) yield; // checkpoint for the time-sliced driver below
+    }
+    // Release the bitsets -- only the final popcounts (already written onto
+    // the nodes) are needed from here on.
+    bitsets.length = 0;
+  }
+
+  (function driveClosureComputation() {
+    const gen = closureSizeGen();
+    const FRAME_BUDGET_MS = 6; // leave the rest of a 16ms frame for the force layout/draw
+    function step() {
+      const t0 = performance.now();
+      let res;
+      do { res = gen.next(); } while (!res.done && performance.now() - t0 < FRAME_BUDGET_MS);
+      if (!res.done) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  })();
+
+  // The zoom behaviour computes pan/zoom relative to the canvas's own
+  // top-left origin, so the "center the graph on screen" offset has to
+  // live inside the zoom transform itself (as its initial value) rather
+  // than as a separate manual translate in draw() -- otherwise zooming
+  // around the pointer drifts, since d3 doesn't know about that extra
+  // offset when it recalculates transform.x/y on each wheel event.
+  let transform = d3.zoomIdentity.translate(W/2, H/2);
+  const canvasSel = d3.select(canvas);
+  const zoomBehavior = d3.zoom().scaleExtent([0.02, 25]).on('zoom', (ev) => { transform = ev.transform; });
+  canvasSel.call(zoomBehavior).call(zoomBehavior.transform, transform);
+
+  const simulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(12).strength(0.15))
+    .force('charge', d3.forceManyBody().strength(-18).distanceMax(400))
+    .force('center', d3.forceCenter(0, 0))
+    .force('collide', d3.forceCollide(2))
+    .alphaDecay(0.02);
+
+  const maxColorDeg = Math.max(...degree);
+
+  // Nodes whose closure size isn't computed yet (see closureSizeGen above)
+  // fall back to plain degree, scaled against its own running max -- kept
+  // separate from maxDepCount's scale so the two metrics don't bleed into
+  // each other while the computation is still in flight.
+  function metricT(d) {
+    if (d.depCount != null) return Math.min(1, Math.log(d.depCount + 1) / Math.log(Math.max(maxDepCount, 1) + 1));
+    return Math.min(1, Math.log(d.degree + 1) / Math.log(maxColorDeg + 1));
+  }
+
+  function color(d) {
+    const t = metricT(d);
+    const r = Math.round(60 + t * 195);
+    const g = Math.round(140 - t * 100);
+    const b = Math.round(220 - t * 180);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function draw() {
+    ctx.save();
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.translate(transform.x, transform.y);
+    ctx.scale(transform.k, transform.k);
+
+    ctx.strokeStyle = 'rgba(150,150,150,0.12)';
+    ctx.lineWidth = 1 / transform.k;
+    ctx.beginPath();
+    for (const l of links) {
+      ctx.moveTo(l.source.x, l.source.y);
+      ctx.lineTo(l.target.x, l.target.y);
+    }
+    ctx.stroke();
+
+    const showLabels = transform.k > 2.2;
+    for (const n of nodes) {
+      const sizeMetric = n.depCount != null ? n.depCount : n.degree;
+      const r = Math.max(1.2, Math.min(6, 1 + Math.log(sizeMetric + 1)));
+      ctx.beginPath();
+      ctx.fillStyle = n === selected ? '#ffcc33' : color(n);
+      ctx.arc(n.x, n.y, (n === selected ? r * 1.8 : r) / Math.sqrt(transform.k), 0, 6.283);
+      ctx.fill();
+      if (showLabels || n === selected) {
+        ctx.fillStyle = '#eee';
+        ctx.font = `${11/transform.k}px monospace`;
+        ctx.fillText(n.label, n.x + 4/transform.k, n.y + 3/transform.k);
+      }
+    }
+    ctx.restore();
+    hud.textContent = `nodes ${nodes.length} · edges ${links.length} · alpha ${simulation.alpha().toFixed(3)} · zoom ${transform.k.toFixed(2)}x` + (showLabels ? '' : ' (zoom in for labels)');
+  }
+
+  simulation.on('tick', draw);
+  d3.timer(draw);
+
+  function findNodeAt(clientX, clientY) {
+    const mx = (clientX - transform.x) / transform.k;
+    const my = (clientY - transform.y) / transform.k;
+    let best = null, bestD = 15 / transform.k;
+    for (const n of nodes) {
+      const d = Math.hypot(n.x - mx, n.y - my);
+      if (d < bestD) { bestD = d; best = n; }
+    }
+    return best;
+  }
+
+  canvas.addEventListener('mousemove', (ev) => {
+    const best = findNodeAt(ev.clientX, ev.clientY);
+    if (best) {
+      tooltip.style.display = 'block';
+      tooltip.style.left = (ev.clientX + 12) + 'px';
+      tooltip.style.top = (ev.clientY + 12) + 'px';
+      tooltip.textContent = `${best.label} (degree ${best.degree})`;
+    } else {
+      tooltip.style.display = 'none';
+    }
+  });
+
+  let selected = null;
+  let dragged = false;
+  canvas.addEventListener('mousedown', () => { dragged = false; });
+  canvas.addEventListener('mousemove', (ev) => { if (ev.buttons) dragged = true; });
+  canvas.addEventListener('click', (ev) => {
+    if (dragged) return; // don't treat a pan-drag release as a click
+    const best = findNodeAt(ev.clientX, ev.clientY);
+    selectNode(best); // no {focus: true} -- clicking a visible node shouldn't move the view
+  });
+
+  function focusNode(n) {
+    const target = d3.zoomIdentity.translate(W/2, H/2).scale(4).translate(-n.x, -n.y);
+    canvasSel.transition().duration(400).call(zoomBehavior.transform, target);
+  }
+
+  // `toChip(item)` builds the chip's content/behaviour for one entry --
+  // used to share this layout between clickable node chips (dependencies,
+  // dependents) and plain text chips (executables).
+  function chipList(container, items, label, tip, toChip) {
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.innerHTML = `${label} (${items.length}) ${infoIcon(tip)}`;
+    container.appendChild(title);
+
+    if (!items.length) {
+      const none = document.createElement('div');
+      none.className = 'none';
+      none.textContent = 'none';
+      container.appendChild(none);
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'chip-list';
+    const shown = items.slice(0, 40);
+    for (const item of shown) {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      toChip(chip, item);
+      list.appendChild(chip);
+    }
+    container.appendChild(list);
+    if (items.length > shown.length) {
+      const more = document.createElement('div');
+      more.className = 'more';
+      more.textContent = `+ ${items.length - shown.length} more`;
+      container.appendChild(more);
+    }
+  }
+
+  function nodeChip(chip, idx) {
+    chip.textContent = nodes[idx].label;
+    chip.onclick = () => selectNode(nodes[idx], { focus: true });
+  }
+
+  function textChip(chip, text) {
+    chip.textContent = text;
+    chip.style.cursor = 'default';
+    chip.style.color = '#ccc';
+  }
+
+  function selectNode(n, { focus = false } = {}) {
+    selected = n;
+    if (!n) { panel.style.display = 'none'; return; }
+    if (focus) focusNode(n);
+
+    panel.innerHTML = '';
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'closeBtn';
+    closeBtn.textContent = '✕';
+    closeBtn.onclick = () => selectNode(null);
+    panel.appendChild(closeBtn);
+
+    const h2 = document.createElement('h2');
+    h2.textContent = n.label;
+    panel.appendChild(h2);
+
+    const path = document.createElement('div');
+    path.className = 'path';
+    path.textContent = n.path;
+    panel.appendChild(path);
+
+    const descTitle = document.createElement('div');
+    descTitle.className = 'section-title';
+    descTitle.innerHTML = `Description ${infoIcon('The package\'s meta.description from nixpkgs (same text shown on search.nixos.org). Only available for packages that are top-level nixpkgs attributes -- most transitive library dependencies won\'t have one.')}`;
+    panel.appendChild(descTitle);
+    const desc = document.createElement('div');
+    desc.className = n.meta.description ? 'description' : 'none';
+    desc.textContent = n.meta.description || 'no description available';
+    panel.appendChild(desc);
+
+    const facts = document.createElement('div');
+    const rows = [
+      ['NAR size', humanBytes(n.meta.narSize), 'Size of this package alone on disk (its own Nix Archive), not counting its dependencies.'],
+      ['Closure size', humanBytes(n.meta.closureSize), 'Total disk size of this package plus everything it transitively depends on.'],
+      ['Built by', n.meta.deriver || 'unknown', 'The .drv derivation that produced this store path.'],
+      ['Registered', humanDate(n.meta.registrationTime), 'When this path was added to the Nix store on this machine.'],
+    ];
+    for (const [k, v, tip] of rows) {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `<span>${k}${infoIcon(tip)}</span><span>${v}</span>`;
+      facts.appendChild(row);
+    }
+    panel.appendChild(facts);
+
+    const searchLink = document.createElement('div');
+    searchLink.style.marginTop = '10px';
+    const pname = guessPname(n.label);
+    searchLink.innerHTML = `<a href="https://search.nixos.org/packages?query=${encodeURIComponent(pname)}" target="_blank" rel="noopener">Search "${pname}" on search.nixos.org &rarr;</a>`;
+    panel.appendChild(searchLink);
+
+    chipList(panel, n.meta.executables || [], 'Executables', 'Files this package puts in its bin/ directory — the commands it actually provides on your PATH.', textChip);
+    chipList(panel, n.deps, 'Direct dependencies', 'Packages this one directly references — what it needs to build or run.', nodeChip);
+    chipList(panel, n.referrers, 'Direct dependents', 'Packages that directly reference this one — what would break without it.', nodeChip);
+
+    panel.style.display = 'block';
+  }
+
+  // --- Search ---
+  const searchInput = document.getElementById('searchInput');
+  const searchResults = document.getElementById('searchResults');
+  let activeIdx = -1;
+  let currentMatches = [];
+
+  function renderResults(matches, resetActive = true) {
+    currentMatches = matches;
+    if (resetActive) activeIdx = matches.length ? 0 : -1;
+    searchResults.innerHTML = '';
+    if (!matches.length) { searchResults.style.display = 'none'; return; }
+    matches.forEach((n, i) => {
+      const row = document.createElement('div');
+      row.className = 'result' + (i === activeIdx ? ' active' : '');
+      row.innerHTML = `<span>${n.label}</span>`;
+      row.onclick = () => pickResult(n);
+      searchResults.appendChild(row);
+    });
+    searchResults.style.display = 'block';
+  }
+
+  function pickResult(n) {
+    selectNode(n, { focus: true });
+    searchInput.value = n.label;
+    searchResults.style.display = 'none';
+  }
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) { renderResults([]); return; }
+    const matches = [];
+    for (const n of nodes) {
+      if (n.label.toLowerCase().includes(q)) {
+        matches.push(n);
+        if (matches.length >= 20) break;
+      }
+    }
+    renderResults(matches);
+  });
+
+  searchInput.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') {
+      if (activeIdx >= 0 && currentMatches[activeIdx]) pickResult(currentMatches[activeIdx]);
+    } else if (ev.key === 'Escape') {
+      searchInput.value = '';
+      renderResults([]);
+      searchInput.blur();
+    } else if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+      if (!currentMatches.length) return;
+      ev.preventDefault();
+      activeIdx = (activeIdx + (ev.key === 'ArrowDown' ? 1 : -1) + currentMatches.length) % currentMatches.length;
+      renderResults(currentMatches, false);
+    }
+  });
+
+  document.addEventListener('click', (ev) => {
+    if (!ev.target.closest('#search')) searchResults.style.display = 'none';
+  });
+}
+
+render(GRAPH_DATA);
+</script>
+</body>
+</html>
