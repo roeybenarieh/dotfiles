@@ -53,6 +53,7 @@ let
       echo "Creating bucket: ${bucket}"
       ${getExe garagePkg} bucket list | ${getExe pkgs.gnugrep} -q " ${bucket} " || ${getExe garagePkg} bucket create "${bucket}"
       ${getExe garagePkg} bucket allow --read --write --owner "${bucket}" --key "${keyName}"
+      ${getExe garagePkg} bucket set-quotas --max-size "${cfg.bucketMaxSize}" "${bucket}"
     '') cfg.bucketNames}
   '';
 in
@@ -62,6 +63,7 @@ in
     port = mkIntOpt 11906 "s3compatible api port";
     webUiPort = mkIntOpt 11910 "s3compatible web UI port, for browsing/managing buckets";
     bucketNames = mkListOpt [ ] "s3compatible buckets to create";
+    bucketMaxSize = mkstrOpt "1GB" "Max size quota applied to each bucket (garage bucket set-quotas --max-size), e.g. \"1GB\" or \"none\" for no limit";
     region = mkstrOpt "us-east-1" "s3compatible region";
     accessKey = mkstrOpt "s3compatible_accesskey" "s3compatible username";
     secretKey = mkstrOpt "s3compatible_secretkey" "s3compatible password";

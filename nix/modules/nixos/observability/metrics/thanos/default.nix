@@ -100,6 +100,10 @@ in
           name = "thanos";
           url = http_local_endpoint_on_port http_port.query-frontend;
         }
+        {
+          name = "garage";
+          url = http_local_endpoint_on_port s3compatible_config.webUiPort;
+        }
       ];
     };
 
