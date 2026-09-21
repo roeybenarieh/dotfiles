@@ -13,14 +13,22 @@ in
   };
 
   config = mkIf cfg.enable {
-    # add firefox bookmarks
-    ${namespace}.observability.grafana.observability_firefox_bookmarks = [
-      {
-        name = "prometheus";
-        keyword = "prometheus";
-        url = http_local_endpoint_on_port port;
-      }
-    ];
+    # add firefox and chromium bookmarks
+    ${namespace}.observability.grafana = {
+      observability_firefox_bookmarks = [
+        {
+          name = "prometheus";
+          keyword = "prometheus";
+          url = http_local_endpoint_on_port port;
+        }
+      ];
+      observability_chromium_bookmarks = [
+        {
+          name = "prometheus";
+          url = http_local_endpoint_on_port port;
+        }
+      ];
+    };
     # TODO: use prometheus.configText so tracing could be configured. Create your own option for this so other modules could merge their configuration part.
     services.prometheus = {
       enable = true;

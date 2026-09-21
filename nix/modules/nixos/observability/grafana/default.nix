@@ -13,6 +13,10 @@ in
       type = lib.types.listOf types.anything;
       default = [ ];
     };
+    observability_chromium_bookmarks = lib.mkOption {
+      type = lib.types.listOf types.anything;
+      default = [ ];
+    };
   };
 
   config = mkIf cfg.enable {
@@ -46,6 +50,14 @@ in
         }
       ];
     }];
+
+    # set chromium bookmarks (managed enterprise policy: shown as a folder on the bookmarks bar)
+    programs.chromium.extraOpts.ManagedBookmarks = [{ toplevel_name = "observability"; }]
+      ++ cfg.observability_chromium_bookmarks
+      ++ [{
+        name = "grafana";
+        url = http_local_endpoint_on_port http_port;
+      }];
 
     services.grafana = {
       enable = true;

@@ -42,7 +42,6 @@ in
       configuration = {
         auth_enabled = false;
         server.http_listen_port = frontend_port;
-        ui.enabled = true;
         limits_config.volume_enabled = true; # needed by drilldown in Grafana
 
         common = {

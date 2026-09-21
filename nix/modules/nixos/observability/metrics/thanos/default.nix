@@ -94,6 +94,13 @@ in
           url = http_local_endpoint_on_port http_port.query-frontend;
         }
       ];
+      # add chromium bookmarks
+      observability.grafana.observability_chromium_bookmarks = [
+        {
+          name = "thanos";
+          url = http_local_endpoint_on_port http_port.query-frontend;
+        }
+      ];
     };
 
 
