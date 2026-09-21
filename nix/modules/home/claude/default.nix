@@ -18,6 +18,13 @@ let
     hash = "sha256-uD6NEFL2ky5e60RKjl20+gYUHtMjABPoABmZ63vT/SM=";
   };
 
+  # Anthropic's official meta-skill for authoring new Claude Code skills
+  skillCreatorSrc = pkgs.fetchFromGitHub {
+    owner = "anthropics";
+    repo = "skills";
+    rev = "34040c9c568585f6929bedeaad110ad08f079624";
+    hash = "sha256-tI4bTTBfI1ylltklGyiyA7pLoKXEWtrT6lrmwrpLbCw=";
+  };
   claudeSettings = {
     attribution = { commit = ""; pr = ""; };
     # When OmniRoute is active, use its auto-routing model ID; otherwise use the direct Anthropic model.
@@ -113,6 +120,9 @@ in
     home.file.".claude/skills/task-observer/references/environments.md".source = "${taskObserverSrc}/references/environments.md";
     home.file.".claude/skills/task-observer/references/skill-authoring.md".source = "${taskObserverSrc}/references/skill-authoring.md";
     home.file.".claude/skills/task-observer/references/weekly-review.md".source = "${taskObserverSrc}/references/weekly-review.md";
+
+    # skill-creator: Anthropic's official skill for authoring/packaging new skills
+    home.file.".claude/skills/skill-creator".source = "${skillCreatorSrc}/skills/skill-creator";
 
     # graphify: maps any codebase into a queryable knowledge graph
     home.file.".claude/skills/graphify/SKILL.md".source = "${graphifySrc}/graphify/skill.md";
