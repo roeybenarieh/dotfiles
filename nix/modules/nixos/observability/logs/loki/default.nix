@@ -4,7 +4,7 @@ with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.observability.logs.loki;
-  minio_config = config.${namespace}.storage.minio;
+  s3compatible_config = config.${namespace}.storage.s3compatible;
   loki_bucket_name = "loki";
   frontend_port = 3100;
 in
@@ -15,11 +15,11 @@ in
 
   config = mkIf cfg.enable {
     # create S3 bucket for traces
-    ${namespace}.storage.minio = {
+    ${namespace}.storage.s3compatible = {
       enable = true;
       bucketNames = [ loki_bucket_name ];
     };
-    # HACK: sleep until the minio service is on
+    # HACK: sleep until the s3compatible service is on
     systemd.services.loki.serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
 
     # scrape tempo metrics using prometheus
@@ -48,11 +48,11 @@ in
         common = {
           storage.object_store.s3 = {
             bucket_name = loki_bucket_name;
-            endpoint = schemaless_local_endpoint_on_port minio_config.port;
+            endpoint = schemaless_local_endpoint_on_port s3compatible_config.port;
             insecure = true;
-            inherit (minio_config) region;
-            access_key_id = minio_config.accessKey;
-            secret_access_key = minio_config.secretKey;
+            inherit (s3compatible_config) region;
+            access_key_id = s3compatible_key_id s3compatible_config.accessKey;
+            secret_access_key = s3compatible_key_secret s3compatible_config.secretKey;
             trace.enabled = true;
           };
           path_prefix = "/tmp/loki";

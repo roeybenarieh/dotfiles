@@ -5,7 +5,7 @@ with lib.${namespace};
 let
   cfg = config.${namespace}.observability.metrics.thanos;
   prometheus_config = config.services.prometheus;
-  minio_config = config.${namespace}.storage.minio;
+  s3compatible_config = config.${namespace}.storage.s3compatible;
 
   writeYaml = (pkgs.formats.yaml { }).generate;
 
@@ -32,9 +32,9 @@ let
     type = "S3";
     config = {
       bucket = "thanos";
-      endpoint = schemaless_local_endpoint_on_port minio_config.port;
-      access_key = minio_config.accessKey;
-      secret_key = minio_config.secretKey;
+      endpoint = schemaless_local_endpoint_on_port s3compatible_config.port;
+      access_key = s3compatible_key_id s3compatible_config.accessKey;
+      secret_key = s3compatible_key_secret s3compatible_config.secretKey;
       insecure = true;
     };
   };
@@ -82,7 +82,7 @@ in
   config = mkIf cfg.enable {
     ${namespace} = {
       # create S3 bucket for metrics
-      storage.minio = {
+      storage.s3compatible = {
         enable = true;
         bucketNames = [ objectstore_config.config.bucket ];
       };
@@ -97,13 +97,14 @@ in
     };
 
 
-    # tell prometheus to save data in tsdb only for 2 hours
     services.prometheus = {
+      # thanos-sidecar reads Prometheus's local TSDB blocks and ships them to
+      # object storage, so compaction must be disabled (min == max block
+      # duration) and agent mode (which has no TSDB blocks) cannot be used
       extraFlags = [
         "--storage.tsdb.min-block-duration=2h"
         "--storage.tsdb.max-block-duration=2h"
       ];
-      enableAgentMode = true;
       scrapeConfigs = [
         {
           job_name = "thanos";
