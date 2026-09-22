@@ -25,6 +25,51 @@ let
     rev = "34040c9c568585f6929bedeaad110ad08f079624";
     hash = "sha256-tI4bTTBfI1ylltklGyiyA7pLoKXEWtrT6lrmwrpLbCw=";
   };
+
+  statusLineScript = pkgs.writeShellApplication {
+    name = "claude-statusline";
+    runtimeInputs = [ pkgs.jq pkgs.procps pkgs.gawk ];
+    text = ''
+      input=$(cat)
+      MODEL=$(echo "$input" | jq -r '.model.display_name // "unknown"')
+      DIR=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // ""')
+      DIR_NAME=$(basename "$DIR")
+      PCT=$(echo "$input" | jq -r '(.context_window.used_percentage // 0) | floor')
+      COST=$(echo "$input" | jq -r '(.cost.total_cost_usd // 0)')
+      TOKENS=$(echo "$input" | jq -r '
+        (.context_window.total_input_tokens // 0) as $t |
+        if $t >= 1000 then (($t / 1000 * 10 | round) / 10 | tostring) + "k"
+        else ($t | tostring)
+        end')
+
+      MEM_PCT=$(free | awk '/^Mem:/ {printf "%d", $3/$2*100}')
+      CPU_LOAD=$(awk '{print $1}' /proc/loadavg)
+
+      CYAN=$'\033[36m'
+      GREEN=$'\033[32m'
+      YELLOW=$'\033[33m'
+      RED=$'\033[31m'
+      RESET=$'\033[0m'
+
+      if [ "$PCT" -lt 50 ]; then
+        CTX_COLOR="$GREEN"
+      elif [ "$PCT" -lt 80 ]; then
+        CTX_COLOR="$YELLOW"
+      else
+        CTX_COLOR="$RED"
+      fi
+
+      printf '%s[%s]%s %s | %s%d%%%s ctx | %s tok | $%.3f | mem %d%% | cpu %s\n' \
+        "$CYAN" "$MODEL" "$RESET" \
+        "$DIR_NAME" \
+        "$CTX_COLOR" "$PCT" "$RESET" \
+        "$TOKENS" \
+        "$COST" \
+        "$MEM_PCT" \
+        "$CPU_LOAD"
+    '';
+  };
+
   claudeSettings = {
     attribution = { commit = ""; pr = ""; };
     # When OmniRoute is active, use its auto-routing model ID; otherwise use the direct Anthropic model.
@@ -86,14 +131,19 @@ let
         ];
       }
     ];
+  } // optionalAttrs cfg.statusLine.enable {
+    statusLine = {
+      type = "command";
+      command = "${statusLineScript}/bin/claude-statusline";
+    };
   };
 in
 {
   options.${namespace}.claude = with types; {
     enable = mkBoolOpt false "Whether or not to enable claude-desktop.";
-    omniroute = {
-      enable = mkBoolOpt false "Route Claude Code through a local OmniRoute gateway.";
-      port = mkIntOpt 20128 "OmniRoute port (must match the NixOS omniroute module).";
+    statusLine = {
+      enable = mkBoolOpt false "Enable the Claude Code status line showing model, context usage, and cost.";
+    };
     };
   };
 
