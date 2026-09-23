@@ -195,7 +195,8 @@ in
     home.file.".claude/skills/task-observer/references/weekly-review.md".source = "${taskObserverSrc}/references/weekly-review.md";
 
     # skill-creator: Anthropic's official skill for authoring/packaging new skills
-    home.file.".claude/skills/skill-creator".source = "${skillCreatorSrc}/skills/skill-creator";
+    home.file.".claude/skills/skill-creator".source = "${anthropicSkillsSrc}/skills/skill-creator";
+
     # pdf: Anthropic's official skill for reading/extracting, merging/splitting,
     # creating, filling forms in, and OCR'ing PDF files
     home.file.".claude/skills/pdf".source = "${anthropicSkillsSrc}/skills/pdf";
