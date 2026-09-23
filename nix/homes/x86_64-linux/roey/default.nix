@@ -10,6 +10,14 @@ with lib.extra;
       ambxst = disabled;
       wayle = enabled;
       session = disabled;
+      hyprwhspr = {
+        enable = true;
+        shortcut = "SUPER + D";
+        extraSettings = {
+          audio_ducking = true;
+          audio_ducking_mode = "pause";
+        };
+      };
     };
     entertainment = enabled;
     browser = {
