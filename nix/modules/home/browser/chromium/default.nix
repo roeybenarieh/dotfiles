@@ -17,9 +17,13 @@ let
       caret-color: ${colors.base0D} !important;
       scrollbar-color: ${colors.base03} transparent;
     }
-    /* Links */
-    a:link, a:visited {
-      color: ${colors.base0D} !important;
+    /* Links: unvisited vs. visited get distinct Stylix accents.
+       base08 is the base16-documented role for markup link text. */
+    a:link {
+      color: ${colors.base08} !important;
+    }
+    a:visited {
+      color: ${colors.base0E} !important;
     }
     /* Text-selection highlight only, not default page text. */
     ::selection {
