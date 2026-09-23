@@ -72,8 +72,6 @@ let
 
   claudeSettings = {
     attribution = { commit = ""; pr = ""; };
-    # When OmniRoute is active, use its auto-routing model ID; otherwise use the direct Anthropic model.
-    model = if cfg.omniroute.enable then "auto/claude-sonnet" else "claude-sonnet-4-6";
     theme = "dark-ansi";
     voiceEnabled = true;
     skipDangerousModePermissionPrompt = true;
@@ -149,10 +147,6 @@ in
 
   config = mkIf cfg.enable {
     home.shellAliases.claude = "claude --permission-mode auto";
-
-    home.sessionVariables = mkIf cfg.omniroute.enable {
-      ANTHROPIC_BASE_URL = "http://localhost:${toString cfg.omniroute.port}/v1";
-    };
 
     # TODO: you programs.claude-code instead
     home.packages = with pkgs; [
