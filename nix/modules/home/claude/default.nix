@@ -18,8 +18,8 @@ let
     hash = "sha256-uD6NEFL2ky5e60RKjl20+gYUHtMjABPoABmZ63vT/SM=";
   };
 
-  # Anthropic's official meta-skill for authoring new Claude Code skills
-  skillCreatorSrc = pkgs.fetchFromGitHub {
+  # Anthropic's official skills repo
+  anthropicSkillsSrc = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
     rev = "34040c9c568585f6929bedeaad110ad08f079624";
@@ -163,6 +163,29 @@ in
       nodejs # needed for some MCPs
       pyright # needed in non-pycharm environments for python analytics using LSP
       gh # needed for interacting with github
+
+      # "pdf" skill deps: CLI tools it shells out to (its python packages are
+      # merged into languages.python's env via extraPackages, set below)
+      poppler-utils # pdftotext, pdfimages
+      qpdf
+      pdftk
+      tesseract # OCR for scanned PDFs
+    ];
+
+    # python3Packages used by the "pdf" skill's scripts (text/table extraction,
+    # form filling, image rendering, OCR, xlsx export of extracted tables) —
+    # merged into extra.software-development.languages.python's single shared
+    # interpreter below, since Home Manager can't have two independent
+    # python.withPackages closures on PATH at once
+    extra.software-development.languages.python.extraPackages = [
+      "pypdf"
+      "pdfplumber"
+      "reportlab"
+      "pypdfium2"
+      "pytesseract"
+      "pdf2image"
+      "pandas"
+      "openpyxl"
     ];
 
     # task-observer meta-skill: watches sessions and improves the skill library over time
@@ -173,6 +196,9 @@ in
 
     # skill-creator: Anthropic's official skill for authoring/packaging new skills
     home.file.".claude/skills/skill-creator".source = "${skillCreatorSrc}/skills/skill-creator";
+    # pdf: Anthropic's official skill for reading/extracting, merging/splitting,
+    # creating, filling forms in, and OCR'ing PDF files
+    home.file.".claude/skills/pdf".source = "${anthropicSkillsSrc}/skills/pdf";
 
     # graphify: maps any codebase into a queryable knowledge graph
     home.file.".claude/skills/graphify/SKILL.md".source = "${graphifySrc}/graphify/skill.md";
