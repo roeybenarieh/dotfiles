@@ -226,6 +226,9 @@ in
       - `graphify-out/` exists: always prefer it for codebase questions over ad-hoc file reading
 
       If `graphify-out/graph.json` does NOT exist and the question is clearly architectural/structural, consider suggesting to the user that running `/graphify` first would give better answers — but do not block on it; proceed with file reading if they prefer.
+
+      ## Git commits
+      Never run `git commit` unless the user explicitly asks you to commit. Stage files, make changes, and tell the user what's ready — but do not commit on your own initiative.
     '';
 
     home.file.".claude/settings.json" = {
