@@ -218,6 +218,9 @@ in
       context = ''
         ## Git commits
         Never run `git commit` unless the user explicitly asks you to commit. Stage files, make changes, and tell the user what's ready — but do not commit on your own initiative.
+
+        ## LSP servers
+        LSP servers are available via the `LSP` tool for Python, Lua, and Nix. Prefer it over grep for navigation (definitions, references, diagnostics) in those languages.
       '';
     };
 
