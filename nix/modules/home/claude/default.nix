@@ -198,6 +198,13 @@ in
             ".lua" = "lua";
           };
         };
+        nix = {
+          command = "${pkgs.nixd}/bin/nixd";
+          args = [ ];
+          extensionToLanguage = {
+            ".nix" = "nix";
+          };
+        };
       };
 
       skills = {
