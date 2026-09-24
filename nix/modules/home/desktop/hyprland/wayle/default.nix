@@ -29,6 +29,7 @@ in
         clipboard = enabled;
         windowSwitcher = enabled;
         keyboard-layout-indicator = enabled;
+        workspace-compactor = enabled;
       };
     };
 
