@@ -214,6 +214,7 @@ The physical Fn row must be remapped so system tools and bindings work without p
 
 - A notification daemon is required.
 - Notifications must have small gaps between them and no visible frame/border.
+- A GUI notification center/history is required: a panel that lists past notifications (not just transient popups), openable on demand, with an option to clear/dismiss entries.
 
 ---
 

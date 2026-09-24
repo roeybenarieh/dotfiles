@@ -44,7 +44,7 @@ in
               show = true;
               left = [ "dashboard" "hyprland-workspaces" ];
               center = [ "clock" ];
-              right = [ "idle-inhibit" "network" "bluetooth" "battery" "volume" ];
+              right = [ "idle-inhibit" "network" "bluetooth" "battery" "volume" "notifications" ];
             }
           ];
         };
@@ -84,6 +84,9 @@ in
           hyprland-workspaces = {
             app-icons-show = true;
             display-mode = "none";
+          };
+          notifications = {
+            label-show = false;
           };
         };
         osd = {
