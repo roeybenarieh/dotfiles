@@ -3,6 +3,10 @@
     "nixos": {
       "command": "uvx",
       "args": ["mcp-nixos"]
+    },
+    "hypruse": {
+      "command": "uvx",
+      "args": ["hypruse"]
     }
   }
 }
