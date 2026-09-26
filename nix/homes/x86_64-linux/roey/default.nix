@@ -49,7 +49,15 @@ with lib.extra;
     office = enabled;
     claude = {
       enable = true;
-      omniroute.enable = true;
+      statusLine = enabled;
+      litellm = {
+        enable = true;
+        masterKey = "sk-1234";
+      };
+    };
+    omnigent = {
+      enable = true;
+      noAutoOpenBrowser = true;
     };
   };
 
