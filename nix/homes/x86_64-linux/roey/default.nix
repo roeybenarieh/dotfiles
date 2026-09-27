@@ -47,6 +47,7 @@ with lib.extra;
     };
     game-dev = enabled;
     office = enabled;
+    codex = enabled;
     claude = {
       enable = true;
       statusLine = enabled;
