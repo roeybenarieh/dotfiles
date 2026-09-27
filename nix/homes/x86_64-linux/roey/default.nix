@@ -60,6 +60,7 @@ with lib.extra;
     omnigent = {
       enable = true;
       noAutoOpenBrowser = true;
+      tailscale.enable = true;
     };
   };
 

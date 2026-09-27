@@ -65,6 +65,25 @@ Some of the things manually needed to be created:
 - set up Dexcom username and password for Qtile bar at ~/.local/state/qtile-config/config.txt
 - set up Neovim at ~/.config/nvim
 
+## Omnigent over Tailscale
+
+With `extra.omnigent.tailscale.enable = true` (and `extra.tailscale.enable = true` +
+`extra.tailscale.operator` set at the NixOS level), running `omnigent start` / `omni
+start` exposes the local Omnigent web console to every device signed into the same
+tailnet — never to the plain LAN or the public internet. Connect from any of those
+devices (e.g. your phone, once it's signed into the same Tailscale account) at:
+
+```
+https://<machine>.<tailnet>.ts.net
+```
+
+- `<machine>` — this host's Tailscale device name (defaults to its `networking.hostName`, e.g. `laptop`)
+- `<tailnet>` — your tailnet's name, found in `tailscale status` (the label between the machine name and `ts.net`) or the [admin console](https://login.tailscale.com/admin/machines)
+
+The exact URL is also printed to the terminal every time `omnigent start` / `omni start` brings the server up, so you don't need to piece it together by hand.
+
+Tailscale Serve itself has to be enabled once per tailnet before it works at all (unrelated to any per-device setting) — done once already for this tailnet via the [admin console](https://login.tailscale.com/admin/dns), with HTTPS certificates on and Funnel deliberately left off so the server stays tailnet-only.
+
 ## TODOES
 
 - install a password manager in all devices and configure it properly

@@ -1,4 +1,4 @@
-{ system, namespace, inputs, lib, config, ... }:
+{ system, namespace, inputs, lib, pkgs, config, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -8,11 +8,61 @@ in
   options.${namespace}.omnigent = with types; {
     enable = mkBoolOpt false "Enable Omnigent, the multi-agent coding CLI/meta-harness (orchestrates Claude Code, Codex, Cursor, and others) with its local web console.";
     noAutoOpenBrowser = mkBoolOpt false "Suppress the automatic browser tab opened by `omnigent start` / `omni host` (sets OMNIGENT_HOST_NO_OPEN=1) and by `omnigent run` per conversation (sets auto_open_conversation=false in ~/.omnigent/config.yaml).";
+
+    tailscale = {
+      enable = mkBoolOpt false "Make `omnigent start` / `omni start` (and `omnigent host --background` / `omni host --background`) transparently expose the local Omnigent server (default port 6767) to every device on your tailnet over HTTPS via `tailscale serve` (never `funnel` — this deliberately stays off the public internet), with Omnigent's trusted-origin/base-URL settings pointed at the resulting `https://<machine>.ts.net` address. The server itself keeps listening on 127.0.0.1 only — Tailscale Serve is the sole route in, so it's reachable from every device on your tailnet but never from the plain LAN. Requires `extra.tailscale.enable = true` and `extra.tailscale.operator` set to this user at the NixOS level. The connect URL is printed to the terminal on every `start`, since it depends on your tailnet's name and isn't known until you're logged in.";
+    };
   };
 
   config = mkIf cfg.enable (
     let
-      omnigent = inputs.llm-agents-nix.packages.${system}.omnigent;
+      omnigentUnwrapped = inputs.llm-agents-nix.packages.${system}.omnigent;
+
+      # `start` (and `host --background`, which `start` is an alias of) bring up
+      # the local server. Only those trigger the Tailscale Serve setup below;
+      # every other subcommand (claude, codex, run, config, ...) just passes
+      # through untouched.
+      tailscaleServeSetup = ''
+        ts_host=$(${pkgs.tailscale}/bin/tailscale status --json | ${pkgs.jq}/bin/jq -r '.Self.DNSName // empty' | sed 's/\.$//')
+        if [[ -z "$ts_host" ]]; then
+          echo "$0: tailscale isn't signed in yet -- run 'sudo tailscale up' first; starting without exposing it over your tailnet" >&2
+        else
+          export OMNIGENT_WS_ALLOWED_ORIGINS="https://$ts_host"
+          export OMNIGENT_ACCOUNTS_BASE_URL="https://$ts_host"
+          ${pkgs.tailscale}/bin/tailscale serve --bg --https=443 http://localhost:6767
+          echo "Omnigent: reachable from any device on your tailnet at https://$ts_host" >&2
+        fi
+      '';
+
+      mkOmnigentWrapper = name: pkgs.writeShellScriptBin name (''
+        set -euo pipefail
+      '' + optionalString cfg.tailscale.enable ''
+
+        should_serve=0
+        case "''${1:-}" in
+          start) should_serve=1 ;;
+          host)
+            for arg in "$@"; do
+              [[ "$arg" == "--background" ]] && should_serve=1
+            done
+            ;;
+        esac
+        if [[ "$should_serve" == 1 ]]; then
+          ${tailscaleServeSetup}
+        fi
+      '' + ''
+
+        exec ${omnigentUnwrapped}/bin/${name} "$@"
+      '');
+
+      omnigent =
+        if cfg.tailscale.enable then
+          pkgs.symlinkJoin {
+            name = "omnigent-${omnigentUnwrapped.version or "wrapped"}";
+            paths = [ (mkOmnigentWrapper "omnigent") (mkOmnigentWrapper "omni") ];
+          }
+        else
+          omnigentUnwrapped;
     in
     {
       home.packages = [ omnigent ];

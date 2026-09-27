@@ -55,6 +55,10 @@ in
       opentelemetry = disabled;
     };
     ssh = disabled;
+    tailscale = {
+      enable = true;
+      operator = "roey";
+    };
     laptop = enabled;
     razer = enabled;
     graphics = {
