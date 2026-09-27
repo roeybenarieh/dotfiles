@@ -50,6 +50,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprshell.url = "github:H3rmt/hyprshell";
+
+    # Provides the `omnigent` package (nix/modules/home/omnigent). Not merged
+    # into numtide/llm-agents.nix upstream yet — tracking the author's branch
+    # that adds it. Deliberately NOT following our nixpkgs: the package pins
+    # a specific nixpkgs-unstable revision its many bleeding-edge Python deps
+    # (openai-agents, claude-agent-sdk, ...) were built and verified against.
+    llm-agents-nix.url = "github:blacksd/llm-agents.nix/feat/add-omnigent";
   };
 
   outputs = inputs:
