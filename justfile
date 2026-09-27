@@ -3,8 +3,7 @@ default:
 
 # base files needed to be staged by git before building something in nix
 _base_nix_git_stage:
-  git add flake.nix flake.lock && git add ./nix/lib/** \
-  && git add ./nix/modules/home/** ./nix/homes/**
+  git add flake.nix flake.lock && git add ./nix/**
 
 [group('nix')]
 format:
@@ -31,7 +30,6 @@ rollback-user:
 [group('nix')]
 rebuild:
   @just _base_nix_git_stage \
-  && git add ./nix/modules/nixos/** ./nix/systems/** \
   && sudo nice -19 nixos-rebuild switch --flake .
 
 [group('nix')]
