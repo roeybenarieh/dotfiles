@@ -87,6 +87,7 @@ in
           misc = {
             force_default_wallpaper = 0;
             disable_hyprland_logo = true;
+            focus_on_activate = true; # when app opens url - focus application in charge of opening the url
           };
         };
 
