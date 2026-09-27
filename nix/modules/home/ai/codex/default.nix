@@ -12,6 +12,10 @@ in
   config = mkIf cfg.enable {
     programs.codex = {
       enable = true;
+
+      # Server list comes from `extra.mcp` (programs.mcp.servers) — see
+      # nix/modules/home/ai/mcp/default.nix.
+      enableMcpIntegration = true;
     };
   };
 }

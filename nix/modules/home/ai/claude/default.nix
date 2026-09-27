@@ -274,35 +274,9 @@ in
       enable = true;
       settings = claudeSettings;
 
-      mcpServers = {
-        context7 = {
-          type = "http";
-          url = "https://mcp.context7.com/mcp?client=claude-code-nix";
-          headers = {
-            Authorization = "\${CONTEXT7_API_KEY:-}";
-          };
-        };
-        headroom = {
-          type = "stdio";
-          command = "uvx";
-          args = [ "--from" "headroom-ai" "headroom" "mcp" "serve" ];
-        };
-        serena = {
-          type = "stdio";
-          command = "uvx";
-          args = [
-            "--from"
-            "git+https://github.com/oraios/serena"
-            "serena"
-            "start-mcp-server"
-            "--project-from-cwd"
-            "--context"
-            "claude-code"
-            "--open-web-dashboard"
-            "False"
-          ];
-        };
-      };
+      # Server list comes from `extra.mcp` (programs.mcp.servers) — see
+      # nix/modules/home/ai/mcp/default.nix.
+      enableMcpIntegration = true;
 
       lspServers = {
         python = {
