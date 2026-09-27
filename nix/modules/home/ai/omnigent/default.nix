@@ -17,6 +17,18 @@ in
     {
       home.packages = [ omnigent ];
 
+      # Route `claude`/`codex` through Omnigent's harness selection instead of
+      # invoking the underlying CLIs directly. `omni codex` forwards
+      # unrecognized args straight through to Codex, so it can carry the same
+      # per-directory trust override as extra.codex's own `codex` alias
+      # (config.toml is a read-only Nix store symlink, so this can't be
+      # persisted and must be injected on every invocation instead).
+      # `mkForce` wins over extra.codex's alias when both modules are enabled.
+      home.shellAliases = {
+        claude = "omni claude";
+        codex = mkForce ''omni codex -c "projects.\"$(pwd)\"={trust_level=\"trusted\"}"'';
+      };
+
       home.sessionVariables = {
         DO_NOT_TRACK = "1";
       } // optionalAttrs cfg.noAutoOpenBrowser {
