@@ -198,6 +198,7 @@ let
     tui = "fullscreen";
     voiceEnabled = true;
     skipDangerousModePermissionPrompt = true;
+    permissions.defaultMode = "auto";
     permissions.allow = [
       "mcp__context7__resolve-library-id"
       "mcp__context7__query-docs"
@@ -235,10 +236,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.shellAliases = {
-      claude = "claude --permission-mode auto";
-    } // optionalAttrs cfg.litellm.enable {
-      claudefree = "ANTHROPIC_BASE_URL=http://localhost:${toString cfg.litellm.port} ANTHROPIC_AUTH_TOKEN=${cfg.litellm.masterKey} ANTHROPIC_API_KEY='' claude --permission-mode auto";
+    home.shellAliases = optionalAttrs cfg.litellm.enable {
+      claudefree = "ANTHROPIC_BASE_URL=http://localhost:${toString cfg.litellm.port} ANTHROPIC_AUTH_TOKEN=${cfg.litellm.masterKey} ANTHROPIC_API_KEY='' claude";
     };
 
     home.packages = with pkgs; [
