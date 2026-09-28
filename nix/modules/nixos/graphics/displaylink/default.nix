@@ -16,6 +16,17 @@ in
     environment.systemPackages = with pkgs; [
       displaylink # for supporting screen monitor output via usb-c
     ];
+
+    # DisplayLink monitors have no real backlight, so brightness for them
+    # only works via monitor-dim's software overlay (nix/packages/monitor-dim
+    # — it watches the real backlight sysfs file directly, so it stays in
+    # sync with whatever tool changes brightness, no patching needed).
+    # Enabled here rather than per-home, since it only makes sense when
+    # DisplayLink is actually in play.
+    home-manager.sharedModules = [
+      { extra.desktop.hyprland.monitor-dim.enable = true; }
+    ];
+
     # Xserver specific
     services.xserver.videoDrivers = [
       "displaylink"
