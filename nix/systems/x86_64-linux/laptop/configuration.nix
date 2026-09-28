@@ -54,7 +54,6 @@ in
       logs.loki = disabled;
       opentelemetry = disabled;
     };
-    ssh = disabled;
     tailscale = {
       enable = true;
       operator = "roey";

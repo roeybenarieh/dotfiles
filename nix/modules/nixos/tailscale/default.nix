@@ -28,5 +28,8 @@ in
       name = "tailscale";
       url = "https://console.tailscale.com/admin/machines";
     }];
+
+    # enabled ssh so other
+    ${namespace}.ssh = enabled;
   };
 }
