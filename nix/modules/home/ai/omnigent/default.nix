@@ -76,7 +76,8 @@ in
       # `mkForce` wins over extra.codex's alias when both modules are enabled.
       home.shellAliases = {
         claude = "omni claude";
-        codex = mkForce ''omni codex -c "projects.\"$(pwd)\"={trust_level=\"trusted\"}"'';
+        codex = "omni codex";
+        opencode = "omni opencode";
       };
 
       home.sessionVariables = {
