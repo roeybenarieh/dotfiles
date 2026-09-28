@@ -30,6 +30,9 @@ in
     }];
 
     # enabled ssh so other
-    ${namespace}.ssh = enabled;
+    ${namespace} = {
+      ssh = enabled;
+      alive-on-power = enabled;
+    };
   };
 }
