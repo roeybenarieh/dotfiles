@@ -25,14 +25,6 @@ in
         enable = true;
         dbPath = programs-sqlite-db;
       };
-
-      # for more info: https://opencode.ai/docs/models
-      opencode = enabled;
-    };
-    home.shellAliases.ai = "opencode";
-    xdg.configFile."opencode" = {
-      source = ./opencode;
-      recursive = true;
     };
     home.packages = with pkgs; [
       xclip # better Ctrl+c Ctrl+v integration with terminal
