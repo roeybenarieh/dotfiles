@@ -42,7 +42,6 @@ in
         fd
         silicon
         lua51Packages.luarocks
-        lsof # opencode plugin
         statix # nix linter
 
         # languages

@@ -49,6 +49,7 @@ with lib.extra;
     office = enabled;
     mcp = enabled;
     codex = enabled;
+    opencode = enabled;
     claude = {
       enable = true;
       statusLine = enabled;
