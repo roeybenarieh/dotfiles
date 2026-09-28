@@ -1,8 +1,13 @@
-{ namespace, lib, config, ... }:
+{ namespace, lib, config, pkgs, ... }:
 with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.mcp;
+  browserCfg = config.${namespace}.browser;
+  agentBrowserPackage =
+    if browserCfg.default_browser == "firefox"
+    then config.programs.firefox.package
+    else config.programs.chromium.package;
 in
 {
   options.${namespace}.mcp = with types; {
@@ -14,6 +19,11 @@ in
       enable = true;
 
       servers = {
+        agent-browser = {
+          command = lib.getExe pkgs.agent-browser;
+          args = [ "mcp" ];
+          env.AGENT_BROWSER_EXECUTABLE_PATH = lib.getExe agentBrowserPackage;
+        };
         context7 = {
           url = "https://mcp.context7.com/mcp?client=claude-code-nix";
         };
