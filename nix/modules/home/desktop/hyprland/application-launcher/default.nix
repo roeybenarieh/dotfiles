@@ -7,6 +7,18 @@ let
   lua = lib.generators.mkLuaInline;
   papirus = pkgs.papirus-icon-theme;
   icon = name: "${papirus}/share/icons/Papirus/48x48/apps/${name}.svg";
+
+  # Icon-grid layout for the drun app launcher only. `programs.rofi.theme`
+  # below is shared by every rofi invocation (e.g. the clipboard picker's
+  # `rofi -dmenu`), so the grid must NOT live there or plain text lists get
+  # squeezed into icon-sized tiles. Applied via `-theme-str`, which merges
+  # into the shared theme instead of replacing it.
+  drunGridTheme = builtins.concatStringsSep " " [
+    "listview{columns:5;lines:3;cycle:true;dynamic:true;scrollbar:false;layout:vertical;reverse:false;fixed-height:true;fixed-columns:true;spacing:0px;margin:0px;padding:0px;border:0px solid;border-radius:0px;cursor:default;}"
+    "element{enabled:true;spacing:15px;margin:0px;padding:20px 10px;border:0px solid;border-radius:10px;orientation:vertical;cursor:pointer;}"
+    "element-icon{size:64px;cursor:inherit;}"
+    "element-text{highlight:inherit;cursor:inherit;vertical-align:0.5;horizontal-align:0.5;}"
+  ];
 in
 {
   options.${namespace}.desktop.hyprland.applicationLauncher = with types; {
@@ -99,51 +111,9 @@ in
             placeholder = "Search";
           };
 
-          listview = {
-            enabled = true;
-            columns = 5;
-            lines = 3;
-            cycle = true;
-            dynamic = true;
-            scrollbar = false;
-            layout = mkLiteral "vertical";
-            reverse = false;
-            fixed-height = true;
-            fixed-columns = true;
-            spacing = mkLiteral "0px";
-            margin = mkLiteral "0px";
-            padding = mkLiteral "0px";
-            border = mkLiteral "0px solid";
-            border-radius = mkLiteral "0px";
-            cursor = "default";
-          };
-
           scrollbar = {
             handle-width = mkLiteral "5px";
             border-radius = mkLiteral "0px";
-          };
-
-          element = {
-            enabled = true;
-            spacing = mkLiteral "15px";
-            margin = mkLiteral "0px";
-            padding = mkLiteral "20px 10px";
-            border = mkLiteral "0px solid";
-            border-radius = mkLiteral "10px";
-            orientation = mkLiteral "vertical";
-            cursor = mkLiteral "pointer";
-          };
-
-          element-icon = {
-            size = mkLiteral "64px";
-            cursor = mkLiteral "inherit";
-          };
-
-          element-text = {
-            highlight = mkLiteral "inherit";
-            cursor = mkLiteral "inherit";
-            vertical-align = mkLiteral "0.5";
-            horizontal-align = mkLiteral "0.5";
           };
 
           error-message = {
@@ -197,5 +167,13 @@ in
       { _args = [ "SUPER + Super_L" (lua ''hl.dsp.exec_cmd("pgrep -x rofi >/dev/null && pkill -x rofi || ${config.programs.rofi.finalPackage}/bin/rofi -show drun -theme-str '${drunGridTheme}'")'') ]; }
       { _args = [ "SUPER + semicolon" (lua ''hl.dsp.exec_cmd("${pkgs.rofimoji}/bin/rofimoji")'') ]; }
     ];
+
+    # `drun-use-desktop-cache` speeds up rofi but goes stale whenever a
+    # rebuild adds/removes a .desktop entry, hiding new apps from the
+    # launcher until the cache is cleared. Drop it on every activation so it
+    # gets rebuilt fresh on the next launcher open.
+    home.activation.clearRofiDrunCache = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD rm -f $VERBOSE_ARG "$HOME/.cache/rofi-drun-desktop.cache" "$HOME/.cache/rofi3.druncache"
+    '';
   };
 }
