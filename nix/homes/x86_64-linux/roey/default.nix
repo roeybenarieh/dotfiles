@@ -9,7 +9,7 @@ with lib.extra;
       enable = true;
       ambxst = disabled;
       wayle = enabled;
-      session = disabled;
+      sessionRestore = enabled;
       hyprwhspr = {
         enable = true;
         shortcut = "SUPER + D";
