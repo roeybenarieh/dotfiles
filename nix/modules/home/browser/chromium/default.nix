@@ -111,7 +111,7 @@ in
         enableWideVine = true; # allows playing DRM-protected content (like Netflix, Spotify, or Amazon Prime)
       };
       extensions = [
-        "epcnnfbjfcgphgdmggkamkmgojdagdnn" # ublock
+        "cfhdojbkjhnklbpkdaibdccddilifddb" # Adblock Plus
         "dbepggeogbaibhgnhhndojpepiihcmeb" # vimium
         "khncfooichmfjbepaaaebmommgaepoid" # Unhook - Remove YouTube Recommended & Shorts
       ];
