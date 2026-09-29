@@ -21,7 +21,11 @@ in
     desktop.displayManager.plasma = enabled;
 
     docker = enabled;
-    omniroute = enabled;
+    litellm = {
+      enable = true;
+      environmentFile = "/etc/litellm-secrets";
+      masterKey = "sk-1234";
+    };
     containerization.k3s = disabled;
     gpu.nvidiaMX350 = {
       enable = false;
