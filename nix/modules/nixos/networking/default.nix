@@ -27,7 +27,7 @@ in
       "org/blueman/general".plugin-list = [ "!ConnectionNotifier" ];
     };
 
-    environment.systemPackages = with pkgs; [ openfortivpn nmgui ];
+    environment.systemPackages = with pkgs; [ openconnect nmgui ];
     programs.localsend = enabled;
     networking = {
       inherit (cfg) hostName; # Define your hostname.
@@ -49,6 +49,11 @@ in
             ipv6 = { method = "auto"; "route-metric" = metricEthernet; };
           };
 
+          # networkmanager-fortisslvpn was removed as insecure/archived upstream; openconnect
+          # gained native Fortinet SSL VPN support (fortinet.c) and is the maintained
+          # replacement. Its NM plugin authenticates interactively (auth-dialog fetches a
+          # session cookie each connect), so there's no data item for a pre-filled username
+          # like fortisslvpn had — NM will prompt for credentials on connect.
           "Jutomate FortiVPN" = {
             connection = {
               id = "Jutomate FortiVPN";
@@ -56,10 +61,15 @@ in
               autoconnect = false;
             };
             vpn = {
-              service-type = "org.freedesktop.NetworkManager.fortisslvpn";
+              service-type = "org.freedesktop.NetworkManager.openconnect";
+              protocol = "fortinet";
               gateway = "149.106.132.26:10443";
-              user = "roey";
-              trusted-cert = "30a034feac05b7cfdf3d758e1dd359649ddb6d4e84b96031e619c6a90b1f207f";
+            };
+            # gwcert is a VPN *secret* (unlike fortisslvpn's plain "trusted-cert" data item),
+            # so it must live in the keyfile's separate [vpn-secrets] group. Same certificate
+            # pin as before, just in openconnect's "sha256:<hex>" --servercert format.
+            "vpn-secrets" = {
+              gwcert = "sha256:30a034feac05b7cfdf3d758e1dd359649ddb6d4e84b96031e619c6a90b1f207f";
             };
           };
           # NOTE: this connection work automatically in Iphone only if there is an automation that toogle off and on the hotspot every time you want to start using it.
@@ -99,7 +109,7 @@ in
             ipv6 = { method = "auto"; "route-metric" = metricIphoneBt; "never-default" = true; };
           };
         };
-        plugins = [ pkgs.networkmanager-fortisslvpn ];
+        plugins = [ pkgs.networkmanager-openconnect ];
         dispatcherScripts = [
           {
             source = pkgs.writeShellScript "iphone-default-route" ''
