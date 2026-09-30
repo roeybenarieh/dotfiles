@@ -6,8 +6,9 @@ let
   cfg = config.${namespace}.desktop.hyprland.idle;
   brightnessctl = getExe pkgs.brightnessctl;
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
-  dpmsOn  = "${hyprctl} eval 'hl.dsp.dpms(true)'";
-  dpmsOff = "${hyprctl} eval 'hl.dsp.dpms(false)'";
+  dpmsOn  = "${hyprctl} dispatch 'hl.dsp.dpms({ action = \"enable\" })'";
+  dpmsOff = "${hyprctl} dispatch 'hl.dsp.dpms({ action = \"disable\" })'";
+  lockCmd = config.xdg.desktopEntries.power-logout.exec;
 in
 {
   options.${namespace}.desktop.hyprland.idle = with types; {
@@ -20,7 +21,7 @@ in
       settings = {
         general = {
           # Lock the screen before the system suspends so we never wake to an unlocked session.
-          before_sleep_cmd = "loginctl lock-session";
+          before_sleep_cmd = lockCmd;
           after_sleep_cmd = dpmsOn;
           # Respect DBus inhibitors set by media players (audio suppression).
           ignore_dbus_inhibit = false;
@@ -28,26 +29,22 @@ in
 
         listener = [
           {
-            # 2.5 min: dim to 10% and restore on activity.
+            # 2.5 min: dim to 30% and restore on activity.
             timeout = 150;
-            on-timeout = "${brightnessctl} -s set 10%";
+            on-timeout = "${brightnessctl} -s set 30%";
             on-resume = "${brightnessctl} -r";
           }
           {
-            # 5 min: lock screen.
+            # 5 min: lock screen + screen off.
             timeout = 300;
-            on-timeout = "loginctl lock-session";
-          }
-          {
-            # 5.5 min: screen off.
-            timeout = 330;
-            on-timeout = dpmsOff;
+            on-timeout = "${dpmsOff} ; ${lockCmd}";
             on-resume = dpmsOn;
           }
           {
-            # 30 min: suspend. AC caffeine (nixos module) blocks this while plugged in.
-            timeout = 1800;
-            on-timeout = "systemctl suspend";
+            # 10 min: suspend+hibernate. AC caffeine (nixos module) blocks this while plugged in.
+            timeout = 600;
+            on-timeout = "systemctl suspend-then-hibernate";
+            on-resume = lockCmd;
           }
         ];
       };
