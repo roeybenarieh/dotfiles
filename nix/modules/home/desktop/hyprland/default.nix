@@ -18,6 +18,9 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Prefer native Wayland in Nixpkgs Chromium/Electron(instead of XWayland)
+    home.sessionVariables.NIXOS_OZONE_WL = "1";
+
     home.packages = with pkgs; [
       wdisplays
       pkgs.brightnessctl
