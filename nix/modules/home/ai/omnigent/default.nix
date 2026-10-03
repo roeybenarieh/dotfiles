@@ -18,19 +18,21 @@ in
     let
       omnigentUnwrapped = inputs.llm-agents-nix.packages.${system}.omnigent;
 
-      # `start` (and `host --background`, which `start` is an alias of) bring up
-      # the local server. Only those trigger the Tailscale Serve setup below;
-      # every other subcommand (claude, codex, run, config, ...) just passes
-      # through untouched.
+      # Any command can auto-start the local server, so all invocations need
+      # the trusted origin. Only explicit background starts configure Serve.
       tailscaleServeSetup = ''
-        ts_host=$(${pkgs.tailscale}/bin/tailscale status --json | ${pkgs.jq}/bin/jq -r '.Self.DNSName // empty' | sed 's/\.$//')
+        ts_host=$(${pkgs.tailscale}/bin/tailscale status --json | ${pkgs.jq}/bin/jq -r '.Self.DNSName // empty' | sed 's/\.$//') || ts_host=""
         if [[ -z "$ts_host" ]]; then
-          echo "$0: tailscale isn't signed in yet -- run 'sudo tailscale up' first; starting without exposing it over your tailnet" >&2
+          if [[ "$should_serve" == 1 ]]; then
+            echo "$0: tailscale isn't signed in yet -- run 'sudo tailscale up' first; starting without exposing it over your tailnet" >&2
+          fi
         else
           export OMNIGENT_WS_ALLOWED_ORIGINS="https://$ts_host"
           export OMNIGENT_ACCOUNTS_BASE_URL="https://$ts_host"
-          ${pkgs.tailscale}/bin/tailscale serve --bg --https=443 http://localhost:6767
-          echo "Omnigent: reachable from any device on your tailnet at https://$ts_host" >&2
+          if [[ "$should_serve" == 1 ]]; then
+            ${pkgs.tailscale}/bin/tailscale serve --bg --https=443 http://localhost:6767
+            echo "Omnigent: reachable from any device on your tailnet at https://$ts_host" >&2
+          fi
         fi
       '';
 
@@ -47,9 +49,7 @@ in
             done
             ;;
         esac
-        if [[ "$should_serve" == 1 ]]; then
-          ${tailscaleServeSetup}
-        fi
+        ${tailscaleServeSetup}
       '' + ''
 
         exec ${omnigentUnwrapped}/bin/${name} "$@"
