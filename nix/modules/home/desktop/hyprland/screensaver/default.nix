@@ -140,6 +140,14 @@ let
   '';
 
   lockCmd = pkgs.writeShellScript "hyprlock-us" ''
+    # hypridle fires this same lockCmd from several places (before_sleep_cmd,
+    # the 300s timeout, and the 600s suspend listener's on-resume) and those
+    # can all trigger again while a lock screen is already up and waiting for
+    # a password. A second hyprlock process then fights the first one for the
+    # session lock and keyboard focus, which is what made the password field
+    # stop accepting input after the machine had been locked for a while.
+    ${pkgs.procps}/bin/pgrep -x hyprlock >/dev/null && exit 0
+
     ${pkgs.hyprland}/bin/hyprctl switchxkblayout all 0
     ${updateCacheScript}
 

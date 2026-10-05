@@ -37,7 +37,12 @@ in
           {
             # 5 min: lock screen + screen off.
             timeout = 300;
-            on-timeout = "${dpmsOff} ; ${lockCmd}";
+            on-timeout = lockCmd;
+          }
+          {
+            # 5 min, 5 sec: power off screens
+            timeout = 305;
+            on-timeout = dpmsOff;
             on-resume = dpmsOn;
           }
           {
