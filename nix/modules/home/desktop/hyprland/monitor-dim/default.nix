@@ -9,15 +9,17 @@ in
 {
   options.${namespace}.desktop.hyprland.monitor-dim = with types; {
     enable = mkBoolOpt false ''
-      Enable software brightness dimming (a click-through wlr-layer-shell
-      overlay) for monitors with no real backlight/DDC-CI control, e.g.
+      Enable software brightness dimming (a Hyprland final-frame shader)
+      for monitors with no real backlight/DDC-CI control, e.g.
       DisplayLink-connected displays. Tracks the real backlight device
       automatically (via inotify on its sysfs file) — every tool that sets
       brightness (brightnessctl, light, a DE's settings daemon, ...) drives
-      this without needing to patch or wrap that tool.
+      this without needing to patch or wrap that tool. Dims all composed
+      content, including shell popups and the cursor. Owns Hyprland's
+      screen_shader setting and forces software cursors while running.
     '';
     skipOutputs = mkListOpt [ ]
-      "Output names to exclude from dimming. Real-backlight outputs (e.g. the internal panel) still benefit from the overlay layered on top, since it can go fully opaque regardless of the panel's minimum backlight floor.";
+      "Output names to exclude from dimming. Real-backlight outputs (e.g. the internal panel) still benefit from software dimming, since it can go fully black regardless of the panel's minimum backlight floor.";
     backlight = mkOpt (nullOr str) null
       "Backlight device name under /sys/class/backlight to track (e.g. \"intel_backlight\"). Null auto-detects the first device found.";
   };
@@ -25,7 +27,7 @@ in
   config = mkIf cfg.enable {
     systemd.user.services.monitor-dim = {
       Unit = {
-        Description = "Software brightness overlay for monitors without DDC/CI";
+        Description = "Full-frame software brightness for monitors without DDC/CI";
         After = [ "graphical-session.target" ];
         PartOf = [ "graphical-session.target" ];
       };

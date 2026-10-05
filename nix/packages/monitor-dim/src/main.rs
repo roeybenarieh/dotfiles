@@ -1,471 +1,372 @@
-use std::collections::HashMap;
-use std::io::{Read, Write};
-use std::os::unix::net::UnixListener;
+use std::io::{self, Read, Write};
+use std::os::unix::net::{UnixListener, UnixStream};
 use std::path::{Path, PathBuf};
+use std::time::Duration;
 
-use calloop::EventLoop;
-use calloop_wayland_source::WaylandSource;
+use calloop::{
+    generic::Generic,
+    signals::{Signal, Signals},
+    EventLoop, Interest, Mode, PostAction,
+};
 use inotify::{Inotify, WatchMask};
-use smithay_client_toolkit::{
-    compositor::{CompositorHandler, CompositorState},
-    delegate_compositor, delegate_layer, delegate_output, delegate_registry, delegate_shm,
-    output::{OutputHandler, OutputState},
-    registry::{ProvidesRegistryState, RegistryState},
-    registry_handlers,
-    shell::{
-        wlr_layer::{
-            Anchor, KeyboardInteractivity, Layer, LayerShell, LayerShellHandler, LayerSurface,
-            LayerSurfaceConfigure,
-        },
-        WaylandSurface,
-    },
-    shm::{slot::SlotPool, Shm, ShmHandler},
-};
-use wayland_client::{
-    globals::registry_queue_init,
-    protocol::{wl_output, wl_region, wl_shm, wl_surface},
-    Connection, Dispatch, QueueHandle,
-};
+use serde_json::Value;
 
-const MAX_ALPHA_FRACTION: f32 = 1.0;
-
-fn percent_to_alpha(percent: u8) -> u8 {
-    let frac = (100 - percent.min(100)) as f32 / 100.0;
-    (frac * MAX_ALPHA_FRACTION * 255.0).round() as u8
+// Layer-shell overlays cannot cover other overlay surfaces, their popups, or
+// the lock screen reliably. Apply brightness to the final composed framebuffer
+// instead. Unlike a hardware gamma ramp/CTM, these pixels also reach DisplayLink.
+fn shader(percent: u8, skipped_ids: &[u64]) -> String {
+    let skip = skipped_ids
+        .iter()
+        .map(|id| format!("wl_output == {id}"))
+        .collect::<Vec<_>>()
+        .join(" || ");
+    let brightness = f32::from(percent.min(100)) / 100.0;
+    let factor = if skip.is_empty() {
+        format!("{brightness:.6}")
+    } else {
+        format!("({skip}) ? 1.0 : {brightness:.6}")
+    };
+    format!("#version 300 es\nprecision highp float;\nin vec2 v_texcoord;\nlayout(location = 0) out vec4 fragColor;\nuniform sampler2D tex;\nuniform int wl_output;\nvoid main() {{\n    vec4 color = texture(tex, v_texcoord);\n    float brightness = {factor};\n    fragColor = vec4(color.rgb * brightness, color.a);\n}}\n")
 }
 
-struct DimSurface {
-    layer: LayerSurface,
-    width: u32,
-    height: u32,
+fn command_percent(current: u8, command: &str) -> io::Result<u8> {
+    let parts: Vec<_> = command.split_whitespace().collect();
+    let [op, arg] = parts.as_slice() else {
+        return Err(io::Error::other("expected set/up/down <number>"));
+    };
+    let arg: i64 = arg.parse().map_err(io::Error::other)?;
+    let value = match *op {
+        "set" => arg,
+        "up" => i64::from(current).saturating_add(arg),
+        "down" => i64::from(current).saturating_sub(arg),
+        _ => return Err(io::Error::other("expected set/up/down <number>")),
+    };
+    Ok(value.clamp(0, 100) as u8)
 }
 
 struct App {
-    registry_state: RegistryState,
-    output_state: OutputState,
-    compositor_state: CompositorState,
-    layer_shell: LayerShell,
-    shm: Shm,
-    pool: SlotPool,
-    surfaces: HashMap<wl_surface::WlSurface, DimSurface>,
+    ipc: PathBuf,
+    shader_path: PathBuf,
     skip: Vec<String>,
     percent: u8,
+    original_cursor: i64,
+    active: bool,
 }
 
 impl App {
-    fn redraw_all(&mut self, qh: &QueueHandle<Self>) {
-        let alpha = percent_to_alpha(self.percent);
-        for surf in self.surfaces.values_mut() {
-            if surf.width == 0 || surf.height == 0 {
-                continue;
-            }
-            draw(&mut self.pool, &surf.layer, surf.width, surf.height, alpha, qh);
+    fn request(&self, command: &str) -> io::Result<String> {
+        let mut stream = UnixStream::connect(&self.ipc)?;
+        stream.set_read_timeout(Some(Duration::from_secs(2)))?;
+        stream.set_write_timeout(Some(Duration::from_secs(2)))?;
+        stream.write_all(command.as_bytes())?;
+        let mut reply = String::new();
+        stream.read_to_string(&mut reply)?;
+        Ok(reply)
+    }
+
+    fn keyword(&self, name: &str, value: &str) -> io::Result<()> {
+        let mut reply = self.request(&format!("keyword {name} {value}"))?;
+        if reply.contains("non-legacy parsers") {
+            // Hyprland's Lua config backend rejects `keyword`. Use typed Lua
+            // values and byte escapes so paths cannot become executable Lua.
+            let value = if name == "cursor:no_hardware_cursors" {
+                value.parse::<i64>().map_err(io::Error::other)?.to_string()
+            } else {
+                let escaped: String = value.bytes().map(|b| format!("\\{b:03}")).collect();
+                format!("\"{escaped}\"")
+            };
+            reply = self.request(&format!(
+                "eval hl.config({{[\"{}\"] = {value}}})",
+                name.replace(':', ".")
+            ))?;
         }
+        if reply.trim() != "ok" {
+            return Err(io::Error::other(reply));
+        }
+        Ok(())
     }
 
-    fn set_percent(&mut self, percent: u8, qh: &QueueHandle<Self>) {
-        self.percent = percent.min(100);
-        self.redraw_all(qh);
+    fn option(&self, name: &str) -> io::Result<Value> {
+        serde_json::from_str(&self.request(&format!("j/getoption {name}"))?)
+            .map_err(io::Error::other)
     }
 
-    fn handle_command(&mut self, cmd: &str, qh: &QueueHandle<Self>) {
-        let mut parts = cmd.split_whitespace();
-        let op = parts.next().unwrap_or("");
-        let arg: i32 = parts.next().and_then(|s| s.parse().ok()).unwrap_or(0);
-        let new_percent = match op {
-            "set" => arg.clamp(0, 100) as u8,
-            "up" => (self.percent as i32 + arg).clamp(0, 100) as u8,
-            "down" => (self.percent as i32 - arg).clamp(0, 100) as u8,
-            _ => {
-                eprintln!("unknown command: {cmd}");
-                return;
+    fn apply(&mut self, percent: u8) -> io::Result<()> {
+        let mut skipped_ids = Vec::new();
+        if !self.skip.is_empty() {
+            let monitors: Vec<Value> =
+                serde_json::from_str(&self.request("j/monitors")?).map_err(io::Error::other)?;
+            for monitor in monitors {
+                if self
+                    .skip
+                    .iter()
+                    .any(|name| monitor["name"].as_str() == Some(name.as_str()))
+                {
+                    if let Some(id) = monitor["id"].as_u64() {
+                        skipped_ids.push(id);
+                    }
+                }
             }
-        };
-        self.set_percent(new_percent, qh);
+        }
+        // Atomic replacement: Hyprland must never read a partially written shader.
+        let temp = self.shader_path.with_extension("tmp");
+        std::fs::write(&temp, shader(percent, &skipped_ids))?;
+        std::fs::rename(temp, &self.shader_path)?;
+        // A hardware cursor is a separate display plane, outside the framebuffer.
+        self.keyword("cursor:no_hardware_cursors", "1")?;
+        self.active = true;
+        self.keyword(
+            "decoration:screen_shader",
+            &self.shader_path.to_string_lossy(),
+        )?;
+        self.percent = percent;
+        Ok(())
     }
 }
 
-fn draw(
-    pool: &mut SlotPool,
-    layer: &LayerSurface,
-    width: u32,
-    height: u32,
-    alpha: u8,
-    _qh: &QueueHandle<App>,
-) {
-    let stride = width as i32 * 4;
-    let (buffer, canvas) = pool
-        .create_buffer(
-            width as i32,
-            height as i32,
-            stride,
-            wl_shm::Format::Argb8888,
-        )
-        .expect("create buffer");
-
-    for px in canvas.chunks_exact_mut(4) {
-        px[0] = 0; // B
-        px[1] = 0; // G
-        px[2] = 0; // R
-        px[3] = alpha; // A (premultiplied; RGB already 0 so no scaling needed)
-    }
-
-    let surface = layer.wl_surface();
-    surface.damage_buffer(0, 0, width as i32, height as i32);
-    buffer.attach_to(surface).expect("attach buffer");
-    layer.commit();
-}
-
-impl CompositorHandler for App {
-    fn scale_factor_changed(
-        &mut self,
-        _: &Connection,
-        _: &QueueHandle<Self>,
-        _: &wl_surface::WlSurface,
-        _: i32,
-    ) {
-    }
-    fn transform_changed(
-        &mut self,
-        _: &Connection,
-        _: &QueueHandle<Self>,
-        _: &wl_surface::WlSurface,
-        _: wayland_client::protocol::wl_output::Transform,
-    ) {
-    }
-    fn frame(
-        &mut self,
-        _: &Connection,
-        _: &QueueHandle<Self>,
-        _: &wl_surface::WlSurface,
-        _: u32,
-    ) {
-    }
-    fn surface_enter(
-        &mut self,
-        _: &Connection,
-        _: &QueueHandle<Self>,
-        _: &wl_surface::WlSurface,
-        _: &wl_output::WlOutput,
-    ) {
-    }
-    fn surface_leave(
-        &mut self,
-        _: &Connection,
-        _: &QueueHandle<Self>,
-        _: &wl_surface::WlSurface,
-        _: &wl_output::WlOutput,
-    ) {
-    }
-}
-
-impl OutputHandler for App {
-    fn output_state(&mut self) -> &mut OutputState {
-        &mut self.output_state
-    }
-
-    fn new_output(&mut self, _: &Connection, qh: &QueueHandle<Self>, output: wl_output::WlOutput) {
-        let info = match self.output_state.info(&output) {
-            Some(i) => i,
-            None => return,
-        };
-        let name = info.name.clone().unwrap_or_default();
-        if self.skip.iter().any(|s| s == &name) {
-            eprintln!("skipping output {name}");
+impl Drop for App {
+    fn drop(&mut self) {
+        if !self.active {
             return;
         }
-        eprintln!("dimming output {name}");
-
-        let surface = self.compositor_state.create_surface(qh);
-
-        let region = self.compositor_state.wl_compositor().create_region(qh, ());
-        surface.set_input_region(Some(&region));
-        region.destroy();
-
-        let layer = self.layer_shell.create_layer_surface(
-            qh,
-            surface,
-            Layer::Overlay,
-            Some("monitor-dim"),
-            Some(&output),
-        );
-        layer.set_anchor(Anchor::TOP | Anchor::BOTTOM | Anchor::LEFT | Anchor::RIGHT);
-        layer.set_exclusive_zone(-1);
-        layer.set_keyboard_interactivity(KeyboardInteractivity::None);
-        layer.commit();
-
-        self.surfaces.insert(
-            layer.wl_surface().clone(),
-            DimSurface {
-                layer,
-                width: 0,
-                height: 0,
-            },
-        );
-    }
-
-    fn update_output(&mut self, _: &Connection, _: &QueueHandle<Self>, _: wl_output::WlOutput) {}
-
-    fn output_destroyed(
-        &mut self,
-        _: &Connection,
-        _: &QueueHandle<Self>,
-        _: wl_output::WlOutput,
-    ) {
-    }
-}
-
-impl LayerShellHandler for App {
-    fn closed(&mut self, _: &Connection, _: &QueueHandle<Self>, layer: &LayerSurface) {
-        self.surfaces.retain(|_, s| &s.layer != layer);
-    }
-
-    fn configure(
-        &mut self,
-        _: &Connection,
-        qh: &QueueHandle<Self>,
-        layer: &LayerSurface,
-        configure: LayerSurfaceConfigure,
-        _serial: u32,
-    ) {
-        let (w, h) = configure.new_size;
-        if w == 0 || h == 0 {
-            return;
+        // Do not clear a different shader installed by another tool meanwhile.
+        if let Ok(value) = self.option("decoration:screen_shader") {
+            if value["str"].as_str() == self.shader_path.to_str() {
+                let _ = self.keyword("decoration:screen_shader", "[[EMPTY]]");
+            }
         }
-        let alpha = percent_to_alpha(self.percent);
-        if let Some(surf) = self
-            .surfaces
-            .values_mut()
-            .find(|s| s.layer.wl_surface() == layer.wl_surface())
-        {
-            surf.width = w;
-            surf.height = h;
+        if let Ok(value) = self.option("cursor:no_hardware_cursors") {
+            if value["int"].as_i64() == Some(1) {
+                let _ = self.keyword(
+                    "cursor:no_hardware_cursors",
+                    &self.original_cursor.to_string(),
+                );
+            }
         }
-        draw(&mut self.pool, layer, w, h, alpha, qh);
     }
 }
 
-impl ShmHandler for App {
-    fn shm_state(&mut self) -> &mut Shm {
-        &mut self.shm
-    }
-}
-
-impl ProvidesRegistryState for App {
-    fn registry(&mut self) -> &mut RegistryState {
-        &mut self.registry_state
-    }
-    registry_handlers![OutputState];
-}
-
-impl Dispatch<wl_region::WlRegion, ()> for App {
-    fn event(
-        _: &mut Self,
-        _: &wl_region::WlRegion,
-        _: wl_region::Event,
-        _: &(),
-        _: &Connection,
-        _: &QueueHandle<Self>,
-    ) {
-    }
-}
-
-delegate_compositor!(App);
-delegate_output!(App);
-delegate_shm!(App);
-delegate_layer!(App);
-delegate_registry!(App);
-
-// Acts as a client if invoked as `monitor-dim <set|up|down> <n>`: sends the
-// command to a running daemon's socket, prints its reply, and exits. This
-// keeps the tool self-contained (no netcat/socat dependency needed at the
-// keybinding call site) the same way `hyprctl` is both the compositor and
-// its own IPC client.
-fn run_client(verb: &str, arg: &str) -> std::io::Result<()> {
-    use std::os::unix::net::UnixStream;
-    let runtime_dir = std::env::var("XDG_RUNTIME_DIR").expect("XDG_RUNTIME_DIR not set");
-    let sock_path = format!("{runtime_dir}/monitor-dim.sock");
-    let mut stream = UnixStream::connect(&sock_path)?;
+fn run_client(socket: &Path, verb: &str, arg: &str) -> io::Result<()> {
+    let mut stream = UnixStream::connect(socket)?;
+    stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.write_all(format!("{verb} {arg}").as_bytes())?;
     stream.shutdown(std::net::Shutdown::Write)?;
     let mut reply = String::new();
     stream.read_to_string(&mut reply)?;
+    if reply.trim() != "ok" {
+        return Err(io::Error::other(reply));
+    }
     print!("{reply}");
     Ok(())
 }
 
-// Every real brightness tool on Linux — brightnessctl, light, a desktop
-// environment's settings daemon, systemd-logind's SetBrightness — ultimately
-// writes the same kernel sysfs file. Watching it directly with inotify (it's
-// a plain write(), so IN_MODIFY fires reliably even though it's sysfs, not a
-// regular file) means every one of those tools, present or future, drives
-// this overlay automatically with nothing to patch or wire up per-tool.
 fn find_backlight_device(explicit: Option<&str>) -> Option<PathBuf> {
     let base = Path::new("/sys/class/backlight");
     if let Some(name) = explicit {
-        let p = base.join(name);
-        return p.is_dir().then_some(p);
+        let path = base.join(name);
+        return path.is_dir().then_some(path);
     }
     std::fs::read_dir(base)
         .ok()?
-        .filter_map(|e| e.ok())
+        .filter_map(Result::ok)
         .map(|e| e.path())
         .next()
 }
 
-fn read_backlight_percent(dir: &Path, max_brightness: u64) -> Option<u8> {
-    let raw = std::fs::read_to_string(dir.join("brightness")).ok()?;
-    let value: u64 = raw.trim().parse().ok()?;
-    Some(((value * 100 / max_brightness.max(1)) as u8).min(100))
+fn read_backlight_percent(dir: &Path, max: u64) -> Option<u8> {
+    let value: u64 = std::fs::read_to_string(dir.join("brightness"))
+        .ok()?
+        .trim()
+        .parse()
+        .ok()?;
+    Some(((u128::from(value) * 100 / u128::from(max.max(1))).min(100)) as u8)
+}
+
+fn run() -> Result<(), Box<dyn std::error::Error>> {
+    let runtime = PathBuf::from(std::env::var("XDG_RUNTIME_DIR")?);
+    let socket = runtime.join("monitor-dim.sock");
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if let [verb, arg] = args.as_slice() {
+        if matches!(verb.as_str(), "set" | "up" | "down") {
+            return Ok(run_client(&socket, verb, arg)?);
+        }
+    }
+    let mut skip = Vec::new();
+    let mut backlight = None;
+    let mut args = args.iter();
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "--skip" => skip.push(args.next().ok_or("--skip needs an output name")?.clone()),
+            "--backlight" => {
+                backlight = Some(
+                    args.next()
+                        .ok_or("--backlight needs a device name")?
+                        .clone(),
+                )
+            }
+            _ => return Err(format!("unknown argument: {arg}").into()),
+        }
+    }
+
+    // Register signals before taking ownership of compositor settings.
+    let signals = Signals::new(&[Signal::SIGINT, Signal::SIGTERM])?;
+    let mut event_loop: EventLoop<App> = EventLoop::try_new()?;
+    let handle = event_loop.handle();
+    let stop = event_loop.get_signal();
+    handle.insert_source(signals, move |_, _, _| stop.stop())?;
+
+    let instance = std::env::var("HYPRLAND_INSTANCE_SIGNATURE")?;
+    let hypr = runtime.join("hypr").join(instance);
+    let mut app = App {
+        ipc: hypr.join(".socket.sock"),
+        shader_path: runtime.join("monitor-dim.frag"),
+        skip,
+        percent: 100,
+        original_cursor: 2,
+        active: false,
+    };
+    let current = app.option("decoration:screen_shader")?;
+    let current = current["str"].as_str().unwrap_or("");
+    if !current.is_empty() && current != "[[EMPTY]]" && Some(current) != app.shader_path.to_str() {
+        return Err(format!("screen shader already in use: {current}").into());
+    }
+    app.original_cursor = app.option("cursor:no_hardware_cursors")?["int"]
+        .as_i64()
+        .ok_or("missing cursor:no_hardware_cursors option")?;
+
+    if UnixStream::connect(&socket).is_ok() {
+        return Err("another monitor-dim daemon is already running".into());
+    }
+    let _ = std::fs::remove_file(&socket);
+    let listener = UnixListener::bind(&socket)?;
+    listener.set_nonblocking(true)?;
+    handle.insert_source(
+        Generic::new(listener, Interest::READ, Mode::Level),
+        |_, listener, app| {
+            while let Ok((mut stream, _)) = listener.accept() {
+                // Bound malformed clients so they cannot hang dimming/shutdown forever.
+                let _ = stream.set_read_timeout(Some(Duration::from_millis(200)));
+                let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
+                let mut buf = String::new();
+                let result = (&mut stream)
+                    .take(128)
+                    .read_to_string(&mut buf)
+                    .and_then(|_| command_percent(app.percent, &buf))
+                    .and_then(|percent| app.apply(percent));
+                let reply = match result {
+                    Ok(()) => "ok\n".to_owned(),
+                    Err(err) => format!("error: {err}\n"),
+                };
+                let _ = stream.write_all(reply.as_bytes());
+            }
+            Ok(PostAction::Continue)
+        },
+    )?;
+
+    // Reapply after config reloads and hotplug, including updated --skip IDs.
+    let events = UnixStream::connect(hypr.join(".socket2.sock"))?;
+    events.set_nonblocking(true)?;
+    let mut pending = String::new();
+    let disconnect = event_loop.get_signal();
+    handle.insert_source(
+        Generic::new(events, Interest::READ, Mode::Level),
+        move |_, events, app| {
+            let mut buf = [0; 4096];
+            loop {
+                match (&**events).read(&mut buf) {
+                    Ok(0) => {
+                        disconnect.stop();
+                        return Ok(PostAction::Remove);
+                    }
+                    Ok(n) => pending.push_str(&String::from_utf8_lossy(&buf[..n])),
+                    Err(err) if err.kind() == io::ErrorKind::WouldBlock => break,
+                    Err(err) => return Err(err),
+                }
+            }
+            let mut changed = false;
+            while let Some(end) = pending.find('\n') {
+                let line: String = pending.drain(..=end).collect();
+                changed |= ["configreloaded>>", "monitoradded>>", "monitorremoved>>"]
+                    .iter()
+                    .any(|prefix| line.starts_with(prefix));
+            }
+            if changed {
+                if let Err(err) = app.apply(app.percent) {
+                    eprintln!("monitor-dim: {err}");
+                }
+            }
+            Ok(PostAction::Continue)
+        },
+    )?;
+
+    let mut initial_percent = 100;
+    if let Some(dir) = find_backlight_device(backlight.as_deref()) {
+        let max = std::fs::read_to_string(dir.join("max_brightness"))?
+            .trim()
+            .parse()?;
+        let inotify = Inotify::init()?;
+        inotify
+            .watches()
+            .add(dir.join("brightness"), WatchMask::MODIFY)?;
+        initial_percent = read_backlight_percent(&dir, max).unwrap_or(100);
+        eprintln!("watching backlight: {}", dir.display());
+        handle.insert_source(
+            Generic::new(inotify, Interest::READ, Mode::Level),
+            move |_, inotify, app| {
+                let mut buf = [0; 4096];
+                // Only drain events: the registered file descriptor is not replaced.
+                let _ = unsafe { inotify.get_mut() }.read_events(&mut buf);
+                if let Some(percent) = read_backlight_percent(&dir, max) {
+                    if let Err(err) = app.apply(percent) {
+                        eprintln!("monitor-dim: {err}");
+                    }
+                }
+                Ok(PostAction::Continue)
+            },
+        )?;
+    } else {
+        eprintln!("monitor-dim: no backlight device found, using socket control only");
+    }
+
+    app.apply(initial_percent)?;
+    println!("monitor-dim listening on {}", socket.display());
+    let result = event_loop.run(None, &mut app, |_| {});
+    drop(app); // Restore compositor settings on SIGTERM/SIGINT, including service restarts.
+    let _ = std::fs::remove_file(socket);
+    result?;
+    Ok(())
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+    if let Err(err) = run() {
+        eprintln!("monitor-dim: {err}");
+        std::process::exit(1);
+    }
+}
 
-    if let [verb, arg] = args.as_slice() {
-        if matches!(verb.as_str(), "set" | "up" | "down") {
-            if let Err(e) = run_client(verb, arg) {
-                eprintln!("monitor-dim: {e}");
-                std::process::exit(1);
-            }
-            return;
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn brightness_limits_and_skipped_outputs() {
+        assert!(shader(0, &[]).contains("float brightness = 0.000000;"));
+        assert!(shader(255, &[]).contains("float brightness = 1.000000;"));
+        assert!(shader(40, &[0, 7]).contains("(wl_output == 0 || wl_output == 7) ? 1.0 : 0.400000"));
+        assert!(shader(40, &[]).contains("color.rgb * brightness, color.a"));
     }
 
-    let mut skip = Vec::new();
-    let mut backlight: Option<String> = None;
-    let mut i = 0;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--skip" => {
-                if let Some(v) = args.get(i + 1) {
-                    skip.push(v.clone());
-                    i += 1;
-                }
-            }
-            "--backlight" => {
-                if let Some(v) = args.get(i + 1) {
-                    backlight = Some(v.clone());
-                    i += 1;
-                }
-            }
-            _ => {}
+    #[test]
+    fn socket_commands_clamp_without_overflow_and_reject_invalid_input() {
+        assert_eq!(command_percent(50, "set 0").unwrap(), 0);
+        assert_eq!(command_percent(50, "up 9223372036854775807").unwrap(), 100);
+        assert_eq!(
+            command_percent(50, "down -9223372036854775808").unwrap(),
+            100
+        );
+        assert_eq!(command_percent(50, "down 75").unwrap(), 0);
+        for invalid in ["set", "set nope", "unknown 2", "set 20 extra"] {
+            assert!(command_percent(50, invalid).is_err());
         }
-        i += 1;
     }
-
-    let conn = Connection::connect_to_env().expect("connect to wayland");
-    let (globals, event_queue) = registry_queue_init::<App>(&conn).expect("registry init");
-    let qh = event_queue.handle();
-
-    let compositor_state =
-        CompositorState::bind(&globals, &qh).expect("wl_compositor not available");
-    let layer_shell = LayerShell::bind(&globals, &qh).expect("wlr-layer-shell not available");
-    let shm = Shm::bind(&globals, &qh).expect("wl_shm not available");
-    let pool = SlotPool::new(1, &shm).expect("create pool");
-
-    let mut app = App {
-        registry_state: RegistryState::new(&globals),
-        output_state: OutputState::new(&globals, &qh),
-        compositor_state,
-        layer_shell,
-        shm,
-        pool,
-        surfaces: HashMap::new(),
-        skip,
-        percent: 100,
-    };
-
-    let mut event_loop: EventLoop<App> = EventLoop::try_new().expect("create event loop");
-    let loop_handle = event_loop.handle();
-
-    let wayland_source = WaylandSource::new(conn, event_queue);
-    loop_handle
-        .insert_source(wayland_source, |_, queue, app| queue.dispatch_pending(app))
-        .expect("insert wayland source");
-
-    let runtime_dir = std::env::var("XDG_RUNTIME_DIR").expect("XDG_RUNTIME_DIR not set");
-    let sock_path = format!("{runtime_dir}/monitor-dim.sock");
-    let _ = std::fs::remove_file(&sock_path);
-    let listener = UnixListener::bind(&sock_path).expect("bind control socket");
-    listener.set_nonblocking(true).expect("set nonblocking");
-    println!("monitor-dim listening on {sock_path}");
-
-    let qh_for_socket = qh.clone();
-    loop_handle
-        .insert_source(
-            calloop::generic::Generic::new(listener, calloop::Interest::READ, calloop::Mode::Level),
-            move |_, listener, app: &mut App| {
-                loop {
-                    match listener.accept() {
-                        Ok((mut stream, _)) => {
-                            let mut buf = String::new();
-                            let _ = stream.read_to_string(&mut buf);
-                            app.handle_command(buf.trim(), &qh_for_socket);
-                            let _ = stream.write_all(b"ok\n");
-                        }
-                        Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => break,
-                        Err(_) => break,
-                    }
-                }
-                Ok(calloop::PostAction::Continue)
-            },
-        )
-        .expect("insert socket source");
-
-    if let Some(backlight_dir) = find_backlight_device(backlight.as_deref()) {
-        let max_brightness: u64 = std::fs::read_to_string(backlight_dir.join("max_brightness"))
-            .ok()
-            .and_then(|s| s.trim().parse().ok())
-            .unwrap_or(1);
-
-        if let Some(p) = read_backlight_percent(&backlight_dir, max_brightness) {
-            app.set_percent(p, &qh);
-        }
-
-        match Inotify::init() {
-            Ok(inotify) => {
-                match inotify
-                    .watches()
-                    .add(backlight_dir.join("brightness"), WatchMask::MODIFY)
-                {
-                    Ok(_) => {
-                        eprintln!("watching backlight: {}", backlight_dir.display());
-                        let qh_for_backlight = qh.clone();
-                        loop_handle
-                            .insert_source(
-                                calloop::generic::Generic::new(
-                                    inotify,
-                                    calloop::Interest::READ,
-                                    calloop::Mode::Level,
-                                ),
-                                move |_, inotify, app: &mut App| {
-                                    let mut buf = [0u8; 4096];
-                                    // Drain all pending events (a single write can
-                                    // sometimes generate more than one) before
-                                    // reading the value back, so we always redraw
-                                    // with the final settled brightness.
-                                    let _ = unsafe { inotify.get_mut() }.read_events(&mut buf);
-                                    if let Some(p) =
-                                        read_backlight_percent(&backlight_dir, max_brightness)
-                                    {
-                                        app.set_percent(p, &qh_for_backlight);
-                                    }
-                                    Ok(calloop::PostAction::Continue)
-                                },
-                            )
-                            .expect("insert backlight watcher");
-                    }
-                    Err(e) => eprintln!("monitor-dim: failed to watch backlight: {e}"),
-                }
-            }
-            Err(e) => eprintln!("monitor-dim: failed to init inotify: {e}"),
-        }
-    } else {
-        eprintln!("monitor-dim: no backlight device found, real-backlight sync disabled");
-    }
-
-    event_loop
-        .run(None, &mut app, |_| {})
-        .expect("event loop run");
 }

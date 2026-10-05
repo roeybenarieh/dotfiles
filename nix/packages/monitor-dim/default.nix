@@ -5,10 +5,9 @@
 # bus exists but ddcutil reports "cannot be used for DDC/CI communication"
 # — a driver limitation, not a permissions issue) and don't respond to
 # Hyprland's CTM/gamma control either (evdi's capture path sits outside
-# that pipeline). The only thing that visibly works is a real rendered
-# surface, since that *is* captured into the DisplayLink framebuffer: a
-# persistent, click-through, semi-transparent black wlr-layer-shell overlay
-# per targeted output, with alpha driven by a brightness percentage.
+# that pipeline). A Hyprland final-frame shader modifies the actual rendered
+# pixels, including overlay popups and the software cursor, before scanout.
+# It owns decoration:screen_shader while running; --skip uses wl_output IDs.
 #
 # Run as `monitor-dim --skip <output-name>...` — every other connected
 # output gets dimmed. Control it over its Unix socket at
@@ -16,17 +15,13 @@
 #   set <0-100>   absolute brightness percent
 #   up <n>        relative increase
 #   down <n>      relative decrease
-# 100 = no dim (fully transparent overlay), 0 = maximum dim (never fully
-# opaque — capped so the monitor doesn't go completely black).
+# 100 = no dim, 0 = fully black.
 pkgs.rustPlatform.buildRustPackage {
   pname = "monitor-dim";
-  version = "0.1.0";
+  version = "0.2.0";
   src = ./.;
 
   cargoLock.lockFile = ./Cargo.lock;
-
-  nativeBuildInputs = [ pkgs.pkg-config ];
-  buildInputs = [ pkgs.libxkbcommon pkgs.wayland ];
 
   meta.mainProgram = "monitor-dim";
 }
