@@ -24,6 +24,7 @@ in
         state_file = "auto";
         hotkey.enabled = false; # Compositor bindings avoid raw input-device access.
         audio.pause_media = true;
+        audio.max_duration_secs = 600; # Allow up to 10 minutes of dictation.
         parakeet = {
           model = "parakeet-tdt-0.6b-v3-int8";
           model_type = "tdt";
