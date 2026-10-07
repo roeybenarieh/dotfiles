@@ -6,6 +6,11 @@ let
   cfg = config.${namespace}.desktop.hyprland.voxtype;
   lua = lib.generators.mkLuaInline;
   voxtype = lib.getExe config.services.voxtype.package;
+  microphone = pkgs.writeShellApplication {
+    name = "voxtype-microphone";
+    runtimeInputs = with pkgs; [ coreutils pulseaudio libnotify util-linux ];
+    text = builtins.readFile ./microphone.sh;
+  };
 in
 {
   options.${namespace}.desktop.hyprland.voxtype = {
@@ -16,6 +21,8 @@ in
   config = mkIf cfg.enable {
     services.voxtype = {
       enable = true;
+      # Voxtype launches hooks with `sh`, which its package wrapper omits.
+      environment.PATH = lib.mkForce (lib.makeBinPath [ pkgs.bash pkgs.coreutils ]);
       # Enable ONNX engines for the CPU-optimized Parakeet INT8 model.
       package = pkgs.voxtype.override { onnxSupport = true; };
       loadModels = [ config.services.voxtype.settings.parakeet.model ];
@@ -31,6 +38,9 @@ in
           on_demand_loading = true;
         };
         output = {
+          # The hook runs after the recording state is written. Detach the
+          # watcher so the daemon can process stop/cancel while it runs.
+          pre_recording_command = "${lib.getExe microphone} ${toString config.services.voxtype.settings.audio.max_duration_secs} >/dev/null 2>&1 &";
           mode = "type";
           fallback_to_clipboard = true;
           notification = {
