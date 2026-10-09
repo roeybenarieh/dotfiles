@@ -51,6 +51,7 @@ struct App {
     percent: u8,
     original_cursor: i64,
     active: bool,
+    dpms_off: bool,
 }
 
 impl App {
@@ -120,12 +121,32 @@ impl App {
             &self.shader_path.to_string_lossy(),
         )?;
         self.percent = percent;
+        // A black frame still leaves DisplayLink backlights lit; power off at 0%.
+        let off = percent == 0;
+        if off || self.dpms_off {
+            self.dispatch_dpms(!off)?;
+            self.dpms_off = off;
+        }
+        Ok(())
+    }
+
+    fn dispatch_dpms(&self, on: bool) -> io::Result<()> {
+        let action = if on { "enable" } else { "disable" };
+        let reply = self.request(&format!(
+            "dispatch hl.dsp.dpms({{ action = \"{action}\" }})"
+        ))?;
+        if reply.trim() != "ok" {
+            return Err(io::Error::other(reply));
+        }
         Ok(())
     }
 }
 
 impl Drop for App {
     fn drop(&mut self) {
+        if self.dpms_off {
+            let _ = self.dispatch_dpms(true);
+        }
         if !self.active {
             return;
         }
@@ -224,6 +245,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         percent: 100,
         original_cursor: 2,
         active: false,
+        dpms_off: false,
     };
     let current = app.option("decoration:screen_shader")?;
     let current = current["str"].as_str().unwrap_or("");

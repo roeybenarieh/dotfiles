@@ -25,6 +25,23 @@ in
   };
 
   config = mkIf cfg.enable {
+    # Preserve dimming during reload itself, before the daemon receives
+    # configreloaded. Otherwise a full-brightness frame can slip through.
+    wayland.windowManager.hyprland.extraConfig = ''
+      do
+        local runtime = os.getenv("XDG_RUNTIME_DIR")
+        local shader = runtime and (runtime .. "/monitor-dim.frag")
+        local file = shader and io.open(shader, "r")
+        if file then
+          file:close()
+          hl.config({
+            decoration = { screen_shader = shader },
+            cursor = { no_hardware_cursors = 1 },
+          })
+        end
+      end
+    '';
+
     systemd.user.services.monitor-dim = {
       Unit = {
         Description = "Full-frame software brightness for monitors without DDC/CI";
