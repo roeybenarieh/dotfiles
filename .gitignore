@@ -208,3 +208,6 @@ zsdoc/data
 /tests/_output/*
 !/tests/_output/.gitkeep
 
+
+# VM disk images
+*.qcow2

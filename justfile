@@ -32,6 +32,37 @@ rebuild:
   @just _base_nix_git_stage \
   && sudo nice -19 nixos-rebuild switch --flake .
 
+# Boot the test VM's login screen and desktop via noVNC on localhost:6080.
+[group('nix')]
+test-vm: _base_nix_git_stage
+  #!/usr/bin/env bash
+  set -euo pipefail
+  vm=$(nix build .#nixosConfigurations.test-vm.config.system.build.vm --no-link --print-out-paths)
+  novnc=$(nix build "nixpkgs#novnc" --no-link --print-out-paths)
+  "$novnc/bin/novnc" --listen 127.0.0.1:6080 --vnc localhost:5950 >/tmp/test-vm-novnc.log 2>&1 &
+  novnc_pid=$!
+  trap 'kill "$novnc_pid" 2>/dev/null || true' EXIT
+  curl --fail --silent --retry 10 --retry-connrefused --retry-delay 1 \
+    http://localhost:6080/vnc.html --output /dev/null
+  echo "Connections become available as the VM boots:"
+  echo "SSH command:  ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null localhost"
+  echo "VNC Browser:  http://localhost:6080/vnc.html"
+  echo "Hypruse MCP:  http://localhost:8081/mcp"
+  echo "NixOS MCP:    http://localhost:8082/mcp"
+  echo "Boot log: tail -f /tmp/test-vm-console.log | Stop: Ctrl-C"
+  "$vm/bin/run-test-vm-vm" </dev/null >/tmp/test-vm-console.log 2>&1
+
+# Rebuild the running test VM's config over SSH after making host changes.
+[group('nix')]
+test-vm-rebuild: _base_nix_git_stage
+  ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@localhost \
+    "nixos-rebuild switch --flake /dotfiles#test-vm"
+
+# Destroy the test VM's disk image so the next 'just test-vm' starts completely fresh.
+[group('nix')]
+test-vm-reset:
+  rm -f test-vm.qcow2
+
 [group('nix')]
 copy-existing-nixos-config system:
   @if [ -d "./nix/systems/x86_64-linux/{{system}}" ]; then \
