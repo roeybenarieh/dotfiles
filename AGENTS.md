@@ -6,6 +6,19 @@ Project instructions for coding agents working in this repository.
 
 Whenever an agent needs `sudo` or equivalent root privileges, ask the user for approval to use the test VM first (see the testing section below), then run the privileged command **inside the guest**, never on the host. Confirm the command targets the guest before running it. Host `sudo`, `su`, `doas`, `pkexec`, or host-root execution through another tool are not substitutes. If a task genuinely requires host privileges and cannot be validated in the VM, explain the limitation and leave the host operation to the user.
 
+## Expensive commands: ask first
+
+Always ask the user for permission before running CPU/RAM-expensive commands (large builds, full rebuilds, heavy evals, etc.).
+
+Examples of expensive commands:
+- `nixos-rebuild dry-build --flake .` (full evaluation of the system configuration)
+- `just rebuild`, `just test-vm-rebuild`, `nixos-rebuild build/switch`
+- `nix build .#nixosConfigurations.<system>...` (building system closures or packages)
+
+## Nix module placement
+
+Nix code that only makes sense in the context of subject X belongs in X's module, even if it configures another program. Example: a Chromium bookmark for the Prometheus UI goes in the prometheus module, so disabling prometheus also removes the bookmark.
+
 ## Overview
 
 NixOS + Home Manager dotfiles using [Nix Flakes](https://nixos.wiki/wiki/Flakes) and [Snowfall Lib](https://snowfall.org/guides/lib/quickstart/) for modular configuration. Namespace: `extra`.
