@@ -8,6 +8,16 @@ let
   papirus = pkgs.papirus-icon-theme;
   icon = name: "${papirus}/share/icons/Papirus/48x48/apps/${name}.svg";
 
+  askpass = pkgs.writeShellScript "rofi-askpass" ''
+    exec ${config.programs.rofi.finalPackage}/bin/rofi -dmenu -password -l 0 -p "sudo password:" < /dev/null
+  '';
+
+  # Plain systemctl first; only when it fails (e.g. blocked by an inhibitor)
+  # retry with --ignore-inhibitors under sudo, which prompts via askpass.
+  powerAction = verb: pkgs.writeShellScript "power-${verb}" ''
+    ${pkgs.systemd}/bin/systemctl ${verb} || sudo -A ${pkgs.systemd}/bin/systemctl -i ${verb}
+  '';
+
   # Icon-grid layout for the drun app launcher only. `programs.rofi.theme`
   # below is shared by every rofi invocation (e.g. the clipboard picker's
   # `rofi -dmenu`), so the grid must NOT live there or plain text lists get
@@ -145,13 +155,13 @@ in
       };
       power-hibernate = {
         name = "Hibernate";
-        exec = "systemctl -i hibernate";
+        exec = "${powerAction "hibernate"}";
         icon = icon "system-hibernate";
         categories = [ "System" ];
       };
       power-suspend = {
         name = "Suspend";
-        exec = "systemctl -i suspend";
+        exec = "${powerAction "suspend"}";
         icon = icon "system-suspend";
         categories = [ "System" ];
       };
@@ -162,6 +172,10 @@ in
         categories = [ "System" ];
       };
     };
+
+    wayland.windowManager.hyprland.settings.env = [
+      { _args = [ "SUDO_ASKPASS" "${askpass}" ]; }
+    ];
 
     wayland.windowManager.hyprland.settings.bind = [
       { _args = [ "SUPER + Super_L" (lua ''hl.dsp.exec_cmd("pgrep -x rofi >/dev/null && pkill -x rofi || ${config.programs.rofi.finalPackage}/bin/rofi -show drun -theme-str '${drunGridTheme}'")'') ]; }
