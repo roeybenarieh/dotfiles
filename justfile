@@ -3,7 +3,7 @@ default:
 
 # base files needed to be staged by git before building something in nix
 _base_nix_git_stage:
-  git add flake.nix flake.lock && git add ./nix/**
+  git add --all -- flake.nix flake.lock nix/
 
 [group('nix')]
 format:
@@ -26,6 +26,11 @@ explore-dependencies output="/tmp/nix-dependency-graph.html":
 [group('nix')]
 rollback-user:
   bash $(home-manager generations | fzf | awk -F '-> ' '{print $2 "/activate"}')
+
+# Stage all configuration sources, then check the rebuild without building or switching.
+[group('nix')]
+dry-rebuild: _base_nix_git_stage
+  nixos-rebuild dry-build --flake .
 
 [group('nix')]
 rebuild:

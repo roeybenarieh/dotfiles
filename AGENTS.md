@@ -11,7 +11,7 @@ Whenever an agent needs `sudo` or equivalent root privileges, ask the user for a
 Always ask the user for permission before running CPU/RAM-expensive commands (large builds, full rebuilds, heavy evals, etc.).
 
 Examples of expensive commands:
-- `nixos-rebuild dry-build --flake .` (full evaluation of the system configuration)
+- `just dry-rebuild` (full evaluation of the system configuration)
 - `just rebuild`, `just test-vm-rebuild`, `nixos-rebuild build/switch`
 - `nix build .#nixosConfigurations.<system>...` (building system closures or packages)
 
@@ -27,6 +27,7 @@ NixOS + Home Manager dotfiles using [Nix Flakes](https://nixos.wiki/wiki/Flakes)
 
 ```bash
 just rebuild              # Rebuild and switch NixOS system config + Home Manager (sudo) — user must run this interactively.
+just dry-rebuild          # Stage flake files and all of nix/, then dry-build (ask permission first)
 just format               # Format all Nix files with treefmt
 just update-all-dependencies  # Update flake.lock
 just collect-garbage      # Run nix-collect-garbage
@@ -40,7 +41,7 @@ just test-vm-rebuild      # Rebuild the running VM's config via SSH (after makin
 just test-vm-reset        # Destroy the VM disk image and start completely fresh
 ```
 
-**Important:** Nix Flakes only see tracked files, so stage changes (and `git add` any new files) before building. The `just` recipes stage known paths via `_base_nix_git_stage`; new module files elsewhere need manual staging.
+**Important:** Nix Flakes only see tracked files. Build recipes use `_base_nix_git_stage` to stage additions, modifications, and deletions in `flake.nix`, `flake.lock`, and all of `nix/` (including packages, patches, scripts, and hidden files). If a configuration source is added outside these paths, extend this shared helper so every build recipe includes it.
 
 ## Architecture
 
@@ -111,11 +112,13 @@ GitHub Actions runs on push/PR: flake lock staleness check, git-leaks secret sca
 
 ## Workflow Guidelines
 
-**Dry-run before declaring done:** After making any Nix config changes, always run a dry-build to catch evaluation errors before telling the user you're finished:
+**Dry-run before declaring done:** After making any Nix config changes, ask permission for the expensive evaluation, then always use this recipe to catch evaluation errors before telling the user you're finished:
+
 ```bash
-git add flake.nix flake.lock && git add ./nix/lib/** && git add ./nix/modules/home/** ./nix/homes/** && git add ./nix/modules/nixos/** ./nix/systems/** && nixos-rebuild dry-build --flake .
+just dry-rebuild
 ```
-Fix any errors that appear, then re-run until it succeeds cleanly. Only then tell the user to run `just rebuild` in their terminal (or `! just rebuild` in OpenCode's shell mode).
+
+Do not invoke `nixos-rebuild dry-build` directly or assemble an ad hoc staging command; the recipe handles staging consistently. Fix any errors that appear, then re-run the recipe until it succeeds cleanly. If approval is not given, report dry-build verification as pending. Only after success tell the user to run `just rebuild` in their terminal.
 
 **Fonts:** When making any font-related changes, run `fc-cache -rf` after rebuilding to refresh the font cache.
 
