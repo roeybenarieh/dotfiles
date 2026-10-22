@@ -76,9 +76,8 @@ in
     programs.btop = {
       enable = true;
       settings = {
-        proc_tree = true;
-        proc_aggregate = true;
         proc_sorting = "cpu direct";
+        shown_boxes = "proc"; # show only the processes box
       };
     };
 
