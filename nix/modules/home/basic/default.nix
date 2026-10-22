@@ -107,7 +107,7 @@ in
     };
     home.shellAliases = {
       l = "ls -lh"; # defaulty l = "ls -lFh", and -F doesnt exists in eza.
-      tree = "eza --tree";
+      tree = "eza --tree --git-ignore";
     };
 
 
