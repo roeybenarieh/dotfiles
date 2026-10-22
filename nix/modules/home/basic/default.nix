@@ -91,10 +91,6 @@ in
         batpipe # integrate bat with other tools
       ];
     };
-    home.shellAliases = {
-      cat = "${getExe pkgs.bat} --paging=never";
-    };
-
 
     # eza - ls alternative
     programs.eza = {
