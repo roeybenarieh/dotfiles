@@ -13,7 +13,27 @@ in
     programs.zsh = {
       enable = true;
       # Enable completion for aliases
-      initContent = "setopt complete_aliases";
+      # mkAfter: runs after oh-my-zsh's eza alias and home.shellAliases.
+      initContent = lib.mkAfter ''
+        setopt complete_aliases
+
+        # ls on a file shows it (bat); cat on a directory lists it (eza).
+        unalias ls cat 2>/dev/null
+        ls() {
+          if [[ $# -eq 1 && -f $1 ]]; then
+            command bat --paging=never -- "$1"
+          else
+            command eza "$@"
+          fi
+        }
+        cat() {
+          if [[ $# -eq 1 && -d $1 ]]; then
+            command eza "$@"
+          else
+            command bat --paging=never "$@"
+          fi
+        }
+      '';
 
       # save timestamp to records
       history.extended = true;
