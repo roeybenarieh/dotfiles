@@ -18,6 +18,10 @@ in
     };
     services.displayManager.defaultSession = "hyprland-uwsm";
 
+    # Keep the compositor alive when a child process (e.g. a runaway `nix build`)
+    # is OOM-killed; the default OOMPolicy=stop tears down the whole session.
+    systemd.user.services."wayland-wm@".serviceConfig.OOMPolicy = "continue";
+
     snowfallorg.users.roey.home.config.${namespace}.desktop.hyprland = mkForce {
       enable = true;
       systemd.enable = !config.programs.hyprland.withUWSM;
