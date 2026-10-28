@@ -95,15 +95,15 @@ Options are exposed under `extra.<module-name>` and enabled in `nix/homes/` or `
 
 ### Notable Flake Inputs
 
-| Input | Purpose |
-|---|---|
-| `nixpkgs` (master) | Stable packages |
-| `nixpkgs-unstable` | Bleeding-edge packages |
-| `home-manager` | User-level config |
-| `stylix` | Unified theming |
-| `spicetify-nix` | Spotify customization |
-| `nur` | Nix User Repository |
-| `claude-desktop` | Claude Desktop app |
+| Input                | Purpose                   |
+| -------------------- | ------------------------- |
+| `nixpkgs` (master)   | Stable packages           |
+| `nixpkgs-unstable`   | Bleeding-edge packages    |
+| `home-manager`       | User-level config         |
+| `stylix`             | Unified theming           |
+| `spicetify-nix`      | Spotify customization     |
+| `nur`                | Nix User Repository       |
+| `claude-desktop`     | Claude Desktop app        |
 | `grafana-dashboards` | GitLab Grafana dashboards |
 
 ### CI
@@ -122,16 +122,18 @@ Do not invoke `nixos-rebuild dry-build` directly or assemble an ad hoc staging c
 
 **Fonts:** When making any font-related changes, run `fc-cache -rf` after rebuilding to refresh the font cache.
 
-**Finding a NixOS module's source in the store:** Use `nix eval` to get the declaration path, then read it directly — never use `find /nix/store`:
+**Nix lookups:** Prefer the NixOS MCP; follow its tool-provided instructions. For this repo's flake inputs, use `source: "/home/roey/.dotfiles"`.
+
+**Exact option declarations:** When you need the declaration path from this system's evaluated configuration, use:
+
 ```bash
-# Get the .nix file path where an option is declared
-nix eval .#nixosConfigurations.<system>.options.<option.path>.enable.declarations
-# Example:
-nix eval .#nixosConfigurations.laptop.options.services.displayManager.plasma-login-manager.enable.declarations
-# → [ "/nix/store/…-source/nixos/modules/services/display-managers/plasma-login-manager.nix" ]
-# Then read the file at that path to see all available options and config keys
+nix eval .#nixosConfigurations.<system>.options.<option.path>.declarations
 ```
-To find the built package output (for inspecting shipped config files, man pages, etc.):
+
+Read the returned path with the NixOS MCP — never use `find /nix/store`.
+
+**Built package output** (shipped config files, man pages, etc.): get the path with the following, then read it with the MCP:
+
 ```bash
 nix build .#nixosConfigurations.<system>.config.services.<name>.package --no-link --print-out-paths
 ```
@@ -145,6 +147,7 @@ The `test-vm` system (`nix/systems/x86_64-linux/test-vm/`) uses the same desktop
 ### When to use a test environment
 
 Ask the user for approval to use the test VM whenever:
+
 - A command requires `sudo` or equivalent root privileges (see "Privileged commands")
 - A config change affects a service, daemon, or app that needs to be started to verify
 - A GUI feature needs to be visually confirmed (window behaviour, keybindings, app layout)
@@ -158,6 +161,7 @@ For unprivileged checks, use the VM only when a dry-build alone cannot confirm c
 Before starting or reusing the VM, explain why it is needed and wait for the user's approval. Once approved, run `just test-vm` from `/home/roey/.dotfiles` if needed and keep it running in a persistent terminal/background session while using the guest. Ask again before restarting or resetting it. If approval is not given, report VM-dependent verification as pending.
 
 After startup (~30–60 s first boot), the terminal prints an info box and holds. Pressing Ctrl-C in that terminal kills the VM and noVNC. Agent workflow:
+
 1. Use `hypruse` to inspect the desktop and open `http://localhost:6080/vnc.html` in a browser.
 2. Connect (no VNC password)
 3. Use `hypruse` on the host browser window with screenshots, zoom, and focused input to interact with the guest desktop through the noVNC canvas. Confirm the browser window address before sending input; host desktop controls do not directly target guest windows.
@@ -171,3 +175,7 @@ After startup (~30–60 s first boot), the terminal prints an info box and holds
 7. Full reset (destroys disk image): `! just test-vm-reset`
 
 The disk image `test-vm.qcow2` persists between runs in the dotfiles root directory.
+
+### Revert test-only VM changes
+
+If you change `nix/systems/x86_64-linux/test-vm/` (for example, enabling a module so it can be exercised in the VM) only to verify something, undo that change when the work is finished, then unstage it. Confirm with `git diff HEAD -- nix/systems/x86_64-linux/test-vm/` that nothing test-only remains. Keep the change only if the user explicitly asks for it to stay. Also stop the VM and noVNC when done.
