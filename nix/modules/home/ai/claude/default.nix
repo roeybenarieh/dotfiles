@@ -26,6 +26,28 @@ let
     hash = "sha256-uD6NEFL2ky5e60RKjl20+gYUHtMjABPoABmZ63vT/SM=";
   };
 
+  # ponytail: pushes the agent toward the simplest, dependency-light solution
+  # (YAGNI, stdlib-first) instead of over-engineering. Installed as a real
+  # Claude Code plugin (not just its skills) so its SessionStart/UserPromptSubmit
+  # hooks fire — those hooks are what actually force the ruleset into context
+  # on every turn; the skills alone are only model-invoked on a description
+  # match and wouldn't give the "active every response" behavior ponytail advertises.
+  ponytailSrc = pkgs.fetchFromGitHub {
+    owner = "dietrichgebert";
+    repo = "ponytail";
+    rev = "e3ba2aa6f1e6f0bc4d69eb09c9f0d0a93af56156";
+    hash = "sha256-PES5XrSYx0VBXWVHEDRykGy0SAmJfV/luzy8Gfg0aAQ=";
+  };
+
+  # taste-skill: anti-slop frontend design skill (tasteskill.dev) — reads the
+  # brief, infers a design direction, and pushes frontend output away from
+  # templated-looking defaults. Single-file skill, so fetch it directly
+  # rather than the whole taste-skill repo.
+  tasteSkillSrc = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/Leonxlnx/taste-skill/ce26fc25c0e5e8cab638f883de62d9a86ee5e45b/skills/taste-skill/SKILL.md";
+    hash = "sha256-qhlDUbJGuLR5kJnU7XsDPSnqtubj1Y2NIXKXi+ez7Ik=";
+  };
+
   # graphify's SKILL.md sits at the repo root (alongside its source code) and its
   # references live in a separate nested path, so assemble a proper skill directory
   # for programs.claude-code.skills rather than pointing at graphifySrc directly.
@@ -35,122 +57,9 @@ let
     cp -r ${graphifySrc}/graphify/skills/claude/references/. $out/references/
   '';
 
-  # Generic notify-send wrapper: walks up the process tree from wherever it's
-  # called (through the caller, its shell, etc.) to find the nearest ancestor
-  # PID that Hyprland recognizes as a window owner — i.e. the actual window
-  # this notification originated from, regardless of whatever window happens
-  # to be focused by the time the user clicks it. Focuses that window back if
-  # the notification body is clicked — the freedesktop spec's reserved
-  # "default" action, which wayle's notification popups already wire up to a
-  # body click. Doesn't know or care which app/window called it, so it's
-  # reusable beyond claude too.
-  notifySendFocusScript = pkgs.writeShellApplication {
-    name = "notify-send-focus";
-    runtimeInputs = [ pkgs.libnotify pkgs.hyprland pkgs.jq pkgs.glib ];
-    text = ''
-      find_window_addr() {
-        local pid="$1" ppid clients addr
-
-        clients=$(hyprctl clients -j) || return 1
-
-        while [ "$pid" -gt 1 ] 2>/dev/null; do
-          addr=$(printf '%s' "$clients" | jq -r --argjson pid "$pid" \
-            '.[] | select(.pid == $pid) | .address' 2>/dev/null | head -n1)
-          if [ -n "$addr" ]; then
-            printf '%s\n' "$addr"
-            return 0
-          fi
-
-          ppid=$(awk '/^PPid:/ {print $2}' "/proc/$pid/status" 2>/dev/null) || return 1
-          [ -n "$ppid" ] || return 1
-          pid="$ppid"
-        done
-
-        return 1
-      }
-
-      addr=""
-      if resolved=$(find_window_addr "$$"); then
-        addr="$resolved"
-      fi
-
-      if [ -z "$addr" ]; then
-        exec notify-send "$@"
-      fi
-
-      # Minimal notify-send-alike arg parsing: -u/--urgency is accepted but
-      # dropped ("normal" is the freedesktop-spec default anyway), the rest is
-      # SUMMARY [BODY]. Keep the originals around too, since this loop
-      # consumes "$@" and the notify-send fallback below still needs it.
-      orig_args=("$@")
-      summary=""
-      body=""
-      while [ "$#" -gt 0 ]; do
-        case "$1" in
-          -u | --urgency) shift 2 ;;
-          *)
-            if [ -z "$summary" ]; then
-              summary="$1"
-            elif [ -z "$body" ]; then
-              body="$1"
-            fi
-            shift
-            ;;
-        esac
-      done
-
-      # notify-send's own -w/-A wait mode blocks until the server sends
-      # NotificationClosed — but wayle doesn't reliably emit that (dismissing
-      # a popup just hides it from the toast tray while keeping it in
-      # history), so notify-send -w hangs forever regardless of whether the
-      # notification was ever clicked. So: send the notification directly
-      # over D-Bus and listen for the ActionInvoked signal ourselves instead,
-      # bounded by a timeout, rather than trusting notify-send to report back.
-      # The "--" is required: gdbus otherwise parses a bare "-1" as an
-      # (unrecognized) option rather than the expire_timeout value.
-      id_raw=$(gdbus call --session \
-        --dest org.freedesktop.Notifications \
-        --object-path /org/freedesktop/Notifications \
-        --method org.freedesktop.Notifications.Notify \
-        -- "" 0 "" "$summary" "$body" "['default','default']" "{}" -1) \
-        || exec notify-send "''${orig_args[@]}"
-      # gdbus prints "(uint32 1860,)" — a plain [0-9]+ grep would match the
-      # "32" inside the word "uint32" itself before the real id, so anchor on
-      # the actual tuple shape instead.
-      id=$(printf '%s' "$id_raw" | sed -n 's/^(uint32 \([0-9]*\),)$/\1/p')
-      [ -n "$id" ] || exit 0
-
-      coproc MON { gdbus monitor --session --dest org.freedesktop.Notifications 2>/dev/null; }
-
-      deadline=$((SECONDS + 60))
-      clicked=0
-      while [ "$SECONDS" -lt "$deadline" ]; do
-        if read -r -t 1 -u "''${MON[0]}" line; then
-          case "$line" in
-            *"ActionInvoked (uint32 $id, 'default')"*)
-              clicked=1
-              break
-              ;;
-          esac
-        fi
-      done
-
-      kill "$MON_PID" 2>/dev/null || true
-      wait "$MON_PID" 2>/dev/null || true
-
-      if [ "$clicked" = "1" ]; then
-        # On this Hyprland version, "dispatch focuswindow address:..." (the
-        # classic CLI syntax) fails — dispatch commands are evaluated through
-        # its Lua layer, and hl.dsp.focus's `window` field must be an actual
-        # window object from hl.get_windows(), not an address string.
-        hyprctl repl "local wins = hl.get_windows(); for _, w in ipairs(wins) do if w.address == \"$addr\" then hl.dispatch(hl.dsp.focus({ window = w })) end end" >/dev/null 2>&1 || true
-      fi
-    '';
-  };
-
   statusLineScript = pkgs.writeShellApplication {
     name = "claude-statusline";
-    runtimeInputs = [ pkgs.jq pkgs.procps pkgs.gawk ];
+    runtimeInputs = [ pkgs.jq pkgs.procps pkgs.gawk pkgs.coreutils ];
     text = ''
       input=$(cat)
       MODEL=$(echo "$input" | jq -r '.model.display_name // "unknown"')
@@ -164,6 +73,12 @@ let
         else ($t | tostring)
         end')
 
+      # Subscription usage (5-hour session window + weekly window), reported
+      # by Claude Code itself — absent until it has polled the API at least once.
+      FIVE_HOUR_PCT=$(echo "$input" | jq -r '(.rate_limits.five_hour.used_percentage // null) | if . != null then floor else null end')
+      SEVEN_DAY_PCT=$(echo "$input" | jq -r '(.rate_limits.seven_day.used_percentage // null) | if . != null then floor else null end')
+      FIVE_HOUR_RESET=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
+
       MEM_PCT=$(free | awk '/^Mem:/ {printf "%d", $3/$2*100}')
       CPU_LOAD=$(awk '{print $1}' /proc/loadavg)
 
@@ -173,20 +88,42 @@ let
       RED=$'\033[31m'
       RESET=$'\033[0m'
 
-      if [ "$PCT" -lt 50 ]; then
-        CTX_COLOR="$GREEN"
-      elif [ "$PCT" -lt 80 ]; then
-        CTX_COLOR="$YELLOW"
-      else
-        CTX_COLOR="$RED"
+      pct_color() {
+        if [ "$1" -lt 50 ]; then
+          echo "$GREEN"
+        elif [ "$1" -lt 80 ]; then
+          echo "$YELLOW"
+        else
+          echo "$RED"
+        fi
+      }
+
+      CTX_COLOR=$(pct_color "$PCT")
+
+      USAGE_SEGMENT=""
+      if [ "$FIVE_HOUR_PCT" != "null" ]; then
+        FIVE_HOUR_COLOR=$(pct_color "$FIVE_HOUR_PCT")
+        RESET_IN=""
+        if [ -n "$FIVE_HOUR_RESET" ]; then
+          SECS_LEFT=$(( ''${FIVE_HOUR_RESET%.*} - $(date +%s) ))
+          if [ "$SECS_LEFT" -gt 0 ]; then
+            RESET_IN=$(printf ' (resets %dh%dm)' $((SECS_LEFT / 3600)) $(((SECS_LEFT % 3600) / 60)))
+          fi
+        fi
+        USAGE_SEGMENT="''${USAGE_SEGMENT} | ''${FIVE_HOUR_COLOR}''${FIVE_HOUR_PCT}%''${RESET} 5h''${RESET_IN}"
+      fi
+      if [ "$SEVEN_DAY_PCT" != "null" ]; then
+        SEVEN_DAY_COLOR=$(pct_color "$SEVEN_DAY_PCT")
+        USAGE_SEGMENT="''${USAGE_SEGMENT} | ''${SEVEN_DAY_COLOR}''${SEVEN_DAY_PCT}%''${RESET} 7d"
       fi
 
-      printf '%s[%s]%s %s | %s%d%%%s ctx | %s tok | $%.3f | mem %d%% | cpu %s\n' \
+      printf '%s[%s]%s %s | %s%d%%%s ctx | %s tok | $%.3f%s | mem %d%% | cpu %s\n' \
         "$CYAN" "$MODEL" "$RESET" \
         "$DIR_NAME" \
         "$CTX_COLOR" "$PCT" "$RESET" \
         "$TOKENS" \
         "$COST" \
+        "$USAGE_SEGMENT" \
         "$MEM_PCT" \
         "$CPU_LOAD"
     '';
@@ -209,7 +146,7 @@ let
         hooks = [
           {
             type = "command";
-            command = "${pkgs.jq}/bin/jq -r '.message // \"Claude needs your attention\"' | { read -r msg; ${notifySendFocusScript}/bin/notify-send-focus -u normal \"Claude Code\" \"$msg\"; }";
+            command = "${pkgs.jq}/bin/jq -r '.message // \"Claude needs your attention\"' | { read -r msg; ${pkgs.extra.notify-send-focus}/bin/notify-send-focus -u normal \"Claude Code\" \"$msg\"; }";
             async = true;
           }
         ];
@@ -277,30 +214,7 @@ in
       # nix/modules/home/ai/mcp/default.nix.
       enableMcpIntegration = true;
 
-      lspServers = {
-        python = {
-          command = "${pkgs.pyright}/bin/pyright-langserver";
-          args = [ "--stdio" ];
-          extensionToLanguage = {
-            ".py" = "python";
-            ".pyi" = "python";
-          };
-        };
-        lua = {
-          command = "${pkgs.lua-language-server}/bin/lua-language-server";
-          args = [ ];
-          extensionToLanguage = {
-            ".lua" = "lua";
-          };
-        };
-        nix = {
-          command = "${pkgs.nixd}/bin/nixd";
-          args = [ ];
-          extensionToLanguage = {
-            ".nix" = "nix";
-          };
-        };
-      };
+      # Native LSP settings come from extra.lsp, shared with other harnesses.
 
       skills = {
         # task-observer meta-skill: watches sessions and improves the skill library over time
@@ -315,14 +229,18 @@ in
 
         # graphify: maps any codebase into a queryable knowledge graph
         graphify = graphifySkillDir;
+
+        # taste-skill: anti-slop frontend design skill from tasteskill.dev
+        taste-skill = tasteSkillSrc;
+      };
+
+      plugins = {
+        ponytail = ponytailSrc;
       };
 
       context = ''
         ## Git commits
         Never run `git commit` unless the user explicitly asks you to commit. Stage files, make changes, and tell the user what's ready — but do not commit on your own initiative.
-
-        ## LSP servers
-        LSP servers are available via the `LSP` tool for Python, Lua, and Nix. Prefer it over grep for navigation (definitions, references, diagnostics) in those languages.
       '';
     };
 

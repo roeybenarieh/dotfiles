@@ -1,0 +1,23 @@
+--- a/.opencode/plugins/ponytail.mjs
++++ b/.opencode/plugins/ponytail.mjs
+@@ -74,7 +74,19 @@
+     'experimental.chat.system.transform': async (_input, output) => {
+       const mode = readMode();
+       if (mode === 'off') return;
+-      const instructions = getPonytailInstructions(mode);
++      const instructions = getPonytailInstructions(mode) + `
++
++## Ponytail skill activation
++Use the skill tool to load the applicable skill before doing its work; do not wait for a slash command:
++- Coding (write, fix, refactor): load ponytail at the start of the task.
++- Code/diff review: load ponytail-review. Also use it to review your own final diff before completing a coding change.
++- Requested repository-wide over-engineering audit: load ponytail-audit.
++- Requested shortcut/debt ledger: load ponytail-debt.
++- Requested Ponytail impact/scoreboard: load ponytail-gain.
++- Requested Ponytail commands/help: load ponytail-help.
++Reuse skills already loaded in this conversation. Keep the selected intensity; loading a skill does not reset it.
++Do not run a repository-wide audit or debt harvest unless requested. Respect an explicit request to stop Ponytail or use normal mode.
++`;
+       if (output.system.length > 0) {
+         output.system[output.system.length - 1] += '\n\n' + instructions;
+       } else {
