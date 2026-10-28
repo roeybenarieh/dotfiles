@@ -64,6 +64,8 @@ Some of the things manually needed to be created:
 - set up Google-authenticator at ~/.google_authenticator
 - set up Dexcom username and password for Qtile bar at ~/.local/state/qtile-config/config.txt
 - set up Neovim at ~/.config/nvim
+- configure laptop to automatically connect to Iphone bluetooth connection via bluejay
+- create LiteLLM API keys file at `/etc/litellm-secrets` (root-owned, mode 600) — see `nix/modules/nixos/litellm/default.nix` for the required keys (ANTHROPIC_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, CEREBRAS_API_KEY, SAMBANOVA_API_KEY, HF_TOKEN, LITELLM_UI_USERNAME, LITELLM_UI_PASSWORD)
 
 ## Omnigent over Tailscale
 
@@ -94,3 +96,14 @@ Tailscale Serve itself has to be enabled once per tailnet before it works at all
 - add power profiles for laptop
 - get files from Iphone
 - Airdrop support(maybe opendrop)
+- add encryption to things, make sure the system is VERY secure
+- WinKey+v should paste immediately
+- secure boot, hard drive encryption
+- laptop lid closing doesnt lock and suspend the screen
+- stop job for light-locker is running every time systemd is shutting down
+- bluetooth is not turned-on on boot
+
+- preload nautils file explorer
+- createa a 'just test-vm' command to test the configuration in a fresh vm.
+- correcct laptop idle capabilities
+- test-vm: make sure pam is not realy working so everybody could do anything
