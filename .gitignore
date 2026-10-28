@@ -211,3 +211,7 @@ zsdoc/data
 
 # VM disk images
 *.qcow2
+
+# mcp related
+.playwright-mcp/
+
