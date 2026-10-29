@@ -16,6 +16,7 @@ in
     enable = cfg.enable;
 
     autoEnable = true;
+    overlays = disabled; # HACK: should be fixed upsource
     image = "${inputs.assets}/theme.png";
     polarity = "dark";
     targets = {
