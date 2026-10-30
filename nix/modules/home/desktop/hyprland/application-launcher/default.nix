@@ -178,9 +178,30 @@ in
     ];
 
     wayland.windowManager.hyprland.settings.bind = [
-      { _args = [ "SUPER + Super_L" (lua ''hl.dsp.exec_cmd("pgrep -x rofi >/dev/null && pkill -x rofi || ${config.programs.rofi.finalPackage}/bin/rofi -show drun -theme-str '${drunGridTheme}'")'') ]; }
       { _args = [ "SUPER + semicolon" (lua ''hl.dsp.exec_cmd("${pkgs.rofimoji}/bin/rofimoji")'') ]; }
     ];
+
+    wayland.windowManager.hyprland.extraConfig = ''
+      do
+        -- Toggle the launcher only when MOD is pressed alone; any other key
+        -- cancels it, even an unbound shortcut with MOD released first.
+        local held, superAlone = {}, false
+        hl.on("input.keyboard.key", function(key, _, state)
+          if state == 1 and not held[key] then
+            superAlone = key == 133 and next(held) == nil -- XKB Super_L
+            held[key] = true
+          elseif state == 0 then
+            held[key] = nil
+          end
+        end)
+        hl.bind("SUPER + Super_L", function()
+          if superAlone then
+            superAlone = false
+            hl.dispatch(hl.dsp.exec_cmd("pgrep -x rofi >/dev/null && pkill -x rofi || ${config.programs.rofi.finalPackage}/bin/rofi -show drun -theme-str '${drunGridTheme}'"))
+          end
+        end, { release = true })
+      end
+    '';
 
     # `drun-use-desktop-cache` speeds up rofi but goes stale whenever a
     # rebuild adds/removes a .desktop entry, hiding new apps from the
