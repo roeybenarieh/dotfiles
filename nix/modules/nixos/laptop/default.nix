@@ -107,12 +107,5 @@ in
       };
     };
     services.power-profiles-daemon = disabled;
-
-    # Chromium memory savings.
-    programs.chromium.extraOpts = {
-      "HighEfficiencyModeEnabled" = true;
-      "MemorySaverModeSavings" = 2; # Maximum: discard inactive tabs sooner.
-      "NetworkPredictionOptions" = 2; # Disable speculative preloading and preconnections.
-    };
   };
 }

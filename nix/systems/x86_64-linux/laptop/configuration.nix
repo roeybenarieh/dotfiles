@@ -19,7 +19,7 @@ in
       ambxst = disabled;
     };
     desktop.displayManager.plasma = enabled;
-
+    optimizeMemory = enabled;
     docker = enabled;
     litellm = {
       enable = true;
