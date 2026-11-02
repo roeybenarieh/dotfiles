@@ -17,11 +17,6 @@ in
     # (Optional but recommended) Pin legacy NIX_PATH to match
     nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
-    xdg.configFile = {
-      "nix" = {
-        source = ./nix;
-        recursive = true;
-      };
-    };
+    nix.settings.experimental-features = [ "nix-command" "flakes" ];
   };
 }
