@@ -45,7 +45,7 @@ in
 
         ## Missing programs
 
-        If you need a program that isn't installed, don't give up or ask me to install it. Run it through a Nix shell:
+        If a program isn't installed, NEVER give up or ask me to install it. Run it through a Nix shell:
 
         - Single command: `nix shell nixpkgs#<pkg> -c <command> <args>`
         - Look up the attribute name first with the nixos MCP tool if unsure (`nix search nixpkgs <name>` or the `nix` tool, source nixos).
