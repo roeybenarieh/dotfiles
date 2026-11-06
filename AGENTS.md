@@ -11,6 +11,7 @@ Whenever an agent needs `sudo` or equivalent root privileges, ask the user for a
 Always ask the user for permission before running CPU/RAM-expensive commands (large builds, full rebuilds, heavy evals, etc.).
 
 Examples of expensive commands:
+
 - `just dry-rebuild` (full evaluation of the system configuration)
 - `just rebuild`, `just test-vm-rebuild`, `nixos-rebuild build/switch`
 - `nix build .#nixosConfigurations.<system>...` (building system closures or packages)
@@ -160,7 +161,7 @@ For unprivileged checks, use the VM only when a dry-build alone cannot confirm c
 
 Before starting or reusing the VM, explain why it is needed and wait for the user's approval. Once approved, run `just test-vm` from `/home/roey/.dotfiles` if needed and keep it running in a persistent terminal/background session while using the guest. Ask again before restarting or resetting it. If approval is not given, report VM-dependent verification as pending.
 
-After startup (~30–60 s first boot), the terminal prints an info box and holds. Pressing Ctrl-C in that terminal kills the VM and noVNC. Agent workflow:
+`just test-vm` polls internally until SSH command execution, VNC/noVNC, and both MCP initialization handshakes succeed, then prints `VM ready — SSH + VNC/noVNC + Hypruse MCP + NixOS MCP` with connection details and holds. Wait for that message instead of making separate SSH readiness attempts. Startup times out after roughly three minutes with unavailable services listed; check `/tmp/test-vm-console.log` and `/tmp/test-vm-novnc.log` on failure. MCP readiness confirms the endpoints respond, not that a user has logged into Hyprland. Pressing Ctrl-C in that terminal kills the VM and noVNC. Agent workflow:
 
 1. Use `hypruse` to inspect the desktop and open `http://localhost:6080/vnc.html` in a browser.
 2. Connect (no VNC password)
@@ -175,6 +176,24 @@ After startup (~30–60 s first boot), the terminal prints an info box and holds
 7. Full reset (destroys disk image): `! just test-vm-reset`
 
 The disk image `test-vm.qcow2` persists between runs in the dotfiles root directory.
+
+### Driving the VM GUI (agent permission granted)
+
+When a GUI check is needed inside the VM, the agent uses the **VM's own Hypruse MCP** at `http://localhost:8081/mcp` (not the host `mcp__Hypruse__*` tools, which control the host desktop). The user has granted permission for this, so do not ask again within an approved VM session.
+
+- Call tools over MCP JSON-RPC: `initialize` (read the `mcp-session-id` response header), then `notifications/initialized`, then `tools/call` with the same session id. Use `./scripts/vmmcp.sh <tool> '<json-args>'` from the repository root.
+- Tools match the host Hypruse: `desktop`, `launch`, `screenshot` (`lossless=true` for PNG; the image comes back base64 in `result.content[].data`, decode it to a file and view it), `ui`, `marks`, `click_ui`, `keyboard`, `pointer`, `zoom`.
+- Guest desktop state: a Hyprland session for `roey` must be running (see below). `desktop` must report a `Virtual-1` monitor at 1280x800.
+
+Known guest setup issues and workarounds (VM only, not persistent):
+
+- **No session:** the greeter (`plasmalogin`) owns the DRM device. Stop it (`systemctl stop plasmalogin`), then start Hyprland as `roey` with `XDG_RUNTIME_DIR=/run/user/1000` (script on the guest's `/tmp`). Restart `hypruse-mcp` afterwards so it picks up `HYPRLAND_INSTANCE_SIGNATURE`.
+- **Bootloader step fails** in `nixos-rebuild switch` (no `/boot`): run `mkdir -p /boot && mount -t tmpfs tmpfs /boot` in the guest first, then rerun the switch.
+- **Git refuses `/dotfiles`** inside the guest: `git config --global --add safe.directory /dotfiles`.
+- **`Too many open files in system`** during a guest rebuild: the host virtiofsd for `/nix/store` is out of fds. Restart the VM (ask first).
+- **home-manager clobber:** a pre-existing unmanaged file on the VM disk (e.g. `~/.codex/config.toml`) blocks activation. Remove it in the guest and restart `home-manager-roey`.
+- **Bootloader in `switch-to-configuration`:** the guest has no ESP, so `check-mountpoints` fails even though the new generation is already active. Creating `/boot` as a tmpfs (`mkdir -p /boot && mount -t tmpfs tmpfs /boot`) before the switch lets it finish.
+- **Verifying a GUI app's output:** the agent is expected to check this itself through the guest Hypruse MCP (`./scripts/vmmcp.sh`), not ask the user. Use `screenshot` with `lossless=true`, decode the base64 image, and read it.
 
 ### Revert test-only VM changes
 
