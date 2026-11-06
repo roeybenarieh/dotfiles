@@ -13,6 +13,20 @@ with lib;
   # code paths that cause IRQ/9 (ACPI SCI) interrupt storms on Lenovo hardware.
   boot.kernelParams = [ "acpi_osi=Linux" ];
 
+  # Lenovo's ECDT assigns the EC to GPE 0x6e, but its events arrive on 0x43.
+  # Correct the table before the EC driver starts; masking 0x43 loses EC events
+  # and does not prevent the immediate s2idle wakeup.
+  # https://bugzilla.kernel.org/show_bug.cgi?id=207749#c80
+  boot.initrd.prepend = [
+    "${pkgs.runCommand "lenovo-ecdt.cpio" { nativeBuildInputs = [ pkgs.acpica-tools pkgs.cpio ]; } ''
+      cp ${./ecdt.dsl} ecdt.dsl
+      iasl -p ECDT ecdt.dsl
+      mkdir -p kernel/firmware/acpi
+      cp ECDT.aml kernel/firmware/acpi/ECDT.aml
+      printf '%s\n' kernel/firmware/acpi/ECDT.aml | cpio --quiet -o -H newc --reproducible > "$out"
+    ''}"
+  ];
+
   # Remap keys: this laptop's firmware sends F<num> instead of the appropriate special keymaps
   # (i.e. XF86MonBrightnessUp/Down keysyms for brightness control), so fix it at the X11 level.
   services.xserver.displayManager.sessionCommands = ''
