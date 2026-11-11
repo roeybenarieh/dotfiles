@@ -137,7 +137,7 @@ in
         provider.auto-router = {
           npm = "@ai-sdk/openai-compatible";
           models.main = {
-            name = "Auto Router (haiku/gpt-6-astra/sonnet/opus tiers)";
+            name = "Auto Router (haiku/terra/sol tiers)";
             limit = {
               context = 1000000;
               output = 128000;
@@ -176,11 +176,11 @@ in
               variant = "low";
             };
             MEDIUM = {
-              model = "openai/gpt-6-astra";
+              model = "openai/gpt-6.1-terra";
               variant = "medium";
             };
             COMPLEX = {
-              model = "anthropic/claude-sonnet-5-5";
+              model = "openai/gpt-6.1-sol";
               variant = "high";
             };
             # this would burn my tokens in no-time
@@ -201,7 +201,7 @@ in
       enableToast = false;
     };
 
-    # Ordered chain: primary (the session's model) -> sonnet -> gpt-6-astra.
+    # Ordered chain: primary (the session's model) -> sonnet -> gpt-6.1-terra.
     # A limited model stays unhealthy for cooldownMs (5h) and is skipped until
     # then. retryOriginalAfterMs returns to the primary after the same window.
     xdg.configFile."opencode/model-fallback.json".text = builtins.toJSON {
@@ -212,7 +212,7 @@ in
         retryOriginalAfterMs = 18000000;
         maxFallbackDepth = 3;
       };
-      agents."*".fallbackModels = [ "anthropic/claude-sonnet-5-5" "openai/gpt-6-astra" ];
+      agents."*".fallbackModels = [ "anthropic/claude-sonnet-5-5" "openai/gpt-6.1-terra" ];
       logging = true;
       logLevel = "info";
       logPath = "~/.local/share/opencode/logs/model-fallback.log";
