@@ -6,7 +6,6 @@
     common-pc-ssd
     common-pc
     common-cpu-intel-cpu-only
-    common-gpu-nvidia-nonprime
   ];
   hardware.enableAllFirmware = true;
 }
