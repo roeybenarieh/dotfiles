@@ -1,12 +1,9 @@
-{ namespace, lib, config, pkgs, inputs, ... }:
+{ namespace, lib, config, pkgs, ... }:
+
 with lib;
 with lib.${namespace};
 let
   cfg = config.${namespace}.basic;
-  gmail-icon = pkgs.fetchurl {
-    url = "https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg";
-    sha256 = "sha256-3hKd/5OcNBvmu1YXZXGclTYvAh25NuiKdFV2LmiH+wU=";
-  };
 in
 {
   options.${namespace}.basic = with types; {
@@ -15,8 +12,8 @@ in
 
   config = mkIf cfg.enable {
     ${namespace} = {
-      stylix.enable = true;
       nix.enable = true;
+      stylix.enable = true;
     };
 
     # Let Home Manager install and manage itself.
@@ -29,8 +26,6 @@ in
 
       # file system
       tree
-      baobab # disk usage GUI
-      nautilus # file explorer
 
       # networking related
       curl
@@ -38,7 +33,6 @@ in
 
       # text editing
       vim
-      xclip # sharing system clipboard with terminal clipboard
 
       # utils
       tldr
@@ -65,12 +59,9 @@ in
       htop = "${getExe pkgs.btop}";
       open = "${pkgs.xdg-utils}/bin/xdg-open";
       neofetch = "fastfetch";
+      l = "ls -lh"; # defaulty l = "ls -lFh", and -F doesnt exists in eza.
+      tree = "eza --tree --git-ignore";
     };
-    # set nauilus as default folder explorer
-    xdg.mimeApps.defaultApplications = {
-      "inode/directory" = "nautilus";
-    };
-
 
     # btop - system resource monitor
     programs.btop = {
@@ -100,10 +91,6 @@ in
         "--icons" # Display icons next to file names
         "--group" # Display the group of the resourcd
       ];
-    };
-    home.shellAliases = {
-      l = "ls -lh"; # defaulty l = "ls -lFh", and -F doesnt exists in eza.
-      tree = "eza --tree --git-ignore";
     };
 
 
@@ -141,27 +128,6 @@ in
       options = [
         "--cmd cd" # configure zoxide to be used as 'cd'
       ];
-    };
-
-    # Rebuild the hicolor icon cache so Nautilus can find icons from home-manager packages.
-    home.activation.updateIconCache = inputs.home-manager.lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-      ${pkgs.gtk3}/bin/gtk-update-icon-cache --force --ignore-theme-index \
-        "$HOME/.nix-profile/share/icons/hicolor" || true
-    '';
-
-    # Define Gmail as a desktop application
-    xdg.desktopEntries.gmail = {
-      name = "Gmail";
-      comment = "Google mail application";
-      exec = ''xdg-open "https://mail.google.com/mail"'';
-      terminal = false;
-      type = "Application";
-      icon = gmail-icon;
-      mimeType = [ "x-scheme-handler/mailto" ];
-    };
-    # Make Gmail the default mailto handler
-    xdg.mimeApps.defaultApplications = {
-      "x-scheme-handler/mailto" = [ "gmail.desktop" ];
     };
   };
 }

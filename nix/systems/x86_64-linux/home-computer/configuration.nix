@@ -12,6 +12,7 @@ in
   ${namespace} = {
     networking.hostName = "home-computer";
     apps = enabled;
+    edge-device = enabled;
     docker = enabled;
     gaming = enabled;
     gpu.nvidia1080ti = disabled;
