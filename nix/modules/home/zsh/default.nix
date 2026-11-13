@@ -33,7 +33,7 @@ in
         };
         hostname = {
           ssh_only = true;
-          format = "[host:\\($hostname\\)]($style) ";
+          format = "[host:\\($hostname\\) x]($style) ";
           style = "#e06c75";
         };
       };
