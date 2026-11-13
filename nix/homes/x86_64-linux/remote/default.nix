@@ -6,6 +6,7 @@ with lib.extra;
     cli = enabled;
     git = enabled;
     zsh = enabled;
+    software-development.ide.neovim = enabled;
   };
 
   home = {
