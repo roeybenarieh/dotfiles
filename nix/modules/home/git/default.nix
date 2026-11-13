@@ -20,6 +20,7 @@ in
         core.editor = "nvim";
         init.defaultBranch = "main";
         merge.ff = false;
+        pull.ff = true;
       };
     };
 
