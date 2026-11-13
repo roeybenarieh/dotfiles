@@ -10,6 +10,35 @@ in
   };
 
   config = mkIf cfg.enable {
+    programs.starship = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {
+        add_newline = false;
+        format = "$character$directory$git_branch$git_status$hostname";
+        character = {
+          success_symbol = "[➜](bold #e06c75)";
+          error_symbol = "[➜](bold #ff79c6)";
+        };
+        directory = {
+          style = "#a9b1d6";
+        };
+        git_branch = {
+          format = "[git:\\($branch\\)]($style) ";
+          style = "#e06c75";
+        };
+        git_status = {
+          format = "[✗]($style) ";
+          style = "bold #abb2bf";
+        };
+        hostname = {
+          ssh_only = true;
+          format = "[host:\\($hostname\\)]($style) ";
+          style = "#e06c75";
+        };
+      };
+    };
+
     programs.zsh = {
       enable = true;
       # Enable completion for aliases
@@ -37,6 +66,10 @@ in
 
       # save timestamp to records
       history.extended = true;
+
+      # Prompt: starship overrides the oh-my-zsh theme. Its hostname module
+      # shows the machine name only over SSH (ssh_only defaults to true).
+      # Starship's default format already includes $hostname.
 
       oh-my-zsh = {
         enable = true;
