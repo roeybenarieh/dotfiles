@@ -28,6 +28,11 @@ with lib.${namespace};
     # tmux
   };
 
+  # Do not build the "roey" home-manager configuration on this system.
+  snowfallorg.users.roey = {
+    create = false;
+    home.enable = false;
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
