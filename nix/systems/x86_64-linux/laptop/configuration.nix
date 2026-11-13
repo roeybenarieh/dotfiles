@@ -14,6 +14,7 @@ in
   ${namespace} = {
     networking.hostName = "laptop";
     apps = enabled;
+    edge-device = enabled;
     desktop.hyprland = {
       enable = true;
       ambxst = disabled;

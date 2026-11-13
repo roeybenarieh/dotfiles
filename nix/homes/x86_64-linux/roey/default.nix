@@ -5,6 +5,7 @@ with lib.extra;
   extra = {
     cli = enabled;
     desktop.enable = osConfig.services.xserver.windowManager.qtile.enable or false;
+    edge-device.enable = osConfig.extra.edge-device.enable or false;
     desktop.hyprland = {
       enable = true;
       ambxst = disabled;

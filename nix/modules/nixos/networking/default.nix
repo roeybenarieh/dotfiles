@@ -20,13 +20,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Disable blueman's ConnectionNotifier plugin so it never fires connect/disconnect
-    # notifications (the iPhone tether auto-connects/disconnects frequently).
-    # "!PluginName" is blueman's convention for a user-disabled plugin (see PluginManager.py).
-    snowfallorg.users.roey.home.config.dconf.settings = {
-      "org/blueman/general".plugin-list = [ "!ConnectionNotifier" ];
-    };
-
     environment.systemPackages = with pkgs; [ openconnect nmgui ];
     programs.localsend = enabled;
     networking = {

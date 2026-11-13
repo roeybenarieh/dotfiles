@@ -37,6 +37,7 @@ with lib.${namespace};
   ${namespace} = {
     networking.enable = mkForce false;
     apps = enabled;
+    edge-device = enabled;
     desktop.hyprland = enabled;
     desktop.displayManager.plasma = enabled;
   };
