@@ -67,8 +67,10 @@ impl App {
 
     fn keyword(&self, name: &str, value: &str) -> io::Result<()> {
         let mut reply = self.request(&format!("keyword {name} {value}"))?;
-        if reply.contains("non-legacy parsers") {
-            // Hyprland's Lua config backend rejects `keyword`. Use typed Lua
+        // Hyprland's Lua config backend rejects `keyword`, either with
+        // "non-legacy parsers" or a bare "unknown request" depending on version.
+        if reply.contains("non-legacy parsers") || reply.trim() == "unknown request" {
+            // Use typed Lua
             // values and byte escapes so paths cannot become executable Lua.
             let value = if name == "cursor:no_hardware_cursors" {
                 value.parse::<i64>().map_err(io::Error::other)?.to_string()
