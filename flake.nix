@@ -1,8 +1,10 @@
 {
   description = "Roey Ben Arieh NixOS+HomeManager configurations";
   inputs = {
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable"; # unstable
-    nixpkgs.url = "github:NixOS/nixpkgs/master"; # stable
+    # nixos-unstable only advances to commits Hydra has fully built, so every
+    # package is in cache.nixos.org. `master` has no such guarantee and makes
+    # packages like firefox or libreoffice compile locally.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/master"; # unstable
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,13 +17,22 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    stylix.url = "github:danth/stylix";
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     doh1-autofill = {
       url = "github:roeybenarieh/doh1-autofill/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     spotify-adblock = {
       url = "github:abba23/spotify-adblock";
       flake = false;
@@ -49,14 +60,15 @@
       url = "github:roeybenarieh/Ambxst";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprshell.url = "github:H3rmt/hyprshell";
+    hyprshell = {
+      url = "github:H3rmt/hyprshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    # Provides the `omnigent` package (nix/modules/home/omnigent). Not merged
-    # into numtide/llm-agents.nix upstream yet — tracking the author's branch
-    # that adds it. Deliberately NOT following our nixpkgs: the package pins
-    # a specific nixpkgs-unstable revision its many bleeding-edge Python deps
-    # (openai-agents, claude-agent-sdk, ...) were built and verified against.
-    llm-agents-nix.url = "github:blacksd/llm-agents.nix/feat/add-omnigent";
+    # Provides `opencode`, `claude-code` and `codex`. Deliberately does NOT follow
+    # our nixpkgs: its binary cache (cache.numtide.com, see nixos basic module)
+    # is built against its own pinned nixpkgs, so following would force local builds.
+    llm-agents-nix.url = "github:numtide/llm-agents.nix";
   };
 
   outputs = inputs:
