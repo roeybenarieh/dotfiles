@@ -25,6 +25,24 @@ with lib.${namespace};
       enable = true;
       operator = "remote";
     };
+    opencode-serve.enable = true;
+    opencode-manager = {
+      enable = true;
+      trustedOrigins = [ "http://server:5003" "http://localhost:5003" ];
+      servers = [
+        {
+          name = "laptop";
+          url = "http://100.122.121.95:4096";
+          username = "opencode";
+          passwordFile = "/home/remote/.config/opencode-manager/laptop-password";
+        }
+        {
+          name = "server";
+          url = "http://127.0.0.1:4096";
+          passwordFile = "/home/remote/.config/opencode-manager/server-password";
+        }
+      ];
+    };
     # tmux
   };
 

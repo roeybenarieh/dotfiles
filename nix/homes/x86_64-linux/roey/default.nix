@@ -44,14 +44,17 @@ with lib.extra;
     };
     game-dev = enabled;
     office = enabled;
-    mcp = enabled;
     codex = enabled;
-    opencode = enabled;
+    opencode = {
+      enable = true;
+      server.enable = osConfig.extra.opencode-serve.enable or false;
+    };
+    ocm = enabled;
     claude = {
       enable = true;
       statusLine = enabled;
       litellm = {
-        enable = true;
+        enable = false;
         masterKey = "sk-1234";
       };
     };

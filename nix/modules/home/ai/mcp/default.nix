@@ -41,56 +41,27 @@ let
     sys.exit(main())
   '';
 
-  # OpenCode's native `openai` provider (ChatGPT-OAuth) honors neither
-  # `provider.openai.options.baseURL` nor an `OPENAI_BASE_URL` env var —
-  # verified empirically with `ss`-traced live `opencode run` tests: traffic
-  # went straight to the real remote host both times. Its OAuth code path
-  # builds the request client itself (`createOpenAI(options).responses(...)`)
-  # without threading either override through. headroom ships its own fix for
-  # exactly this: a self-contained OpenCode plugin (built via
-  # `npm run build:standalone`, inlining every dependency) that monkey-patches
-  # `fetch`/`http`/`https`/`http2`/`child_process` at the Node runtime level,
-  # so it reroutes traffic regardless of what any provider SDK does internally.
-  # Fetched straight out of the `headroom-ai` PyPI wheel (same package that
-  # provides the MCP server and proxy above) rather than the mutable
-  # `~/.cache/uv` path it unpacks to at runtime, so this is reproducible.
+  # headroom's OpenCode transport plugin, taken straight out of the
+  # `headroom-ai` PyPI wheel (same package that provides the MCP server and
+  # proxy above) so it is pinned here instead of read from the mutable
+  # `~/.cache/uv` copy. It routes every provider's model requests through the
+  # proxy (rewriting model baseURLs via ctx.model.transform and patching the
+  # Node transport for anything that bypasses them, tagging the real upstream
+  # in `x-headroom-base-url`), which covers both the Anthropic (Claude Pro/Max
+  # OAuth) and OpenAI (ChatGPT OAuth) providers. The proxy URL is passed as the
+  # plugin's `proxyUrl` option (it would otherwise default to localhost:8787).
+  #
+  # 0.44 ships `_dist/index.js` exporting both the OpenCode 1.x `server` and the
+  # 2.x `setup` entry points. OpenCode 2 only loads a local plugin from a
+  # directory, so it is unpacked into one.
   headroomOpencodeWheel = pkgs.fetchurl {
-    url = "https://files.pythonhosted.org/packages/60/fc/8411d3188a485f6e3a227da08d5140bdcc62a07e8a85c73ab1e9a822bf09/headroom_ai-0.39.1-cp310-abi3-manylinux_2_28_x86_64.whl";
-    hash = "sha256-6duyJIOgiNmaRmxQan13+gSJv4xbGf6zUBCsW9Jcl6Q=";
+    url = "https://files.pythonhosted.org/packages/8f/63/39c8f6bd317714bc6a68775be5da5e15bca9e91d5f95e259bc00e6de6f7f/headroom_ai-0.44.0-cp310-abi3-manylinux_2_28_x86_64.whl";
+    hash = "sha256-O1x/0onn0ifc2biWYVVB6p09NziL2XsyV/yHacS373A=";
   };
-  headroomOpencodeTransportPlugin = pkgs.runCommand "entry.opencode.js" { } ''
-    ${lib.getExe' pkgs.unzip "unzip"} -p ${headroomOpencodeWheel} headroom/providers/opencode/_dist/entry.opencode.js > $out
-  '';
-
-  # The transport plugin above reads its proxy target from `options.proxyUrl`,
-  # falling back to `process.env.HEADROOM_PROXY_URL`/`HEADROOM_BASE_URL`
-  # (ultimately `http://localhost:8787` — this repo's port, incidentally). Set
-  # it explicitly from a tiny bootstrap plugin, same trick as the Anthropic one
-  # above, loaded first so the env var exists before the transport plugin's own
-  # default export runs and resolves it.
-  headroomOpencodeProxyUrlPlugin = pkgs.writeText "headroom-proxy-url.mjs" ''
-    export default async () => {
-      process.env.HEADROOM_PROXY_URL = "http://127.0.0.1:${toString headroomProxyPort}";
-      return {};
-    };
-  '';
-
-  # OpenCode's native `anthropic` provider's AI SDK treats `ANTHROPIC_BASE_URL`
-  # as a complete replacement for its default base (`https://api.anthropic.com/v1`)
-  # rather than a host to graft `/v1` onto, so the request path becomes
-  # `<ANTHROPIC_BASE_URL>/messages` with no `/v1` segment. The
-  # `opencode-anthropic-auth` plugin's own `rewriteUrl()` (which reads this same
-  # env var to override the request's protocol+host) only ever swaps host, never
-  # path, so it inherits whatever path the SDK already built. Confirmed directly
-  # against the proxy: `POST /messages` (no `/v1`) → immediate 404, byte-for-byte
-  # the `AI_APICallError: Not Found` seen in every OpenCode request once this
-  # plugin was in the mix — the `/v1` suffix below is what the bare-host version
-  # of this plugin was missing.
-  headroomOpencodeAnthropicBaseUrlPlugin = pkgs.writeText "headroom-anthropic-base-url.mjs" ''
-    export default async () => {
-      process.env.ANTHROPIC_BASE_URL = "http://127.0.0.1:${toString headroomProxyPort}/v1";
-      return {};
-    };
+  headroomOpencodePlugin = pkgs.runCommand "headroom-opencode-plugin" { } ''
+    mkdir -p $out
+    ${lib.getExe' pkgs.unzip "unzip"} -p ${headroomOpencodeWheel} headroom/providers/opencode/_dist/index.js > $out/index.js
+    echo '{"name":"headroom-opencode","private":true,"type":"module"}' > $out/package.json
   '';
 in
 {
@@ -99,7 +70,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ pkgs.nodejs ];
+    home.packages = [ pkgs.nodejs pkgs.uv ]; # needed for some locally configured mcps 
 
     programs.mcp = {
       enable = true;
@@ -199,6 +170,10 @@ in
           # `tool_search_tool_regex` by default; opencode can't execute that
           # tool ("Model tried to call unavailable tool").
           "HEADROOM_TOOL_SEARCH=0"
+          # OpenCode advertises headroom_retrieve itself. Server-side
+          # retrieval handling can turn streaming Responses into JSON
+          # requests, which OpenAI OAuth rejects.
+          "HEADROOM_NO_CCR_RESPONSE_HANDLING=1"
         ];
         Restart = "on-failure";
         RestartSec = 2;
@@ -238,21 +213,22 @@ in
       };
     };
 
-    # The "anthropic" provider (Claude Pro/Max OAuth, via opencode/default.nix's
-    # `opencode-anthropic-auth` plugin) is routed through headroom's proxy the
-    # same way Claude Code is, via the `/v1`-suffixed bootstrap plugin above —
-    # order matters: it must load before the ex-machina auth plugin so
-    # `ANTHROPIC_BASE_URL` is already set when that plugin's `rewriteUrl()`
-    # first reads it.
+    # Route OpenCode's model traffic through the headroom proxy (see
+    # headroomOpencodePlugin above). mkBefore: load it ahead of extra.opencode's
+    # plugins so its transport is in place before any of them sends requests.
     #
-    # The "openai" provider (ChatGPT OAuth) doesn't honor config/env
-    # overrides at all (see the transport-plugin comment above), so it's
-    # routed instead via headroom's runtime-level transport plugin — same
-    # ordering requirement, this time against the proxy-URL bootstrap plugin.
-    programs.opencode.settings.plugin = mkIf config.${namespace}.opencode.enable [
-      "${headroomOpencodeAnthropicBaseUrlPlugin}"
-      "${headroomOpencodeProxyUrlPlugin}"
-      "${headroomOpencodeTransportPlugin}"
-    ];
+    # @ex-machina/opencode-anthropic-auth only attaches the Claude Pro/Max OAuth
+    # token to https://api.anthropic.com or the origin in ANTHROPIC_BASE_URL;
+    # anything else fails with "Refusing to send Anthropic OAuth credentials
+    # to an untrusted origin". Name the proxy as that origin.
+    ${namespace}.opencode.environment = mkIf config.${namespace}.opencode.enable {
+      ANTHROPIC_BASE_URL = "http://127.0.0.1:${toString headroomProxyPort}";
+    };
+    programs.opencode.settings.plugins = mkIf config.${namespace}.opencode.enable (mkBefore [
+      {
+        package = "${headroomOpencodePlugin}";
+        options.proxyUrl = "http://127.0.0.1:${toString headroomProxyPort}";
+      }
+    ]);
   };
 }

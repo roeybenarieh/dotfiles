@@ -1,4 +1,4 @@
-{ namespace, lib, config, pkgs, ... }:
+{ namespace, lib, config, pkgs, inputs, ... }:
 with lib;
 with lib.${namespace};
 let
@@ -26,18 +26,18 @@ let
     hash = "sha256-uD6NEFL2ky5e60RKjl20+gYUHtMjABPoABmZ63vT/SM=";
   };
 
-  # ponytail: pushes the agent toward the simplest, dependency-light solution
-  # (YAGNI, stdlib-first) instead of over-engineering. Installed as a real
-  # Claude Code plugin (not just its skills) so its SessionStart/UserPromptSubmit
-  # hooks fire — those hooks are what actually force the ruleset into context
-  # on every turn; the skills alone are only model-invoked on a description
-  # match and wouldn't give the "active every response" behavior ponytail advertises.
-  ponytailSrc = pkgs.fetchFromGitHub {
-    owner = "dietrichgebert";
-    repo = "ponytail";
-    rev = "e3ba2aa6f1e6f0bc4d69eb09c9f0d0a93af56156";
-    hash = "sha256-PES5XrSYx0VBXWVHEDRykGy0SAmJfV/luzy8Gfg0aAQ=";
+  # addyosmani/agent-skills: lifecycle skills for software development (same
+  # pinned commit as the opencode module). Each skills/<name>/ is a SKILL.md
+  # directory, so every one is mapped into ~/.claude/skills.
+  agentSkillsSrc = pkgs.fetchFromGitHub {
+    owner = "addyosmani";
+    repo = "agent-skills";
+    rev = "301b02b12bff98e4688e6984af6556802322bbde";
+    hash = "sha256-ewVxgb5GqtUeWcGydFz3GbzUkM0p+cuRfP+tlPAg4PY=";
   };
+  agentSkills = mapAttrs (name: _: "${agentSkillsSrc}/skills/${name}")
+    (filterAttrs (_: type: type == "directory")
+      (builtins.readDir "${agentSkillsSrc}/skills"));
 
   # taste-skill: anti-slop frontend design skill (tasteskill.dev) — reads the
   # brief, infers a design direction, and pushes frontend output away from
@@ -195,19 +195,23 @@ in
     # merged into extra.software-development.languages.python's single shared
     # interpreter below, since Home Manager can't have two independent
     # python.withPackages closures on PATH at once
-    extra.software-development.languages.python.extraPackages = [
-      "pypdf"
-      "pdfplumber"
-      "reportlab"
-      "pypdfium2"
-      "pytesseract"
-      "pdf2image"
-      "pandas"
-      "openpyxl"
-    ];
+    ${namespace} = {
+      software-development.languages.python.extraPackages = [
+        "pypdf"
+        "pdfplumber"
+        "reportlab"
+        "pypdfium2"
+        "pytesseract"
+        "pdf2image"
+        "pandas"
+        "openpyxl"
+      ];
+      mcp = enabled;
+    };
 
     programs.claude-code = {
       enable = true;
+      package = inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.claude-code;
       settings = claudeSettings;
 
       # Server list comes from `extra.mcp` (programs.mcp.servers) — see
@@ -216,7 +220,8 @@ in
 
       # Native LSP settings come from extra.lsp, shared with other harnesses.
 
-      skills = {
+      # agent-skills first, so the explicit entries below win on any name clash.
+      skills = agentSkills // {
         # task-observer meta-skill: watches sessions and improves the skill library over time
         task-observer = taskObserverSrc;
 
@@ -228,19 +233,18 @@ in
         pdf = "${anthropicSkillsSrc}/skills/pdf";
 
         # graphify: maps any codebase into a queryable knowledge graph
-        graphify = graphifySkillDir;
+        # graphify = graphifySkillDir;
 
         # taste-skill: anti-slop frontend design skill from tasteskill.dev
         taste-skill = tasteSkillSrc;
       };
 
-      plugins = {
-        ponytail = ponytailSrc;
-      };
-
       context = ''
         ## Git commits
         Never run `git commit` unless the user explicitly asks you to commit. Stage files, make changes, and tell the user what's ready — but do not commit on your own initiative.
+
+        ## Software development skills
+        For any software development task (write, fix, refactor, review, test, design, ship), first read `~/.claude/skills/using-agent-skills/SKILL.md` and load every skill it maps to the task (for example `test-driven-development`, `incremental-implementation`, `code-review-and-quality`). Follow their workflows and verification steps. Subagents must do the same.
       '';
     };
 

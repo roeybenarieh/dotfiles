@@ -7,6 +7,16 @@ with lib.extra;
     git = enabled;
     zsh = enabled;
     software-development.ide.neovim = enabled;
+    # AI agents, same set as the laptop's roey profile (minus desktop-only pieces).
+    claude = {
+      enable = true;
+      statusLine = enabled;
+    };
+    codex = enabled;
+    opencode = {
+      enable = true;
+      server.enable = osConfig.extra.opencode-serve.enable or false;
+    };
   };
 
   home = {

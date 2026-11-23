@@ -63,6 +63,10 @@ in
       enable = true;
       operator = "roey";
     };
+    opencode-serve = {
+      enable = true;
+      port = 4096;
+    };
     laptop = enabled;
     razer = enabled;
     graphics = {

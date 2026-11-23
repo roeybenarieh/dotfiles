@@ -36,27 +36,11 @@ let
   # patched package becomes `programs.codex.package`, there is only ever one
   # `codex` on PATH — no shell alias, and no second executable that a
   # non-interactive/non-Home-Manager shell might skip.
-  # ponytail: pushes the agent toward the simplest, dependency-light solution
-  # (YAGNI, stdlib-first) instead of over-engineering. Installed as a real
-  # Codex plugin (not just its skills) so its lifecycle hooks (claude-codex-hooks.json)
-  # fire — those are what actually force the ruleset into context on every
-  # turn; the skills alone are only model-invoked on a description match.
-  # Codex's `plugins` list (unlike Claude Code's attrset form) derives the
-  # plugin directory name from the derivation itself, and must match the
-  # "name" field in .codex-plugin/plugin.json ("ponytail"), hence the
-  # explicit `name =` override below.
-  ponytailSrc = pkgs.fetchFromGitHub {
-    name = "ponytail";
-    owner = "dietrichgebert";
-    repo = "ponytail";
-    rev = "e3ba2aa6f1e6f0bc4d69eb09c9f0d0a93af56156";
-    hash = "sha256-PES5XrSYx0VBXWVHEDRykGy0SAmJfV/luzy8Gfg0aAQ=";
-  };
-
+  codex = inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.codex;
   codexPackage = pkgs.symlinkJoin {
-    name = "codex-${pkgs.codex.version}";
-    version = pkgs.codex.version;
-    paths = [ pkgs.codex ];
+    name = "codex-${codex.version}";
+    version = codex.version;
+    paths = [ codex ];
     postBuild = ''
       mv "$out/bin/codex" "$out/bin/.codex-unwrapped"
       cat > "$out/bin/codex" <<WRAPPER
@@ -73,6 +57,7 @@ in
   };
 
   config = mkIf cfg.enable {
+    ${namespace}.mcp = enabled;
     programs.codex = {
       enable = true;
       package = codexPackage;
@@ -82,8 +67,6 @@ in
       enableMcpIntegration = true;
 
       settings.notify = [ "${codexNotifyScript}/bin/codex-notify" ];
-
-      plugins = [ ponytailSrc ];
     };
 
     # Home Manager links config.toml as a read-only symlink into the Nix
